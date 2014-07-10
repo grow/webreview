@@ -12,6 +12,7 @@ script: |
       --rednose \
       --with-gae \
       --without-sandbox \
+      --gae-lib-root=google_appengine \
       --with-coverage \
       --cover-erase \
       --cover-html \
