@@ -1,3 +1,4 @@
 #!/bin/bash
 
-gulp & dev_appserver.py --host=localhost .
+./node_modules/.bin/gulp \
+  & dev_appserver.py --host=localhost .

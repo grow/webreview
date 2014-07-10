@@ -13,19 +13,22 @@ var Path = {
 
 
 gulp.task('minify', function(){
-  var css_sources = [
+  gulp.src([
     './bower_components/bootstrap/dist/css/bootstrap.min.css',
     Path.CSS_SOURCES,
-  ];
-  gulp.src(css_sources)
-    .pipe(concat('main.min.css'))
-    .pipe(gulp.dest(Path.CSS_OUT_DIR));
+  ])
+      .pipe(concat('main.min.css'))
+      .pipe(gulp.dest(Path.CSS_OUT_DIR));
 
-  gulp.src(Path.JS_SOURCES)
-    .pipe(concat('main.min.js'))
-    .pipe(gulp.dest(Path.JS_OUT_DIR))
-    .pipe(uglify())
-    .pipe(gulp.dest(Path.JS_OUT_DIR));
+  gulp.src([
+    './bower_components/angular/angular.min.js',
+    './bower_components/angular-bootstrap/ui-bootstrap.min.js',
+    './bower_components/angular-ui-router/release/angular-ui-router.min.js',
+    './bower_components/angular-xeditable/dist/js/xeditable.js',
+    Path.JS_SOURCES,
+  ])
+      .pipe(concat('main.min.js'))
+      .pipe(gulp.dest(Path.JS_OUT_DIR));
 });
 
 
@@ -38,4 +41,5 @@ gulp.task('watch', function() {
 });
 
 
+gulp.task('build', ['minify']);
 gulp.task('default', ['minify', 'watch']);

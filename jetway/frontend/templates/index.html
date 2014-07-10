@@ -1,3 +1,29 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <title>Jetway</title>
+<link rel="stylesheet" href="/_jetway/static/css/main.min.css">
+<script src="/_jetway/static/js/main.min.js"></script>
+<body>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+      <ul class="nav navbar-nav navbar-right">
+        {% if me %}
+          <li><a href="#">{{me.email}}</a>
+          <li><a href="{{sign_out_url}}">Sign out</a>
+        {% else %}
+          <li><a href="{{sign_in_url}}">Sign in</a>
+        {% endif %}
+      </ul>
+      <form class="navbar-left navbar-form">
+        <a href="#" class="btn btn-default">New project</a>
+      </form>
+    </div>
+  </nav>
+  <div class="container">
+    <div ui-view></div>
+  </div>
+  <script>
+    angular.element(document).ready(function() {
+      angular.bootstrap(document, ['jetway']);
+    });
+  </script>
