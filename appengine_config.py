@@ -7,7 +7,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
 
 mimetypes.add_type('image/svg+xml', '.svg')
 
-_client_secrets = json.load(open('client_secrets.json'))
+if os.path.exists('client_secrets.json'):
+  _client_secrets = json.load(open('client_secrets.json'))
+else:
+  _client_secrets = json.load(open('client_secrets.json.example'))
 
 IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')
 
