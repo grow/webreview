@@ -1,0 +1,30 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>{{error.title}} – Error</title>
+<style>
+  html {
+    background: linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0));
+    background-color: #e8ebef;
+    background-repeat: no-repeat;
+    font-family: 'Roboto', 'Helvetica Neue', 'Arial', sans-serif;
+    font-weight: 200;
+  }
+  body {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 80px 20px 20px;
+  }
+  h1 {
+    font-weight: 200;
+    margin: 0;
+  }
+  svg {
+    -webkit-filter: saturate(0%);
+    float: right;
+    margin: 5px 20px;
+    height: 100px;
+    width: 100px;
+  }
+</style>
+<h1>Something went wrong.</h1>
+<p>{{error.message}}
