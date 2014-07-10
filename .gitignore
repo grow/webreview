@@ -3,6 +3,7 @@
 
 *.der
 bower_components
+jetway.yaml
 client_secrets.json
 env
 htmlcov

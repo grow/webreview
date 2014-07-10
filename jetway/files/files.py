@@ -1,3 +1,4 @@
+import appengine_config
 import cloudstorage
 from datetime import datetime
 from google.appengine.ext import blobstore
@@ -5,9 +6,6 @@ from jetway.files import messages
 from jetway.utils import gcs
 import os
 import time
-
-_gcs_private_key_path = os.path.join(
-    os.path.dirname(__file__), '..', '..', 'gcs_private_key.der')
 
 
 class Error(Exception):
@@ -23,7 +21,7 @@ class Signer(object):
   def __init__(self, root):
     self.root = root
     self.signer = gcs.CloudStorageURLSigner(
-        open(_gcs_private_key_path).read(),
+        open(appengine_config.gcs_private_key_path).read(),
         os.environ['GCS_SERVICE_ACCOUNT_EMAIL'])
 
   def sign_put_request(self, unsigned_request):
