@@ -8,9 +8,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
 mimetypes.add_type('image/svg+xml', '.svg')
 
 if os.path.exists('client_secrets.json'):
-  _client_secrets = json.load(open('client_secrets.json'))
+  client_secrets_path = os.path.abspath('client_secrets.json')
 else:
-  _client_secrets = json.load(open('client_secrets.json.example'))
+  client_secrets_path = os.path.abspath('client_secrets.json.example')
+
+client_secrets = json.load(open(client_secrets_path))
 
 IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')
 
@@ -24,7 +26,7 @@ WEBAPP2_AUTH_CONFIG = {
 }
 
 class OAuth(object):
-  CLIENT_ID = _client_secrets['web']['client_id']
+  CLIENT_ID = client_secrets['web']['client_id']
   SCOPES = (
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/userinfo.profile',

@@ -13,11 +13,8 @@ import os
 import webapp2
 
 
-_client_secrets = os.path.join(
-    os.path.dirname(__file__), '..', '..', 'client_secrets.json')
-
 decorator = appengine.OAuth2DecoratorFromClientSecrets(
-    filename=_client_secrets,
+    filename=appengine_config.client_secrets_path,
     scope=appengine_config.OAuth.SCOPES)
 
 
@@ -27,7 +24,7 @@ def get_google_storage_flow(**kwargs):
   origin = os.getenv('HTTP_HOST')
   redirect_uri = '{}://{}/oauth2/callback/googlestorage'.format(scheme, origin)
   scope = ['https://www.googleapis.com/auth/devstorage.full_control']
-  secrets = json.load(open(_client_secrets))['web']
+  secrets = appengine_config.client_secrets['web']
   return appengine.OAuth2WebServerFlow(
       secrets['client_id'],
       secrets['client_secret'],

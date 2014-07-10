@@ -47,7 +47,8 @@ class AvatarHandler(webapp2.RequestHandler):
       self.response.headers.update(headers)
 
     except avatars.AvatarDoesNotExistError:
-      raise
+      self.response.status = 404
+      return
 
     if if_none_match and if_none_match == self.response.headers.get('ETag'):
       self.response.status = 304
