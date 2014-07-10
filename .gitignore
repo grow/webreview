@@ -2,10 +2,12 @@
 .DS_Store
 
 *.der
+bower_components
 client_secrets.json
 env
 htmlcov
 lib
+node_modules
 
 # C extensions
 *.so

@@ -27,8 +27,17 @@ handlers:
   login: admin
   secure: always
 
-- url: /_jetway/static
-  static_dir: jetway/frontend/static/
+- url: /_jetway/static/css
+  static_dir: dist/css
+
+- url: /_jetway/static/js
+  static_dir: dist/js
+
+- url: /_jetway/static/html
+  static_dir: jetway/frontend/static/html
+
+- url: /_jetway/static/images
+  static_dir: jetway/frontend/static/images
 
 - url: /.*
   script: jetway.main.app
@@ -45,3 +54,7 @@ skip_files:
 - ^(.*/)?index\.yaml
 - ^(.*/)?index\.yml
 - ^(.*/)?run_tests.py
+- bower_components
+- env
+- htmlconv
+- node_modules

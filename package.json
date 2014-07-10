@@ -1,0 +1,11 @@
+{
+  "name": "jetway",
+  "private": true,
+  "devDependencies": {
+    "bower": "*",
+    "jshint-stylish": "*",
+    "gulp": "*",
+    "gulp-concat": "*",
+    "gulp-uglify": "*"
+  }
+}
