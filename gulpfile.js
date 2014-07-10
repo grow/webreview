@@ -30,7 +30,11 @@ gulp.task('minify', function(){
 
 
 gulp.task('watch', function() {
-  gulp.watch(Path.JS_SOURCES, ['minify']);
+  var paths = [
+    Path.JS_SOURCES,
+    Path.CSS_SOURCES,
+  ];
+  gulp.watch(paths, ['minify']);
 });
 
 
