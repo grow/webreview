@@ -1,0 +1,23 @@
+<div class="container container-md">
+  <div class="card">
+    <h1>Create site</h1>
+    <form ng-submit="createProject(project)">
+      <div class="form-group">
+        <label>Owner</label>
+        <select class="form-control" ng-model="project.owner.nickname" ng-options="owner for owner in owners">
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nickname</label>
+        <input ng-model="project.nickname" class="form-control" autofocus required>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea ng-model="project.description" class="form-control"></textarea required>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-success">Create site</button>
+      </div>
+    </form>
+  </div>
+</div>

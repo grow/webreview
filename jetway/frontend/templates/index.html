@@ -4,18 +4,21 @@
 <link rel="stylesheet" href="/_jetway/static/css/main.min.css">
 <script src="/_jetway/static/js/main.min.js"></script>
 <body>
-  <nav class="navbar navbar-default" role="navigation">
+  <nav class="navbar navbar-default" role="navigation" ng-controller="HeaderController">
     <div class="container">
       <ul class="nav navbar-nav navbar-right">
         {% if me %}
-          <li><a href="#">{{me.email}}</a>
+          <li><a ui-sref="owner.projects({'owner': me.nickname})">{{me.email}}</a>
           <li><a href="{{sign_out_url}}">Sign out</a>
         {% else %}
           <li><a href="{{sign_in_url}}">Sign in</a>
         {% endif %}
       </ul>
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">Jetway</a>
+      </div>
       <form class="navbar-left navbar-form">
-        <a href="#" class="btn btn-default">New project</a>
+        <a ui-sref="new()" class="btn btn-default">New site</a>
       </form>
     </div>
   </nav>
