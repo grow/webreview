@@ -24,6 +24,14 @@ class UtilsTestCase(testing.BaseTestCase):
     expected = (None, 'bar', 'baz')
     self.assertEqual(expected, result)
 
+    result = utils.parse_hostname('bar--baz-dot-grow.fm')
+    expected = (None, 'bar', 'baz')
+    self.assertEqual(expected, result)
+
+    result = utils.parse_hostname('foo-dot-grow.fm')
+    expected = 'baz'
+    self.assertEqual(expected, result)
+
 
 if __name__ == '__main__':
   unittest.main()

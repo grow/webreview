@@ -2,11 +2,13 @@
 .DS_Store
 
 *.der
+*.p12
+*.pem
 bower_components
-jetway.yaml
 client_secrets.json
 env
 htmlcov
+jetway.yaml
 lib
 node_modules
 

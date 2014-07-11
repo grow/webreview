@@ -4,10 +4,6 @@ api_version: 1
 runtime: python27
 threadsafe: true
 
-env_variables:
-  GCS_BUCKET: grow-prod-grow
-  GCS_SERVICE_ACCOUNT_EMAIL: 578372381550-gg1pnu229oppq27dc8mdihq51qbu6aq9@developer.gserviceaccount.com
-
 libraries:
 - name: ssl 
   version: latest
@@ -18,6 +14,8 @@ libraries:
 - name: webapp2
   version: latest
 - name: PIL
+  version: latest
+- name: yaml
   version: latest
 
 handlers:

@@ -1,0 +1,7 @@
+options:
+  title: Jetway
+  mode: multi
+
+app:
+  gcs_bucket: jetway.appspot.com
+  gcs_service_account_email: 12345678-flrec3jih48575v5ntsp9tq78hpbl270@developer.gserviceaccount.com

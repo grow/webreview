@@ -9,9 +9,11 @@ def parse_hostname(hostname, path=None):
   """Returns (fileset, project, owner) parsed from a hostname."""
   preview_hostname = appengine_config.PREVIEW_HOSTNAME
   hostname = hostname.replace(preview_hostname, '')
+  hostname = hostname.replace('-dot-', '.')
   results = _HOSTNAME_RE.findall(hostname)
   if not results:
-    return None
+    hostname = hostname.rstrip('.')
+    return (hostname, ) if hostname else None
   # Convert empty string to None.
   return tuple(part if part else None for part in results[0])
 

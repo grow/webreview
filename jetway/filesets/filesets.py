@@ -4,6 +4,7 @@ from jetway.files import messages as file_messages
 from jetway.filesets import messages
 from jetway.server import utils
 from jetway.logs import logs
+import appengine_config
 import os
 import webapp2
 
@@ -121,7 +122,7 @@ class Fileset(ndb.Model):
   @classmethod
   def create(cls, project, name, created_by=None):
     try:
-      cls.get(project, name)
+      cls.get(name=name)
       raise FilesetExistsError('Fileset "{}" already exists.'.format(name))
     except FilesetDoesNotExistError:
       pass
@@ -140,10 +141,12 @@ class Fileset(ndb.Model):
     return fileset
 
   @classmethod
-  def get(cls, project, name):
+  def get(cls, project=None, name=None):
     query = cls.query()
-    query = query.filter(cls.project_key == project.key)
-    query = query.filter(cls.name == name)
+    if project is not None:
+      query = query.filter(cls.project_key == project.key)
+    if name is not None:
+      query = query.filter(cls.name == name)
     fileset = query.get()
     if fileset is None:
       text = 'Fileset "{}" does not exist.'
@@ -210,7 +213,8 @@ class Fileset(ndb.Model):
 
   @webapp2.cached_property
   def _signer(self):
-    root = '/{}/jetway/filesets/{}'.format(os.environ['GCS_BUCKET'], self.ident)
+    gcs_bucket = appengine_config.jetway_config['app']['gcs_bucket']
+    root = '/{}/jetway/filesets/{}'.format(gcs_bucket, self.ident)
     return files.Signer(root)
 
   def sign_requests(self, unsigned_requests):

@@ -5,6 +5,7 @@ from jetway.owners import owners
 from jetway.projects import projects
 from jetway.server import utils
 import jinja2
+import logging
 import os
 import webapp2
 
@@ -29,24 +30,31 @@ class RequestHandler(webapp2.RequestHandler):
     context.set_memcache_policy(lambda key: True)
     context.set_memcache_timeout_policy(lambda key: None)
     parts = utils.parse_hostname(os.environ['SERVER_NAME'])
-    fileset_name, project_name, owner_name = parts
+
     try:
-      owner = owners.Owner.get(owner_name)
-      project = projects.Project.get(owner, project_name)
-      if fileset_name is None:
-        raise filesets.FilesetDoesNotExistError
+      if len(parts) == 3:
+        fileset_name, project_name, owner_name = parts
+        owner = owners.Owner.get(owner_name)
+        project = projects.Project.get(owner, project_name)
+        if fileset_name is None:
+          raise filesets.FilesetDoesNotExistError
+        fileset = project.get_fileset(fileset_name)
+      else:
+        fileset_name = parts[0]
+        if fileset_name is None:
+          raise filesets.FilesetDoesNotExistError
+        fileset = filesets.Fileset.get(name=fileset_name)
+
       path = (self.request.path + 'index.html'
               if self.request.path.endswith('/') else self.request.path)
-      fileset = project.get_fileset(fileset_name)
       headers = fileset.get_headers_for_path(path, request_headers=self.request.headers)
       self.response.headers.update(headers)
+
     except (owners.OwnerDoesNotExistError,
             projects.ProjectDoesNotExistError,
             filesets.FilesetDoesNotExistError):
-#      headers = fileset.get_headers_for_path(
-#          self.request.path, request_headers=self.request.headers)
-#      self.response.headers.update(headers)
       self.error(404, 'Not Found', 'This fileset does not exist.')
+
     except files.FileNotFoundError:
       text = 'The URL {} was not found.'
       message = text.format(self.request.path)

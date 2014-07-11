@@ -2,12 +2,19 @@ import json
 import mimetypes
 import os
 import sys
+import yaml
 
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
 
 
 mimetypes.add_type('image/svg+xml', '.svg')
+
+
+if os.path.exists('config/jetway.yaml'):
+  jetway_config = yaml.load(open('config/jetway.yaml'))
+else:
+  jetway_config = yaml.load(open('config/jetway.yaml.example'))
 
 
 if os.path.exists('config/client_secrets.json'):
@@ -27,7 +34,7 @@ else:
 IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')
 
 
-PREVIEW_HOSTNAME = 'jetway.dev' if IS_DEV_SERVER else 'jetway.appspot.com'
+PREVIEW_HOSTNAME = 'jetway.dev.example.com' if IS_DEV_SERVER else 'jetway.appspot.com'
 
 
 WEBAPP2_AUTH_CONFIG = {

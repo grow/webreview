@@ -117,6 +117,17 @@ var ProjectController = function($scope, $stateParams, $state, grow) {
     p['visibility'] = visibility;
     $scope.updateProject(project);
   };
+
+  console.log('test');
+  grow.rpc('filesets.search', {
+    'fileset': {
+      'project': project
+    }
+  }).execute(function(resp) {
+    console.log('foo');
+    $scope.filesets = resp['filesets'];
+    $scope.$apply();
+  });
 };
 
 

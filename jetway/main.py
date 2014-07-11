@@ -12,7 +12,7 @@ from .server import handlers as server_handlers
 from .server import utils
 from .teams import services as team_services
 from .users import services as user_services
-from lib.protorpc.wsgi import service
+from protorpc.wsgi import service
 import webapp2
 
 
