@@ -42,7 +42,7 @@ api_app = service.service_mappings((
     ('/_api/projects.*', project_services.ProjectService),
     ('/_api/teams.*', team_services.TeamService),
     ('/_api/users.*', user_services.UserService),
-), service_prefix='/_api', registry_path='/_api/protorpc')
+), registry_path='/_api/protorpc')
 
 
 def domain_middleware(conditions_and_apps):
@@ -54,8 +54,9 @@ def domain_middleware(conditions_and_apps):
 
 
 app = domain_middleware([
-    (utils.parse_hostname, server_app),
+    # TODO(jeremydw): Do not run API on user content domain.
     (lambda _, path: path.startswith('/oauth2'), oauth2_app),
     (lambda _, path: path.startswith('/_api'), api_app),
+    (utils.parse_hostname, server_app),
     (lambda _, path: True, frontend_app),
 ])

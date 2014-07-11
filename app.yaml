@@ -55,4 +55,6 @@ skip_files:
 - bower_components
 - env
 - htmlconv
+- lib/Crypto
 - node_modules
+- ^.*.example

@@ -34,12 +34,17 @@ else:
 IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')
 
 
-PREVIEW_HOSTNAME = 'jetway.dev.example.com' if IS_DEV_SERVER else 'jetway.appspot.com'
+if os.environ.get('CURRENT_VERSION_ID', '') == 'testbed-version':
+  PREVIEW_HOSTNAME = 'jetway-test.appspot.com'
+elif IS_DEV_SERVER:
+  PREVIEW_HOSTNAME = jetway_config['urls']['hostname']['dev']
+else:
+  PREVIEW_HOSTNAME = jetway_config['urls']['hostname']['prod']
 
 
 WEBAPP2_AUTH_CONFIG = {
     'webapp2_extras.sessions': {
-        'secret_key': '5uxIj7*3V7CxTi~=Ap{@+"*ep{1B6O',
+        'secret_key': jetway_config['app']['webapp2_secret_key'],
         'user_model': 'jetway.users.User',
     },
 }

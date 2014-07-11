@@ -1,4 +1,5 @@
 from google.appengine.ext import testbed
+import appengine_config
 import unittest
 
 
@@ -13,9 +14,5 @@ class BaseTestCase(unittest.TestCase):
     self.testbed.init_datastore_v3_stub()
     self.testbed.init_memcache_stub()
     self.testbed.init_urlfetch_stub()
-    self.testbed.setup_env(
-        gcs_bucket='grow-prod-grow',
-        gcs_service_account_email=(
-              '578372381550-gg1pnu229oppq27dc8mdihq51qbu6aq9'
-              '@developer.gserviceaccount.com'),
-    )
+    self.testbed.setup_env(testing='True')
+    reload(appengine_config)

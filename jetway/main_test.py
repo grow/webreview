@@ -36,9 +36,7 @@ class ServerAppTestCase(testing.BaseTestCase):
 class ApiAppTestCase(testing.BaseTestCase):
 
   def test_api_app(self):
-    headers = {
-        'Content-Type': 'application/json'
-    }
+    headers = {'Content-Type': 'application/json'}
     req = webapp2.Request.blank('/_api/protorpc.services', headers=headers,
                                 method='POST')
     resp = req.get_response(main.app)

@@ -2,7 +2,6 @@
 
 if [ -d env ]; then
   source env/bin/activate
-  ./scripts/run
   
   printf '\n --- \n'
 
