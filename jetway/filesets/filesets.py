@@ -224,6 +224,8 @@ class Fileset(ndb.Model):
         signed_reqs.append(self.sign_put_request(req))
       elif req.verb == file_messages.Verb.DELETE:
         signed_reqs.append(self.sign_delete_request(req))
+      elif req.verb == file_messages.Verb.GET:
+        signed_reqs.append(self.sign_get_request(req))
     return signed_reqs
 
   def sign_put_request(self, unsigned_request):
@@ -231,6 +233,9 @@ class Fileset(ndb.Model):
 
   def sign_delete_request(self, unsigned_request):
     return self._signer.sign_delete_request(unsigned_request)
+
+  def sign_get_request(self, unsigned_request):
+    return self._signer.sign_get_request(unsigned_request)
 
   def get_headers_for_path(self, path, request_headers=None):
     return self._signer.get_headers_for_path(path, request_headers=request_headers)

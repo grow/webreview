@@ -20,6 +20,7 @@
         <td>
           <img ng-src="{{membership.user.avatar_url}}">
           <a ui-sref="owner.projects({'owner': membership.user.nickname})">{{membership.user.nickname}}</a>
+        <td>{{membership.role}}
     </table>
     <form>
       <input type="text" class="form-control" ng-model="membership.user.nickname">

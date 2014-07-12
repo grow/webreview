@@ -35,15 +35,22 @@ class Signer(object):
     req.path = unsigned_request.path
     req.verb = messages.Verb.PUT
     req.url = request['url']
-    req.params = messages.Params()
-    req.params.google_access_id = request['params']['GoogleAccessId']
-    req.params.expires = request['params']['Expires']
-    req.params.signature = request['params']['Signature']
+    req.params = self._create_params_message_from_request(request)
     req.headers = messages.Headers()
     req.headers.content_type = request['headers']['Content-Type']
     req.headers.content_length = request['headers']['Content-Length']
     if 'Content-MD5' in request['headers']:
       req.headers.content_md5 = request['headers']['Content-MD5']
+    return req
+
+  def sign_get_request(self, unsigned_request):
+    absolute_path = os.path.join(self.root, unsigned_request.path.lstrip('/'))
+    request = self.signer.create_get(absolute_path)
+    req = messages.SignedRequest()
+    req.path = unsigned_request.path
+    req.verb = messages.Verb.GET
+    req.url = request['url']
+    req.params = self._create_params_message_from_request(request)
     return req
 
   def sign_delete_request(self, unsigned_request):
@@ -53,11 +60,15 @@ class Signer(object):
     req.path = unsigned_request.path
     req.verb = messages.Verb.DELETE
     req.url = request['url']
-    req.params = messages.Params()
-    req.params.google_access_id = request['params']['GoogleAccessId']
-    req.params.expires = request['params']['Expires']
-    req.params.signature = request['params']['Signature']
+    req.params = self._create_params_message_from_request(request)
     return req
+
+  def _create_params_message_from_request(self, request):
+    params = messages.Params()
+    params.google_access_id = request['params']['GoogleAccessId']
+    params.expires = request['params']['Expires']
+    params.signature = request['params']['Signature']
+    return params
 
   def get_headers_for_path(self, path, request_headers=None):
     absolute_path = os.path.join(self.root, path.lstrip('/'))
