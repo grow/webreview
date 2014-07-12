@@ -1,13 +1,19 @@
 <h1>{{project.nickname}}</h1>
 
 <div class="row">
-  <div class="col-md-7">
+  <div class="col-md-8">
+
     <h2>Previews</h2>
 
-    {{filesets}}
+    <table class="table">
+      <tr ng-repeat="fileset in filesets">
+        <td><a href="{{fileset.url}}">{{fileset.url}}</a>
+        <td>{{fileset.modified|date:"medium"}}
+    </table>
 
   </div>
-  <div class="col-md-5">
+  <div class="col-md-4">
+
     <h2>Team</h2>
     <table class="table">
       <tr ng-repeat="membership in teams[0].memberships">
@@ -19,8 +25,10 @@
       <input type="text" class="form-control" ng-model="membership.user.nickname">
       <button class="btn btn-default btn-sm" type="submit">Add</button>
     </form>
+
     <h2>Settings</h2>
     <div class="btn btn-danger btn-sm">Delete project</div>
+
   </div>
 </div>
 

@@ -19,6 +19,7 @@ class BaseHandler(auth_handlers.SessionHandler):
     params.update({
         'me': self.me,
         'config': appengine_config,
+        'version': os.getenv('CURRENT_VERSION_ID', 'xxx'),
     })
     if self.me is None:
       params['sign_in_url'] = self.create_sign_in_url()

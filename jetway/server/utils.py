@@ -20,15 +20,21 @@ def parse_hostname(hostname, path=None, multitenant=False):
   return tuple(part if part else None for part in results[0])
 
 
-def make_url(fileset, project, owner, path=None, multitenant=False,
+def make_url(fileset, project, owner, path=None,
+             multitenant=appengine_config.jetway_config['options']['multitenant'],
              include_port=appengine_config.IS_DEV_SERVER):
   preview_hostname = appengine_config.PREVIEW_HOSTNAME
+  scheme = os.getenv('wsgi.url_scheme', 'http')
   if include_port:
     preview_hostname += ':{}'.format(os.getenv('SERVER_PORT'))
+  if scheme == 'https' and 'appspot.com' in preview_hostname:
+    sep = '-dot-'
+  else:
+    sep = '.'
   if multitenant:
-    return 'http://{fileset}--{project}--{owner}.{hostname}'.format(
-        fileset=fileset, hostname=preview_hostname,
+    return '{scheme}://{fileset}--{project}--{owner}{sep}{hostname}'.format(
+        scheme=scheme, fileset=fileset, sep=sep, hostname=preview_hostname,
         owner=owner, project=project)
   else:
-    return 'http://{fileset}.{hostname}'.format(
-        fileset=fileset, hostname=preview_hostname)
+    return '{scheme}://{fileset}{sep}{hostname}'.format(
+        scheme=scheme, fileset=fileset, sep=sep, hostname=preview_hostname)

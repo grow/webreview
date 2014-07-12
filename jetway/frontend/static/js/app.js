@@ -1,3 +1,5 @@
+var _prefix = '/_jetway/' + __config.ver;
+
 angular.module('jetway', [
   'ui.router',
   'ui.bootstrap',
@@ -13,13 +15,13 @@ angular.module('jetway', [
   $stateProvider
     .state('home', {
       url: '/',
-      templateUrl: '/_jetway/static/html/home.html',
+      templateUrl: _prefix + '/static/html/home.html',
       controller: HomeController
     })
     .state('new', {
       url: '/new?owner',
       controller: NewController,
-      templateUrl: '/_jetway/static/html/new.html'
+      templateUrl: _prefix + '/static/html/new.html'
     })
     .state('orgs', {
       url: '/orgs',
@@ -29,11 +31,11 @@ angular.module('jetway', [
       .state('orgs.new', {
         url: '/new',
         controller: OrgNewController,
-        templateUrl: '/_jetway/static/html/orgs.new.html'
+        templateUrl: _prefix + '/static/html/orgs.new.html'
       })
     .state('settings', {
       url: '/settings',
-      templateUrl: '/_jetway/static/html/settings.html',
+      templateUrl: _prefix + '/static/html/settings.html',
       controller: SettingsController
     })
 
@@ -45,12 +47,12 @@ angular.module('jetway', [
       .state('deployments.new', {
         url: '/new?owner',
         controller: DeploymentNewController,
-        templateUrl: '/_jetway/static/html/deployments.new.html'
+        templateUrl: _prefix + '/static/html/deployments.new.html'
       })
       .state('deployments.deployment', {
         url: '/:deployment',
         controller: DeploymentController,
-        templateUrl: '/_jetway/static/html/deployment.html'
+        templateUrl: _prefix + '/static/html/deployment.html'
       })
 
     .state('launches', {
@@ -61,51 +63,51 @@ angular.module('jetway', [
       .state('launches.new', {
         url: '/new?owner&project',
         controller: LaunchNewController,
-        templateUrl: '/_jetway/static/html/launches.new.html'
+        templateUrl: _prefix + '/static/html/launches.new.html'
       })
       .state('launches.launch', {
         url: '/:launch',
         controller: LaunchController,
-        templateUrl: '/_jetway/static/html/launch.html'
+        templateUrl: _prefix + '/static/html/launch.html'
       })
 
     .state('owner', {
       abstract: true,
       url: '/:owner',
       controller: OwnerController,
-      templateUrl: '/_jetway/static/html/owner.html'
+      templateUrl: _prefix + '/static/html/owner.html'
     })
       .state('owner.projects', {
         url: '',
         controller: ProjectsController,
-        templateUrl: '/_jetway/static/html/projects.html'
+        templateUrl: _prefix + '/static/html/projects.html'
       })
       .state('owner.launches', {
         url: '/launches',
         controller: LaunchesController,
-        templateUrl: '/_jetway/static/html/launches.html'
+        templateUrl: _prefix + '/static/html/launches.html'
       })
       .state('owner.deployments', {
         url: '/deployments',
         controller: DeploymentsController,
-        templateUrl: '/_jetway/static/html/deployments.html'
+        templateUrl: _prefix + '/static/html/deployments.html'
       })
       /*
       .state('owner.team', {
         url: '/teams/:team',
         controller: TeamController,
-        templateUrl: '/_jetway/static/html/team.html'
+        templateUrl: _prefix + '/static/html/team.html'
       })
       */
       .state('owner.teams', {
         url: '/teams',
         controller: TeamsController,
-        templateUrl: '/_jetway/static/html/teams.html'
+        templateUrl: _prefix + '/static/html/teams.html'
       })
       .state('owner.settings', {
         url: '/settings',
         controller: OwnerSettingsController,
-        templateUrl: '/_jetway/static/html/owner.settings.html'
+        templateUrl: _prefix + '/static/html/owner.settings.html'
       })
 
     .state('teams', {
@@ -116,18 +118,18 @@ angular.module('jetway', [
       .state('teams.new', {
         url: '/new?owner',
         controller: TeamNewController,
-        templateUrl: '/_jetway/static/html/teams.new.html'
+        templateUrl: _prefix + '/static/html/teams.new.html'
       })
       .state('teams.team', {
         url: '/:letter/:team',
         controller: TeamController,
-        templateUrl: '/_jetway/static/html/team.html'
+        templateUrl: _prefix + '/static/html/team.html'
       })
 
     .state('project', {
       url: '/:owner/:project',
       abstract: true,
-      templateUrl: '/_jetway/static/html/project.html',
+      templateUrl: _prefix + '/static/html/project.html',
       controller: ProjectController
     })
       .state('project.index', {
@@ -137,28 +139,28 @@ angular.module('jetway', [
       .state('project.workspaces', {
         url: '/workspaces',
         controller: WorkspacesController,
-        templateUrl: '/_jetway/static/html/workspaces.html'
+        templateUrl: _prefix + '/static/html/workspaces.html'
       })
       .state('project.launches', {
         url: '/launches',
         controller: LaunchesController,
-        templateUrl: '/_jetway/static/html/launches.html'
+        templateUrl: _prefix + '/static/html/launches.html'
       })
       .state('project.collaborators', {
         url: '/collaborators',
         controller: CollaboratorsController,
-        templateUrl: '/_jetway/static/html/collaborators.html'
+        templateUrl: _prefix + '/static/html/collaborators.html'
       })
       .state('project.settings', {
         url: '/settings',
         controller: ProjectSettingsController,
-        templateUrl: '/_jetway/static/html/project.settings.html'
+        templateUrl: _prefix + '/static/html/project.settings.html'
       })
 
     .state('file', {
       url: '/:owner/:project/:branch/file/{file:.*}',
       controller: FileController,
-      templateUrl: '/_jetway/static/html/file.html'
+      templateUrl: _prefix + '/static/html/file.html'
     })
 })
 

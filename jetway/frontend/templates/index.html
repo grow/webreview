@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <title>Jetway</title>
-<link rel="stylesheet" href="/_jetway/static/css/main.min.css">
-<script src="/_jetway/static/js/main.min.js"></script>
+<link rel="stylesheet" href="/_jetway/{{version}}/static/css/main.min.css">
+<script>
+  var __config = {ver: '{{version}}'};
+</script>
+<script src="/_jetway/{{version}}/static/js/main.min.js"></script>
 <body>
   <nav class="navbar navbar-default" role="navigation" ng-controller="HeaderController">
     <div class="container">

@@ -4,6 +4,7 @@ from jetway.filesets import filesets
 from jetway.owners import owners
 from jetway.projects import projects
 from jetway.server import utils
+import appengine_config
 import jinja2
 import logging
 import os
@@ -29,7 +30,9 @@ class RequestHandler(webapp2.RequestHandler):
     context.set_cache_policy(lambda key: True)
     context.set_memcache_policy(lambda key: True)
     context.set_memcache_timeout_policy(lambda key: None)
-    parts = utils.parse_hostname(os.environ['SERVER_NAME'])
+    parts = utils.parse_hostname(
+        os.environ['SERVER_NAME'],
+        multitenant=appengine_config.jetway_config['options']['multitenant'])
 
     try:
       if len(parts) == 3:

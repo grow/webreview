@@ -25,16 +25,16 @@ handlers:
   login: admin
   secure: always
 
-- url: /_jetway/static/css
+- url: /_jetway/[^/]*/static/css
   static_dir: dist/css
 
-- url: /_jetway/static/js
+- url: /_jetway/[^/]*/static/js
   static_dir: dist/js
 
-- url: /_jetway/static/html
+- url: /_jetway/[^/]*/static/html
   static_dir: jetway/frontend/static/html
 
-- url: /_jetway/static/images
+- url: /_jetway/[^/]*/static/images
   static_dir: jetway/frontend/static/images
 
 - url: /.*
