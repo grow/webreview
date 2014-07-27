@@ -3,19 +3,18 @@ from jetway.files import files
 from jetway.filesets import filesets
 from jetway.owners import owners
 from jetway.projects import projects
+from jetway.auth import handlers as auth_handlers
 from jetway.server import utils
 import appengine_config
 import jinja2
-import logging
 import os
-import webapp2
 
 _path = os.path.join(os.path.dirname(__file__), 'templates')
 _loader = jinja2.FileSystemLoader(_path)
 _env = jinja2.Environment(loader=_loader, autoescape=True, trim_blocks=True)
 
 
-class RequestHandler(webapp2.RequestHandler):
+class RequestHandler(auth_handlers.SessionHandler):
 
   def error(self, status, title, message):
       template = _env.get_template('error.html')
@@ -47,6 +46,14 @@ class RequestHandler(webapp2.RequestHandler):
         if fileset_name is None:
           raise filesets.FilesetDoesNotExistError
         fileset = filesets.Fileset.get(name=fileset_name)
+
+#      if not fileset.project.can(self.me, projects.Permission.READ):
+#        if self.me:
+#          self.error(403, 'Forbidden', '{} does not have access to this page.'.format(self.me))
+#        else:
+#          self.redirect(self.create_sign_in_url())
+##          self.error(403, 'Unauthorized', 'You must be logged in to access this.')
+#        return
 
       path = (self.request.path + 'index.html'
               if self.request.path.endswith('/') else self.request.path)

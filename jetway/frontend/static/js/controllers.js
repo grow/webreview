@@ -85,19 +85,6 @@ var ProjectController = function($scope, $stateParams, $state, grow) {
     'nickname': $stateParams['project']
   };
 
-  var team = {
-    'owner': {'nickname': $stateParams['owner']}
-  };
-  if ($stateParams['project']) {
-    team['projects'] = [{'nickname': $stateParams['project']}];
-  }
-  $scope.rpc = grow.rpc('teams.search', {
-    'team': team 
-  }).execute(function(resp) {
-    $scope.teams = resp['teams'];
-    $scope.$apply();
-  });
-
   $scope.rpcs.project = grow.rpc('projects.get', {
     'project': project
   }).execute(function(resp) {
@@ -118,7 +105,6 @@ var ProjectController = function($scope, $stateParams, $state, grow) {
     $scope.updateProject(project);
   };
 
-  console.log('test');
   grow.rpc('filesets.search', {
     'fileset': {
       'project': project
@@ -128,6 +114,55 @@ var ProjectController = function($scope, $stateParams, $state, grow) {
     $scope.filesets = resp['filesets'];
     $scope.$apply();
   });
+
+  // Project team.
+
+  $scope.membership = {
+    'role': 'READ_ONLY'
+  };
+  var team = null;
+
+  $scope.$watch('project', function() {
+    var project = $scope.project;
+    if (project['ident']) {
+      team = {'kind': 'PROJECT_OWNERS', 'ident': project['ident']};
+      grow.rpc('teams.get', {
+        'team': team 
+      }).execute(function(resp) {
+        $scope.team = resp['team'];
+        $scope.$apply();
+      });
+    }
+  });
+
+  $scope.updateMembership = function(membership) {
+    grow.rpc('teams.update_membership', {
+      'team': team,
+      'membership': membership 
+    }).execute(function(resp) {
+      $scope.$apply();
+    });
+  };
+
+  $scope.createMembership = function(membership) {
+    grow.rpc('teams.create_membership', {
+      'team': team,
+      'membership': membership 
+    }).execute(function(resp) {
+      $scope.team = resp['team'];
+      $scope.$apply();
+    });
+  };
+
+  $scope.deleteMembership = function(membership) {
+    grow.rpc('teams.delete_membership', {
+      'team': team,
+      'membership': membership 
+    }).execute(function(resp) {
+      $scope.team = resp['team'];
+      $scope.$apply();
+    });
+  };
 };
 
 

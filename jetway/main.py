@@ -27,6 +27,11 @@ server_app = webapp2.WSGIApplication([
     ('.*', server_handlers.RequestHandler),
 ], config=appengine_config.WEBAPP2_AUTH_CONFIG)
 
+auth_app = webapp2.WSGIApplication([
+#    ('/auth/sign_in', auth_handlers.SignInHandler),
+#    ('/auth/sign_in', auth_handlers.SignInHandler),
+], config=appengine_config.WEBAPP2_AUTH_CONFIG)
+
 oauth2_app = webapp2.WSGIApplication([
     ('/oauth2callback', auth_handlers.OAuth2CallbackHandler),
 ], config=appengine_config.WEBAPP2_AUTH_CONFIG)
@@ -56,6 +61,7 @@ def domain_middleware(conditions_and_apps):
 app = domain_middleware([
     # TODO(jeremydw): Do not run API on user content domain.
     (lambda _, path: path.startswith('/oauth2'), oauth2_app),
+    (lambda _, path: path.startswith('/auth'), auth_app),
     (lambda _, path: path.startswith('/_api'), api_app),
     (utils.parse_hostname, server_app),
     (lambda _, path: True, frontend_app),

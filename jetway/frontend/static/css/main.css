@@ -1,0 +1,42 @@
+body,
+h1,
+h2,
+h3,
+p {
+  font-family: 'Roboto', arial, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 300;
+}
+
+table.table-margin {
+  margin-top: 20px;
+}
+
+a {
+  color: #097be8;
+}
+
+.avatar {
+
+}
+
+.avatar.avatar-xs {
+  margin: 0 5px 0 0;
+  height: 15px;
+  width: 15px;
+}
+
+.meta {
+  color: #666;
+  font-size: 12px;
+}
+
+.filesets b {
+  font-size: 16px;
+  margin-bottom: 5px;
+}

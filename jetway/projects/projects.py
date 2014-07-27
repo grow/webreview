@@ -44,7 +44,7 @@ class Project(ndb.Model):
   description = ndb.StringProperty()
   cover = ndb.StructuredProperty(Cover)
   visibility = msgprop.EnumProperty(messages.Visibility,
-                                    default=messages.Visibility.PUBLIC)
+                                    default=messages.Visibility.PRIVATE)
 
   def __repr__(self):
     return '{}/{}'.format(self.owner.nickname, self.nickname)
