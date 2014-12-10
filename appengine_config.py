@@ -24,6 +24,7 @@ elif jetway_config.get('app'):
   service_account_key = json.load(open(service_account_key_path))
   GCS_BUCKET = jetway_config['app'].get('gcs_bucket')
 else:
+  client_secrets_path = os.path.abspath('testing/client_secrets_and_service_account_key.json')
   client_secrets = {'web': {'client_id': '12345', 'client_secret': '12345'}}
   service_account_key = {'client_email': None}
   GCS_BUCKET = 'jetway-test.appspot.com'
