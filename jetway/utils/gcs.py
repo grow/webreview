@@ -72,6 +72,11 @@ class CloudStorageURLSigner(object):
       expiration: An instance of datetime.datetime containing the time when the
                   signed URL should expire.
     """
+    # Key is a JSON key.
+    if key.startswith('-----BEGIN PRIVATE KEY-----'):
+      key = key.replace('-----BEGIN PRIVATE KEY-----\n', '')
+      key = key.replace('\n-----END PRIVATE KEY-----\n', '')
+      key = base64.b64decode(key)
     self.key = RSA.importKey(key)
     self.client_id_email = client_id_email
     self.gcs_api_endpoint = gcs_api_endpoint

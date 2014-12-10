@@ -1,21 +1,21 @@
 #!/bin/bash
 
-pip --version > /dev/null || {
+pip --version 2>&1> /dev/null || {
   echo "pip not installed. Installing..."
   sudo easy_install pip
 }
 
-virtualenv --version > /dev/null || {
+virtualenv --version 2>&1> /dev/null || {
   echo "virtualenv not installed. Installing..."
   sudo pip install virtualenv
 }
 
-gaenv -h > /dev/null || {
+gaenv -h 2>&1> /dev/null || {
   echo "gaenv not installed. Installing..."
   sudo pip install gaenv
 }
 
-node --version > /dev/null || {
+node --version 2>&1> /dev/null || {
   echo "node not installed. Install from: http://nodejs.org/"
   exit 1
 }

@@ -1,3 +1,4 @@
+from google.appengine.api import app_identity
 from google.appengine.ext import ndb
 from jetway.files import files
 from jetway.files import messages as file_messages
@@ -7,6 +8,9 @@ from jetway.logs import logs
 import appengine_config
 import os
 import webapp2
+
+gcs_bucket = (appengine_config.GCS_BUCKET
+              or app_identity.get_default_gcs_bucket_name())
 
 
 class Error(Exception):
@@ -186,8 +190,7 @@ class Fileset(ndb.Model):
     if message.stats:
       self.stats = FilesetStats.from_message(message.stats)
     if message.resources:
-      self.resources = [Resource.from_message(message)
-                        for message in message.resources]
+      self.resources = [Resource.from_message(m) for m in message.resources]
     self.put()
 
   def to_message(self):
@@ -213,7 +216,6 @@ class Fileset(ndb.Model):
 
   @webapp2.cached_property
   def _signer(self):
-    gcs_bucket = appengine_config.jetway_config['app']['gcs_bucket']
     root = '/{}/jetway/filesets/{}'.format(gcs_bucket, self.ident)
     return files.Signer(root)
 

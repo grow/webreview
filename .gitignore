@@ -1,11 +1,12 @@
 *.py[cod]
 .DS_Store
 
+config/*.json
 *.der
 *.p12
 *.pem
+
 bower_components
-client_secrets.json
 env
 htmlcov
 jetway.yaml

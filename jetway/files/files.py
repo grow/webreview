@@ -21,8 +21,8 @@ class Signer(object):
   def __init__(self, root):
     self.root = root
     self.signer = gcs.CloudStorageURLSigner(
-        open(appengine_config.gcs_private_key_path).read(),
-        appengine_config.jetway_config['app']['gcs_service_account_email'])
+        appengine_config.service_account_key['private_key'],
+        appengine_config.GCS_SERVICE_ACCOUNT_EMAIL)
 
   def sign_put_request(self, unsigned_request):
     absolute_path = os.path.join(self.root, unsigned_request.path.lstrip('/'))

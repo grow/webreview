@@ -1,7 +1,20 @@
 options:
   title: Jetway
   mode: multi
+  multitenant: false
 
 app:
-  gcs_bucket: jetway.appspot.com
-  gcs_service_account_email: 12345678-flrec3jih48575v5ntsp9tq78hpbl270@developer.gserviceaccount.com
+
+  # Replace this with the filename of the client secrets key.
+  client_secrets_file: "client_secret_1234567890-XXXX.apps.googleusercontent.com.json"
+
+  # Replace this with the filename of the service account key.
+  service_account_key_file: "example-123456789.json"
+
+  # Which GCS bucket to use? Leave commented out to use the default bucket
+  # associated with your App Engine application.
+  # gcs_bucket: example.appspot.com
+
+urls:
+  hostname:
+    prod: jetway.appspot.com
