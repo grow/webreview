@@ -25,7 +25,7 @@ elif jetway_config.get('app'):
   GCS_BUCKET = jetway_config['app'].get('gcs_bucket')
 else:
   client_secrets = {'web': {'client_id': '12345', 'client_secret': '12345'}}
-  service_account_key = {}
+  service_account_key = {'client_email': None}
   GCS_BUCKET = 'jetway-test.appspot.com'
 
 GCS_SERVICE_ACCOUNT_EMAIL = service_account_key['client_email']
