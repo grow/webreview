@@ -13,19 +13,15 @@ else:
   jetway_config = yaml.load(open('config/jetway.yaml.example'))
 
 if os.environ.get('CURRENT_VERSION_ID', '') == 'testbed-version':
-  client_secrets_basename = 'client_secrets_and_service_account_key.json'
-  service_account_key_basename = 'client_secrets_and_service_account_key.json'
+  service_account_key = json.load(open('testing/client_secrets_and_service_account_key.json'))
+  client_secrets = json.load(open('testing/client_secrets_and_service_account_key.json'))
 else:
-  client_secrets_basename = 'client_secrets.json'
-  service_account_key_basename = 'service_account_key_basename'
-
-_basename = jetway_config['app'].get('client_secrets_file', client_secrets_basename)
-client_secrets_path = os.path.abspath('config/{}'.format(_basename))
-client_secrets = json.load(open(client_secrets_path))
-
-_basename = jetway_config['app'].get('service_account_key_file', service_account_key_basename)
-service_account_key_path = os.path.abspath('config/{}'.format(_basename))
-service_account_key = json.load(open(service_account_key_path))
+  _basename = jetway_config['app'].get('client_secrets_file', 'client_secrets.json')
+  client_secrets_path = os.path.abspath('config/{}'.format(_basename))
+  client_secrets = json.load(open(client_secrets_path))
+  _basename = jetway_config['app'].get('service_account_key_file', 'service_account_key.json')
+  service_account_key_path = os.path.abspath('config/{}'.format(_basename))
+  service_account_key = json.load(open(service_account_key_path))
 
 GCS_SERVICE_ACCOUNT_EMAIL = service_account_key['client_email']
 
