@@ -15,7 +15,7 @@ else:
 if os.environ.get('TESTING'):
   service_account_key = json.load(open('testing/client_secrets_and_service_account_key.json'))
   client_secrets = json.load(open('testing/client_secrets_and_service_account_key.json'))
-elif 'app' in jetway_config:
+elif jetway_config.get('app'):
   _basename = jetway_config['app'].get('client_secrets_file', 'client_secrets.json')
   client_secrets_path = os.path.abspath('config/{}'.format(_basename))
   client_secrets = json.load(open(client_secrets_path))
