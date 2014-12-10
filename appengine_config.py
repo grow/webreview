@@ -13,8 +13,8 @@ else:
   jetway_config = yaml.load(open('config/jetway.yaml.example'))
 
 if os.environ.get('TESTING'):
-  service_account_key = json.load(open('testing/client_secrets_and_service_account_key.json'))
-  client_secrets_path = os.path.abspath('testing/client_secrets_and_service_account_key.json')
+  service_account_key = json.load(open('testing/service_account_key.json'))
+  client_secrets_path = os.path.abspath('testing/client_secrets.json')
 elif jetway_config.get('app'):
   _basename = jetway_config['app'].get('client_secrets_file', 'client_secrets.json')
   client_secrets_path = os.path.abspath('config/{}'.format(_basename))
@@ -24,7 +24,7 @@ elif jetway_config.get('app'):
   service_account_key = json.load(open(service_account_key_path))
   GCS_BUCKET = jetway_config['app'].get('gcs_bucket')
 else:
-  client_secrets_path = os.path.abspath('testing/client_secrets_and_service_account_key.json')
+  client_secrets_path = os.path.abspath('testing/client_secrets.json')
   client_secrets = {'web': {'client_id': '12345', 'client_secret': '12345'}}
   service_account_key = {'client_email': None}
   GCS_BUCKET = 'jetway-test.appspot.com'

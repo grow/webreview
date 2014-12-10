@@ -1,6 +1,7 @@
 *.py[cod]
 .DS_Store
 
+testing/*.zip
 testing/*.json
 config/*.json
 *.der
