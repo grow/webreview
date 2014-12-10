@@ -12,7 +12,7 @@ if os.path.exists('config/jetway.yaml'):
 else:
   jetway_config = yaml.load(open('config/jetway.yaml.example'))
 
-if os.environ.get('CURRENT_VERSION_ID', '') == 'testbed-version':
+if os.environ.get('TESTING'):
   service_account_key = json.load(open('testing/client_secrets_and_service_account_key.json'))
   client_secrets = json.load(open('testing/client_secrets_and_service_account_key.json'))
 else:
@@ -29,7 +29,7 @@ GCS_BUCKET = jetway_config['app'].get('gcs_bucket')
 
 IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')
 
-if os.environ.get('CURRENT_VERSION_ID', '') == 'testbed-version':
+if os.environ.get('TESTING'):
   PREVIEW_HOSTNAME = 'jetway-test.appspot.com'
 elif IS_DEV_SERVER:
   PREVIEW_HOSTNAME = jetway_config['urls']['hostname']['dev']
