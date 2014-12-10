@@ -1,5 +1,5 @@
 GoogleAppEngineCloudStorageClient==1.9.5.0
-NoseGAE==0.2.1
+NoseGAE==0.3.0
 coverage==3.7.1
 gaenv==0.1.7
 google-api-python-client==1.2
