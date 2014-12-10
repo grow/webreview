@@ -57,4 +57,5 @@ skip_files:
 - htmlconv
 - lib/Crypto
 - node_modules
+- testing
 - ^.*.example
