@@ -14,11 +14,27 @@ When a Git repository is linked to a project in Jetway, Jetway kicks off a worke
 
 ### Development environment
 
+#### Get started
+
 Here's how to get started with Jetway. There are a number of manual steps needed to run a local development server due to integration with Google Accounts and Cloud Storage.
 
 Run the below command and follow the on-screen instructions to install dependencies and acquire keys for integration with Google OAuth and Google Cloud Storage.
 
-```./scripts/setup```
+    ./scripts/setup
 
 1. Run `./scripts/test` to verify tests pass.
 1. Run `./scripts/run` to start a development server.
+
+Jetway uses Bower to manage frontend dependencies, and Gulp to watch for changes and recompile files.
+
+#### Development server hostnames
+
+In production, the workflow frontend and site previews run on different domains. To mimic this behavior in development, we recommend using a modified `/etc/hosts` file. Since Google OAuth doesn't permit `.dev` URLs, we use `dev.example.com`.
+
+```
+127.0.0.1       jetway.dev.example.com
+127.0.0.1       fuyu-dot-jetway.dev.example.com
+127.0.0.1       itsy-dot-jetway.dev.example.com
+```
+
+Using the above configuration, requests to `jetway.dev.example.com` would serve the workflow frontend. Requests to the latter two domains would serve previews for builds named `fuyu` and `itsy`, respectively.
