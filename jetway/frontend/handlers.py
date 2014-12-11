@@ -18,7 +18,7 @@ class BaseHandler(auth_handlers.SessionHandler):
     params = params or {}
     params.update({
         'me': self.me,
-        'config': appengine_config,
+        'config': appengine_config.jetway_config,
         'version': os.getenv('CURRENT_VERSION_ID', 'xxx'),
     })
     if self.me is None:

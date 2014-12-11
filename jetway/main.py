@@ -63,6 +63,6 @@ app = domain_middleware([
     (lambda _, path: path.startswith('/oauth2'), oauth2_app),
     (lambda _, path: path.startswith('/auth'), auth_app),
     (lambda _, path: path.startswith('/_api'), api_app),
-    (utils.parse_hostname, server_app),
+    (utils.is_preview_server, server_app),
     (lambda _, path: True, frontend_app),
 ])

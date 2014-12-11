@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ -d env ]; then
+  source env/bin/activate
+  if [ $1 ]; then
+    gcloud preview app deploy --project=$1 .
+  else
+    gcloud preview app deploy .
+  fi
+  deactivate
+else
+  echo 'Run ./scripts/setup first.'
+  exit 1
+fi
+

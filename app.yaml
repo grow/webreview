@@ -1,4 +1,3 @@
-application: grow-prod
 version: dev
 api_version: 1
 runtime: python27

@@ -5,6 +5,10 @@ import re
 _HOSTNAME_RE = re.compile('^(?:(.*)--)?(.*)--([^\.]*)\.')
 
 
+def is_preview_server(hostname, path=None):
+  return hostname.endswith(appengine_config.PREVIEW_HOSTNAME)
+
+
 def parse_hostname(hostname, path=None, multitenant=False):
   """Returns (fileset, project, owner) parsed from a hostname."""
   hostname = hostname.replace('-dot-', '.')
@@ -21,7 +25,7 @@ def parse_hostname(hostname, path=None, multitenant=False):
 
 
 def make_url(fileset, project, owner, path=None,
-             multitenant=appengine_config.jetway_config['options']['multitenant'],
+             multitenant=False,
              include_port=appengine_config.IS_DEV_SERVER):
   preview_hostname = appengine_config.PREVIEW_HOSTNAME
   scheme = os.getenv('wsgi.url_scheme', 'http')

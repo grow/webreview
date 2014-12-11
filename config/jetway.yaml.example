@@ -1,7 +1,5 @@
 options:
   title: Jetway
-  mode: multi
-  multitenant: false
 
 app:
 
@@ -16,5 +14,7 @@ app:
   # gcs_bucket: example.appspot.com
 
 urls:
+
+  # Where preview/staging builds are served.
   hostname:
     prod: jetway.appspot.com

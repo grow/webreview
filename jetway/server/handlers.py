@@ -5,7 +5,6 @@ from jetway.owners import owners
 from jetway.projects import projects
 from jetway.auth import handlers as auth_handlers
 from jetway.server import utils
-import appengine_config
 import jinja2
 import os
 
@@ -29,11 +28,11 @@ class RequestHandler(auth_handlers.SessionHandler):
     context.set_cache_policy(lambda key: True)
     context.set_memcache_policy(lambda key: True)
     context.set_memcache_timeout_policy(lambda key: None)
-    parts = utils.parse_hostname(
-        os.environ['SERVER_NAME'],
-        multitenant=appengine_config.jetway_config['options']['multitenant'])
-
+    parts = utils.parse_hostname(os.environ['SERVER_NAME'], multitenant=False)
     try:
+      # On the root-level preview domain, where there is never a fileset.
+      if parts is None:
+        raise filesets.FilesetDoesNotExistError()
       if len(parts) == 3:
         fileset_name, project_name, owner_name = parts
         owner = owners.Owner.get(owner_name)
@@ -46,7 +45,6 @@ class RequestHandler(auth_handlers.SessionHandler):
         if fileset_name is None:
           raise filesets.FilesetDoesNotExistError
         fileset = filesets.Fileset.get(name=fileset_name)
-
 #      if not fileset.project.can(self.me, projects.Permission.READ):
 #        if self.me:
 #          self.error(403, 'Forbidden', '{} does not have access to this page.'.format(self.me))
@@ -54,7 +52,6 @@ class RequestHandler(auth_handlers.SessionHandler):
 #          self.redirect(self.create_sign_in_url())
 ##          self.error(403, 'Unauthorized', 'You must be logged in to access this.')
 #        return
-
       path = (self.request.path + 'index.html'
               if self.request.path.endswith('/') else self.request.path)
       headers = fileset.get_headers_for_path(path, request_headers=self.request.headers)
@@ -70,7 +67,6 @@ class RequestHandler(auth_handlers.SessionHandler):
       message = text.format(self.request.path)
       self.error(404, 'Not Found', message)
       return
-
     if_none_match = self.request.headers.get('If-None-Match')
     if if_none_match and if_none_match == self.response.headers.get('ETag'):
       self.response.status = 304
