@@ -1,9 +1,10 @@
 from google.appengine.ext import ndb
 from jetway.avatars import avatars
-from jetway.users import messages
+from jetway.files import files
 from jetway.teams import teams
-from webapp2_extras.appengine.auth import models
+from jetway.users import messages
 from webapp2_extras import security
+from webapp2_extras.appengine.auth import models
 
 
 class Error(Exception):
@@ -108,6 +109,34 @@ class User(BaseUser):
   @property
   def avatar_url(self):
     return avatars.Avatar.create_url(self)
+
+  @classmethod
+  def get_response_for_avatar(cls, req_headers, letter, ident):
+    if_none_match = req_headers.get('If-None-Match')
+    resp_headers = {}
+    status = 200
+    content = None
+    try:
+      avatar = avatars.Avatar.get(letter, ident)
+      try:
+        resp_headers = avatar.get_headers(req_headers)
+      except files.FileNotFoundError:
+        resp_headers, content = avatars.Avatar.generate(ident)
+    except avatars.AvatarDoesNotExistError:
+      try:
+        user = cls.get_by_ident(ident)
+        # User has already gone through the OAuth2 flow into Google.
+        if hasattr(user, 'picture'):
+          status = 302
+          resp_headers['Location'] = user.picture
+        # User has never signed in, use a default avatar.
+        else:
+          resp_headers, content = avatars.Avatar.generate(ident)
+      except UserDoesNotExistError:
+        status = 404
+    if if_none_match and if_none_match == resp_headers.get('ETag'):
+      status = 304
+    return status, resp_headers, content
 
   def update(self, message):
     try:

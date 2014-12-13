@@ -1,3 +1,4 @@
+from google.appengine.api import app_identity
 import json
 import mimetypes
 import os
@@ -22,12 +23,12 @@ elif jetway_config.get('app'):
   _basename = jetway_config['app'].get('service_account_key_file', 'service_account_key.json')
   service_account_key_path = os.path.abspath('config/{}'.format(_basename))
   service_account_key = json.load(open(service_account_key_path))
-  GCS_BUCKET = jetway_config['app'].get('gcs_bucket')
 else:
   client_secrets_path = os.path.abspath('testing/client_secrets.json')
   client_secrets = {'web': {'client_id': '12345', 'client_secret': '12345'}}
   service_account_key = {'client_email': None}
-  GCS_BUCKET = 'jetway-test.appspot.com'
+
+GCS_BUCKET = app_identity.get_default_gcs_bucket_name()
 
 GCS_SERVICE_ACCOUNT_EMAIL = service_account_key['client_email']
 

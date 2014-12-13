@@ -3,10 +3,11 @@ from google.appengine.ext import ndb
 from jetway.files import files
 from jetway.files import messages as file_messages
 import appengine_config
-import os
-import webapp2
 import datetime
 import time
+import os
+import webapp2
+import pydenticon
 
 
 class Error(Exception):
@@ -43,7 +44,7 @@ class Avatar(ndb.Model):
 
   @webapp2.cached_property
   def _signer(self):
-    gcs_bucket = appengine_config.jetway_config['app']['gcs_bucket']
+    gcs_bucket = appengine_config.GCS_BUCKET
     root = '/{}/jetway/avatars/{}'.format(gcs_bucket, self.ident)
     return files.Signer(root)
 
@@ -60,9 +61,10 @@ class Avatar(ndb.Model):
 
   @classmethod
   def create_upload_url(cls, entity):
+    gcs_bucket = appengine_config.GCS_BUCKET
     letter = entity.key.kind()[:1].lower()
     avatar_ident = '{}/{}'.format(letter, entity.ident)
-    root = '{}/jetway/avatars/{}'.format(os.environ['GCS_BUCKET'], avatar_ident)
+    root = '{}/jetway/avatars/{}'.format(gcs_bucket, avatar_ident)
     return blobstore.create_upload_url('/avatars/{}'.format(avatar_ident), gs_bucket_name=root)
 
   def update(self, gs_object_name):
@@ -81,3 +83,14 @@ class Avatar(ndb.Model):
     hostname = os.getenv('DEFAULT_VERSION_HOSTNAME')
     sep = '.' if scheme == 'http' else '-dot-'
     return '//avatars{}{}{}{}'.format(num, sep, hostname, path)
+
+  @classmethod
+  def generate(cls, ident):
+    generator = pydenticon.Generator(5, 5)
+    content = generator.generate(ident, 240, 240)
+    time_obj = (datetime.datetime.now() - datetime.timedelta(days=1)).timetuple()
+    resp_headers = {}
+    resp_headers['Content-Type'] = 'image/png'
+    resp_headers['ETag'] = '"{}"'.format(ident)
+    resp_headers['Last-Modified'] =  time.strftime('%a, %d %b %Y %H:%M:%S GMT', time_obj)
+    return resp_headers, content

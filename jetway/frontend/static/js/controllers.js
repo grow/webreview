@@ -32,6 +32,12 @@ var ExploreController = function($scope) {
 
 var ProjectsController = function($scope, $stateParams, $rootScope, $http, grow) {
   var owner = {'nickname': $stateParams['owner']};
+
+  $scope.rpcs.owner = grow.rpc('owners.get', {'owner': owner}).execute(function(resp) {
+    $scope.owner = resp['owner'];
+    $scope.$apply();
+  });
+
   $scope.rpc = grow.rpc('projects.search', {
     'project': {'owner': owner}
   }).execute(function(resp) {
@@ -110,7 +116,6 @@ var ProjectController = function($scope, $stateParams, $state, grow) {
       'project': project
     }
   }).execute(function(resp) {
-    console.log('foo');
     $scope.filesets = resp['filesets'];
     $scope.$apply();
   });
@@ -124,7 +129,7 @@ var ProjectController = function($scope, $stateParams, $state, grow) {
 
   $scope.$watch('project', function() {
     var project = $scope.project;
-    if (project['ident']) {
+    if (project && project['ident']) {
       team = {'kind': 'PROJECT_OWNERS', 'ident': project['ident']};
       grow.rpc('teams.get', {
         'team': team 
@@ -160,6 +165,14 @@ var ProjectController = function($scope, $stateParams, $state, grow) {
       'membership': membership 
     }).execute(function(resp) {
       $scope.team = resp['team'];
+      $scope.$apply();
+    });
+  };
+
+  // Delete.
+  $scope.deleteProject = function(project) {
+    grow.rpc('projects.delete', {'project': project}).execute(function(resp) {
+      $state.go('owner.projects', {'owner': project['owner']['nickname']});
       $scope.$apply();
     });
   };
@@ -219,7 +232,7 @@ var NewController = function($scope, $state, $rootScope, grow) {
   $scope.createProject = function(project) {
     grow.rpc('projects.create', {'project': project}).execute(
         function(resp) {
-      $state.go('project.cover', {
+      $state.go('project.index', {
         'owner': project.owner.nickname,
         'project': resp['project']['nickname']
       });
@@ -603,7 +616,7 @@ var CollaboratorsController = function($scope, $state, $stateParams, grow) {
 
   $scope.$watch('project', function() {
     var project = $scope.project;
-    if (project['ident']) {
+    if (project && project['ident']) {
       team = {'kind': 'PROJECT_OWNERS', 'ident': project['ident']};
       grow.rpc('teams.get', {
         'team': team 

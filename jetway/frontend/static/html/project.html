@@ -1,26 +1,19 @@
 <h1>{{project.nickname}}</h1>
-
-<textarea>{{project.description}}</textarea>
-
+<textarea class="form-control">{{project.description}}</textarea>
 <div class="row">
   <div class="col-md-8">
-
     <h2>Previews</h2>
-
     <table class="table table-margin filesets">
       <tr ng-repeat="fileset in filesets">
         <td>
           <b><a href="{{fileset.url}}">{{fileset.name}}</a></b>
           <div class="meta">
-            Last modified by <a ui-sref="">{{fileset.modified_by}}</a> on {{fileset.modified|date:"medium"}}
+            Last modified by <a>{{fileset.modified_by}}</a> on {{fileset.modified|date:"medium"}}
           </div>
     </table>
-
   </div>
   <div class="col-md-4">
-
     <h2>Team</h2>
-
     <table class="table table-margin">
       <tr ng-repeat="membership in team.memberships">
         <td>
@@ -29,13 +22,15 @@
             {{membership.user.nickname}}
           </a>
         <td>
-          <form ng-change="updateMembership(membership)">
+          <form ng-submit="updateMembership(membership)">
             <select ng-model="membership.role" ng-change="updateMembership(membership)" required>
               <option value="READ_ONLY">Read only
               <option value="WRITE_FULL">Write
               <option value="ADMIN">Admin
             </select>
           </form>
+        <td>
+          <button class="btn btn-default btn-xs" ng-click="deleteMembership(membership)">x</button>
     </table>
     <form ng-submit="createMembership(membership)" class="form-inline">
       <div class="form-group">
@@ -53,11 +48,8 @@
         <button class="btn btn-default" type="submit">Add</button>
       </div>
     </form>
-
     <h2>Settings</h2>
-
-    <div class="btn btn-danger btn-sm">Delete project</div>
-
+    <div ng-click="deleteProject(project)" class="btn btn-danger btn-sm">Delete project</div>
   </div>
 </div>
 

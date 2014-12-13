@@ -1,4 +1,3 @@
-from google.appengine.api import app_identity
 from google.appengine.ext import ndb
 from jetway.files import files
 from jetway.files import messages as file_messages
@@ -9,8 +8,7 @@ import appengine_config
 import os
 import webapp2
 
-gcs_bucket = (appengine_config.GCS_BUCKET
-              or app_identity.get_default_gcs_bucket_name())
+gcs_bucket = appengine_config.GCS_BUCKET
 
 
 class Error(Exception):

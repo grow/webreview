@@ -9,10 +9,6 @@ app:
   # Replace this with the filename of the service account key.
   # service_account_key_file: "example-123456789.json"
 
-  # Which GCS bucket to use? Leave commented out to use the default bucket
-  # associated with your App Engine application.
-  # gcs_bucket: example.appspot.com
-
 urls:
 
   # Where preview/staging builds are served.
