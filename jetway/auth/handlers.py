@@ -70,6 +70,7 @@ class SessionHandler(webapp2.RequestHandler):
       # We only need to do this if we're not logged in.
       self.decorator._create_flow(self)
       session_user = SessionUser(self.session['sid'])
+      logging.info(self.decorator.flow.params)
       self.decorator.flow.params['state'] = appengine._build_state_value(
           self, session_user)
 

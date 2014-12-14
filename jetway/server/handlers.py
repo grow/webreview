@@ -45,13 +45,13 @@ class RequestHandler(auth_handlers.SessionHandler):
         if fileset_name is None:
           raise filesets.FilesetDoesNotExistError
         fileset = filesets.Fileset.get(name=fileset_name)
-#      if not fileset.project.can(self.me, projects.Permission.READ):
-#        if self.me:
-#          self.error(403, 'Forbidden', '{} does not have access to this page.'.format(self.me))
-#        else:
-#          self.redirect(self.create_sign_in_url())
-##          self.error(403, 'Unauthorized', 'You must be logged in to access this.')
-#        return
+      if not fileset.project.can(self.me, projects.Permission.READ):
+        if self.me:
+          self.error(403, 'Forbidden', '{} does not have access to this page.'.format(self.me))
+        else:
+          self.redirect(self.create_sign_in_url())
+#          self.error(403, 'Unauthorized', 'You must be logged in to access this.')
+        return
       path = (self.request.path + 'index.html'
               if self.request.path.endswith('/') else self.request.path)
       headers = fileset.get_headers_for_path(path, request_headers=self.request.headers)

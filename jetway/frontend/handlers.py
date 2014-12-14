@@ -46,25 +46,6 @@ class AvatarHandler(webapp2.RequestHandler):
     self.response.headers.update(headers)
     if content:
       self.response.out.write(content)
-#    if_none_match = self.request.headers.get('If-None-Match')
-#    try:
-#      avatar = avatars.Avatar.get(letter, ident)
-#      headers = avatar.get_headers(self.request.headers)
-#      self.response.headers.update(headers)
-#    except avatars.AvatarDoesNotExistError:
-#      try:
-#        user = users.User.get_by_ident(ident)
-#        if user.picture:
-#          self.response.status = 302
-#          self.response.headers['Location'] = user.picture
-#          return
-#      except users.UserDoesNotExistError:
-#        pass
-#      self.response.status = 404
-#      return
-#    if if_none_match and if_none_match == self.response.headers.get('ETag'):
-#      self.response.status = 304
-#      return
 
   def post(self, letter, ident):
     cgi_data = self.request.POST['file']

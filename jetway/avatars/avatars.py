@@ -86,7 +86,22 @@ class Avatar(ndb.Model):
 
   @classmethod
   def generate(cls, ident):
-    generator = pydenticon.Generator(5, 5)
+    foreground = [
+        '#F44336',
+        '#E91E63',
+        '#9C27B0',
+        '#673AB7',
+        '#3F51B5',
+        '#2196F3',
+        '#03A9F4',
+        '#00BCD4',
+        '#009688',
+        '#4CAF50',
+        '#8BC34A',
+        '#FF9800',
+        '#FF5722',
+    ]
+    generator = pydenticon.Generator(5, 5, foreground=foreground)
     content = generator.generate(ident, 240, 240)
     time_obj = (datetime.datetime.now() - datetime.timedelta(days=1)).timetuple()
     resp_headers = {}
