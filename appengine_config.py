@@ -30,6 +30,10 @@ else:
 
 ALLOWED_USER_DOMAINS = jetway_config.get('options', {}).get('allowed_user_domains', None)
 
+REQUIRE_HTTPS_FOR_PREVIEWS = jetway_config.get('require_https', {}).get('preview_domain', False)
+
+REQUIRE_HTTPS_FOR_APP = jetway_config.get('require_https', {}).get('app_domain', False)
+
 GCS_SERVICE_ACCOUNT_EMAIL = service_account_key['client_email']
 
 IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')

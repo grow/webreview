@@ -1,16 +1,22 @@
 options:
   title: Jetway
+#  Optionally restrict access to only specific email domains.
+#  allowed_user_domains:
+#  - example1.com
+#  - example2.com
 
 app:
-
   # Replace this with the filename of the client secrets key.
   # client_secrets_file: "client_secret_1234567890-XXXX.apps.googleusercontent.com.json"
-
   # Replace this with the filename of the service account key.
   # service_account_key_file: "example-123456789.json"
 
 urls:
-
-  # Where preview/staging builds are served.
+  # Where staging builds are served for previews.
   hostname:
     prod: jetway.appspot.com
+
+# Optionally control URL scheme behavior.
+# require_https:
+#  preview_domain: no
+#  app_domain: yes

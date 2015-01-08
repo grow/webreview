@@ -1,4 +1,4 @@
-import appengine_config
+import appengine_config as config
 from google.appengine.api import users
 from .auth import handlers as auth_handlers
 from .avatars import services as avatar_services
@@ -22,21 +22,21 @@ frontend_app = webapp2.WSGIApplication([
     ('/me/signout', auth_handlers.SignOutHandler),
     ('/[^/]*/[^/]*.git.*', frontend_handlers.GitRedirectHandler),
     ('.*', frontend_handlers.FrontendHandler),
-], config=appengine_config.WEBAPP2_AUTH_CONFIG)
+], config=config.WEBAPP2_AUTH_CONFIG)
 
 server_app = webapp2.WSGIApplication([
     ('.*', server_handlers.RequestHandler),
-], config=appengine_config.WEBAPP2_AUTH_CONFIG)
+], config=config.WEBAPP2_AUTH_CONFIG)
 
 auth_app = webapp2.WSGIApplication([
 #    ('/auth/signin/start', auth_handlers.SignInHandler),
 #    ('/auth/signin/callback', auth_handlers.SignInCallbackHandler),
 #    ('/auth/sign_in', auth_handlers.SignInHandler),
-], config=appengine_config.WEBAPP2_AUTH_CONFIG)
+], config=config.WEBAPP2_AUTH_CONFIG)
 
 oauth2_app = webapp2.WSGIApplication([
     ('/oauth2callback', auth_handlers.OAuth2CallbackHandler),
-], config=appengine_config.WEBAPP2_AUTH_CONFIG)
+], config=config.WEBAPP2_AUTH_CONFIG)
 
 api_app = service.service_mappings((
     ('/_api/avatars.*', avatar_services.AvatarService),
@@ -65,7 +65,7 @@ def allowed_user_domains_middleware(app):
   # switch this to use OAuth2 integration with Google Accounts. Implement
   # an SSO service for preview domains.
   def middleware(environ, start_response):
-    allowed_user_domains = appengine_config.ALLOWED_USER_DOMAINS
+    allowed_user_domains = config.ALLOWED_USER_DOMAINS
     if allowed_user_domains is None:
       return app(environ, start_response)
     user = users.get_current_user()
@@ -81,11 +81,25 @@ def allowed_user_domains_middleware(app):
   return middleware
 
 
-app = allowed_user_domains_middleware(domain_middleware([
+def https_middleware(app):
+  def middleware(environ, start_response):
+    is_https = environ['wsgi.url_scheme'] == 'https'
+    is_preview_server = utils.is_preview_server(environ['SERVER_NAME'])
+    if not config.IS_DEV_SERVER:
+      if (is_preview_server and config.REQUIRE_HTTPS_FOR_PREVIEWS and not is_https
+          or not is_preview_server and config.REQUIRE_HTTPS_FOR_APP and not is_https):
+        url = 'https://' + environ['HTTP_HOST'] + environ['PATH_INFO']
+        start_response('302', [('Location', url)])
+        return []
+    return app(environ, start_response)
+  return middleware
+
+
+app = https_middleware(allowed_user_domains_middleware(domain_middleware([
     # TODO(jeremydw): Do not run API on user content domain.
     (lambda _, path: path.startswith('/oauth2'), oauth2_app),
     (lambda _, path: path.startswith('/auth'), auth_app),
     (lambda _, path: path.startswith('/_api'), api_app),
     (utils.is_preview_server, server_app),
     (lambda _, path: True, frontend_app),
-]))
+])))

@@ -6,7 +6,9 @@ _HOSTNAME_RE = re.compile('^(?:(.*)--)?(.*)--([^\.]*)\.')
 
 
 def is_preview_server(hostname, path=None):
-  return hostname.endswith(appengine_config.PREVIEW_HOSTNAME)
+  return (hostname.endswith(appengine_config.PREVIEW_HOSTNAME)
+          and hostname != appengine_config.PREVIEW_HOSTNAME
+          and not re.match('^avatars\d-dot-', hostname))
 
 
 def parse_hostname(hostname, path=None, multitenant=False):
