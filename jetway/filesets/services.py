@@ -59,6 +59,8 @@ class FilesetService(api.Service):
       project = projects.Project.get(owner, request.fileset.project.nickname)
     else:
       project = None
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden.')
     results = filesets.Fileset.search(project=project)
     resp = messages.SearchFilesetResponse()
     resp.filesets = [e.to_message() for e in results]

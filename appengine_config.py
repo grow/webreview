@@ -28,11 +28,15 @@ else:
   client_secrets = {'web': {'client_id': '12345', 'client_secret': '12345'}}
   service_account_key = {'client_email': None}
 
-GCS_BUCKET = app_identity.get_default_gcs_bucket_name()
 
 GCS_SERVICE_ACCOUNT_EMAIL = service_account_key['client_email']
 
 IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')
+
+if IS_DEV_SERVER:
+  GCS_BUCKET = 'grow-prod.appspot.com'
+else:
+  GCS_BUCKET = app_identity.get_default_gcs_bucket_name()
 
 if os.environ.get('TESTING'):
   PREVIEW_HOSTNAME = 'jetway-test.appspot.com'

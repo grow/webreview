@@ -59,8 +59,8 @@ class ProjectService(api.Service):
                  messages.GetProjectResponse)
   def get(self, request):
     project = self._get_project(request)
-#    if not project.can(self.me, projects.Permission.READ):
-#      raise api.ForbiddenError('Forbidden.')
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden.')
     resp = messages.GetProjectResponse()
     resp.project = project.to_message()
     return resp

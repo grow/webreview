@@ -2,11 +2,16 @@ GoogleAppEngineCloudStorageClient==1.9.5.0
 NoseGAE==0.3.0
 coverage==3.7.1
 gaenv==0.1.7
-google-api-python-client==1.2
 httplib2
 nose==1.3.1
-oauth2client
 protorpc-standalone==0.9.1
 pycrypto
 pydenticon==0.1.1
 rednose==0.4.1
+
+google-api-python-client==1.3.1
+
+# oauth2client.
+oauth2client==1.4.3
+six
+uritemplate
