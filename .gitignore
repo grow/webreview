@@ -12,6 +12,7 @@ bower_components
 env
 htmlcov
 jetway.yaml
+jetway.*prod.yaml
 lib
 node_modules
 
