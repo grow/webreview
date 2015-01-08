@@ -28,6 +28,7 @@ else:
   client_secrets = {'web': {'client_id': '12345', 'client_secret': '12345'}}
   service_account_key = {'client_email': None}
 
+ALLOWED_USER_DOMAINS = jetway_config.get('options', {}).get('allowed_user_domains', None)
 
 GCS_SERVICE_ACCOUNT_EMAIL = service_account_key['client_email']
 

@@ -1,4 +1,5 @@
 import appengine_config
+from google.appengine.api import users
 from .auth import handlers as auth_handlers
 from .avatars import services as avatar_services
 from .comments import services as comment_services
@@ -28,7 +29,8 @@ server_app = webapp2.WSGIApplication([
 ], config=appengine_config.WEBAPP2_AUTH_CONFIG)
 
 auth_app = webapp2.WSGIApplication([
-#    ('/auth/sign_in', auth_handlers.SignInHandler),
+#    ('/auth/signin/start', auth_handlers.SignInHandler),
+#    ('/auth/signin/callback', auth_handlers.SignInCallbackHandler),
 #    ('/auth/sign_in', auth_handlers.SignInHandler),
 ], config=appengine_config.WEBAPP2_AUTH_CONFIG)
 
@@ -58,11 +60,32 @@ def domain_middleware(conditions_and_apps):
   return middleware
 
 
-app = domain_middleware([
+def allowed_user_domains_middleware(app):
+  # TODO(jeremydw): Instead of using the App Engine Users API, we should
+  # switch this to use OAuth2 integration with Google Accounts. Implement
+  # an SSO service for preview domains.
+  def middleware(environ, start_response):
+    allowed_user_domains = appengine_config.ALLOWED_USER_DOMAINS
+    if allowed_user_domains is None:
+      return app(environ, start_response)
+    user = users.get_current_user()
+    if user is None:
+      url =  users.create_login_url(environ['PATH_INFO'])
+      start_response('302', [('Location', url)])
+      return []
+    if user.email().split('@')[-1] not in allowed_user_domains:
+      start_response('403', [])
+      url = users.create_logout_url(environ['PATH_INFO'])
+      return ['Forbidden. <a href="{}">Sign out</a>.'.format(url)]
+    return app(environ, start_response)
+  return middleware
+
+
+app = allowed_user_domains_middleware(domain_middleware([
     # TODO(jeremydw): Do not run API on user content domain.
     (lambda _, path: path.startswith('/oauth2'), oauth2_app),
     (lambda _, path: path.startswith('/auth'), auth_app),
     (lambda _, path: path.startswith('/_api'), api_app),
     (utils.is_preview_server, server_app),
     (lambda _, path: True, frontend_app),
-])
+]))

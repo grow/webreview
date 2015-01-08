@@ -32,12 +32,14 @@ if [[ ! -e config/jetway.yaml ]]; then
   cp ./config/jetway.yaml.example ./config/jetway.yaml
   echo ""
   echo "Copying config/jetway.yaml.example to config/jetway.yaml."
-  echo "Visit the Google Developers Console at:"
-  echo "  https://console.developers.google.com/project/apps~<PROJECT ID>/apiui/credential"
-  echo "Download to the ./config/ directory:"
-  echo " - web application client secrets JSON"
-  echo " - service account key JSON"
-  echo "Then edit ./config/jetway.yaml"
 else
   echo "Existing ./config/jetway.yaml file found, skipping config setup."
 fi
+
+echo "Installation instructions for Google credentials:"
+echo "Visit the Google Developers Console at:"
+echo "  https://console.developers.google.com/project/apps~<PROJECT ID>/apiui/credential"
+echo "Download to the ./config/ directory:"
+echo " - web application client secrets JSON"
+echo " - service account key JSON"
+echo "Then edit ./config/jetway.yaml"
