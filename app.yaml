@@ -1,9 +1,11 @@
-version: dev
+version: jetway
 api_version: 1
 runtime: python27
 threadsafe: true
 
 libraries:
+- name: endpoints
+  version: latest
 - name: ssl 
   version: latest
 - name: pycrypto
@@ -23,6 +25,9 @@ handlers:
   script: google.appengine.ext.admin.application
   login: admin
   secure: always
+
+- url: /_ah/spi/.*
+  script: jetway.main.endpoints_app
 
 - url: /_jetway/[^/]*/static/css
   static_dir: dist/css

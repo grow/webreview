@@ -1,10 +1,11 @@
 from google.appengine.ext import ndb
+from jetway.auth import handlers as auth_handlers
 from jetway.files import files
 from jetway.filesets import filesets
 from jetway.owners import owners
 from jetway.projects import projects
-from jetway.auth import handlers as auth_handlers
 from jetway.server import utils
+import appengine_config
 import jinja2
 import os
 
@@ -48,10 +49,11 @@ class RequestHandler(auth_handlers.SessionHandler):
       if not fileset.project.can(self.me, projects.Permission.READ):
         if self.me:
           self.error(403, 'Forbidden', '{} does not have access to this page.'.format(self.me))
-        else:
+          return
+        elif appengine_config.ALLOWED_USER_DOMAINS is None:
           self.redirect(self.create_sign_in_url())
 #          self.error(403, 'Unauthorized', 'You must be logged in to access this.')
-        return
+          return
       path = (self.request.path + 'index.html'
               if self.request.path.endswith('/') else self.request.path)
       headers = fileset.get_headers_for_path(path, request_headers=self.request.headers)

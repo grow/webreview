@@ -14,6 +14,7 @@ from .server import utils
 from .teams import services as team_services
 from .users import services as user_services
 from protorpc.wsgi import service
+import endpoints
 import webapp2
 
 
@@ -23,6 +24,10 @@ frontend_app = webapp2.WSGIApplication([
     ('/[^/]*/[^/]*.git.*', frontend_handlers.GitRedirectHandler),
     ('.*', frontend_handlers.FrontendHandler),
 ], config=config.WEBAPP2_AUTH_CONFIG)
+
+endpoints_app = endpoints.api_server([
+    fileset_services.RequestSigningService,
+])
 
 server_app = webapp2.WSGIApplication([
     ('.*', server_handlers.RequestHandler),
@@ -66,13 +71,16 @@ def allowed_user_domains_middleware(app):
   # an SSO service for preview domains.
   def middleware(environ, start_response):
     allowed_user_domains = config.ALLOWED_USER_DOMAINS
+    # If all domains are allowed, continue.
     if allowed_user_domains is None:
       return app(environ, start_response)
     user = users.get_current_user()
+    # Redirect anonymous users to login.
     if user is None:
       url =  users.create_login_url(environ['PATH_INFO'])
       start_response('302', [('Location', url)])
       return []
+    # Ban forbidden users.
     if user.email().split('@')[-1] not in allowed_user_domains:
       start_response('403', [])
       url = users.create_logout_url(environ['PATH_INFO'])

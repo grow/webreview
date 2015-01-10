@@ -3,10 +3,24 @@ from jetway.filesets import filesets
 from jetway.filesets import messages
 from jetway.owners import owners
 from jetway.projects import projects
+from jetway.users import users
 from protorpc import remote
+import endpoints
 
 
-class FilesetService(api.Service):
+# Command-line Grow SDK (API project: grow-prod).
+_jetway_client = (
+    '578372381550-jfl3hdlf1q5rgib94pqsctv1kgkflu1a'
+    '.apps.googleusercontent.com')
+endpoints_api = endpoints.api(
+    name='jetway',
+    version='v0',
+    allowed_client_ids=[_jetway_client, endpoints.API_EXPLORER_CLIENT_ID],
+    scopes=[endpoints.EMAIL_SCOPE],
+)
+
+
+class BaseFilesetService(object):
 
   def _get_project(self, request):
     try:
@@ -29,6 +43,9 @@ class FilesetService(api.Service):
         return p.get_fileset(request.fileset.name)
     except filesets.FilesetDoesNotExistError as e:
       raise api.NotFoundError(str(e))
+
+
+class FilesetService(api.Service, BaseFilesetService):
 
   @remote.method(messages.CreateFilesetRequest,
                  messages.CreateFilesetResponse)
@@ -74,24 +91,6 @@ class FilesetService(api.Service):
     resp.fileset = fileset.to_message()
     return resp
 
-  @remote.method(messages.SignRequestsRequest,
-                 messages.SignRequestsResponse)
-  def sign_requests(self, request):
-    try:
-      if request.fileset.ident:
-        fileset = filesets.Fileset.get_by_ident(request.fileset.ident)
-      else:
-        p = self._get_project(request)
-        fileset = p.get_fileset(request.fileset.name)
-    except filesets.FilesetDoesNotExistError:
-      p = self._get_project(request)
-      fileset = filesets.Fileset.create(p, request.fileset.name, self.me)
-    signed_reqs = fileset.sign_requests(request.unsigned_requests)
-    resp = messages.SignRequestsResponse()
-    resp.fileset = fileset.to_message()
-    resp.signed_requests = signed_reqs
-    return resp
-
   @remote.method(messages.FinalizeFilesetRequest,
                  messages.FinalizeFilesetResponse)
   def finalize(self, request):
@@ -109,4 +108,30 @@ class FilesetService(api.Service):
     pagespeed_result = runner.run(request.file.path)
     resp = messages.GetPageSpeedResultResponse()
     resp.pagespeed_result = pagespeed_result
+    return resp
+
+
+@endpoints_api
+class RequestSigningService(remote.Service, BaseFilesetService):
+
+  @endpoints.method(messages.SignRequestsRequest,
+                    messages.SignRequestsResponse)
+  def sign_requests(self, request):
+    user = endpoints.get_current_user()
+    me = users.User.get_by_email(user.email())
+    try:
+      if request.fileset.ident:
+        fileset = filesets.Fileset.get_by_ident(request.fileset.ident)
+      else:
+        p = self._get_project(request)
+        fileset = p.get_fileset(request.fileset.name)
+    except filesets.FilesetDoesNotExistError:
+      p = self._get_project(request)
+      fileset = filesets.Fileset.create(p, request.fileset.name, self.me)
+    if not fileset.project.can(me, projects.Permission.WRITE):
+      raise api.ForbiddenError('Forbidden.')
+    signed_reqs = fileset.sign_requests(request.unsigned_requests)
+    resp = messages.SignRequestsResponse()
+    resp.fileset = fileset.to_message()
+    resp.signed_requests = signed_reqs
     return resp
