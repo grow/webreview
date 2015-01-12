@@ -118,6 +118,8 @@ class RequestSigningService(remote.Service, BaseFilesetService):
                     messages.SignRequestsResponse)
   def sign_requests(self, request):
     user = endpoints.get_current_user()
+    if user is None:
+      raise api.UnauthorizedError('You must be logged in to do this.')
     me = users.User.get_by_email(user.email())
     try:
       if request.fileset.ident:
