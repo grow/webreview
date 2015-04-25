@@ -1,5 +1,5 @@
 <h1>{{project.nickname}}</h1>
-<textarea class="form-control">{{project.description}}</textarea>
+<div ng-if="project.description">{{project.description}}</div>
 <div class="row">
   <div class="col-md-8">
     <h2>Previews</h2>

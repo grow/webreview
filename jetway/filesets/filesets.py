@@ -124,11 +124,10 @@ class Fileset(ndb.Model):
   @classmethod
   def create(cls, project, name, created_by=None):
     try:
-      cls.get(name=name)
-      raise FilesetExistsError('Fileset "{}" already exists.'.format(name))
+      fileset = cls.get(name=name)
+#      raise FilesetExistsError('Fileset "{}" already exists.'.format(name))
     except FilesetDoesNotExistError:
-      pass
-    fileset = cls(project_key=project.key, name=name)
+      fileset = cls(project_key=project.key, name=name)
     if created_by:
       fileset.created_by_key = created_by.key
     fileset.put()
