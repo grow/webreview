@@ -16,7 +16,10 @@ endpoints_api = endpoints.api(
     name='jetway',
     version='v0',
     allowed_client_ids=[_jetway_client, endpoints.API_EXPLORER_CLIENT_ID],
-    scopes=[endpoints.EMAIL_SCOPE],
+    scopes=[
+        endpoints.EMAIL_SCOPE,
+        'https://www.googleapis.com/auth/plus.me',
+    ],
 )
 
 
@@ -129,7 +132,7 @@ class RequestSigningService(remote.Service, BaseFilesetService):
         fileset = p.get_fileset(request.fileset.name)
     except filesets.FilesetDoesNotExistError:
       p = self._get_project(request)
-      fileset = filesets.Fileset.create(p, request.fileset.name, self.me)
+      fileset = filesets.Fileset.create(p, request.fileset.name, me)
     if not fileset.project.can(me, projects.Permission.WRITE):
       raise api.ForbiddenError('Forbidden.')
     signed_reqs = fileset.sign_requests(request.unsigned_requests)

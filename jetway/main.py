@@ -5,6 +5,7 @@ from .avatars import services as avatar_services
 from .comments import services as comment_services
 from .filesets import services as fileset_services
 from .frontend import handlers as frontend_handlers
+#from .sheets import handlers as sheets_handlers
 from .launches import services as launch_services
 from .orgs import services as org_services
 from .owners import services as owner_services
@@ -19,6 +20,7 @@ import webapp2
 
 
 frontend_app = webapp2.WSGIApplication([
+#    ('/_jetway/sheets/(.*)', sheets_handlers.SheetsHandler),
     ('/avatars/(u|o|p)/(.*)', frontend_handlers.AvatarHandler),
     ('/me/signout', auth_handlers.SignOutHandler),
     ('/[^/]*/[^/]*.git.*', frontend_handlers.GitRedirectHandler),
@@ -96,7 +98,10 @@ def https_middleware(app):
     if not config.IS_DEV_SERVER:
       if (is_preview_server and config.REQUIRE_HTTPS_FOR_PREVIEWS and not is_https
           or not is_preview_server and config.REQUIRE_HTTPS_FOR_APP and not is_https):
-        url = 'https://' + environ['HTTP_HOST'] + environ['PATH_INFO']
+        host = environ['HTTP_HOST']
+        if is_preview_server and 'appspot.com' in host and '-dot-' not in host:
+          host = host.replace('.', '-dot-', 1)
+        url = 'https://' + host + environ['PATH_INFO']
         start_response('302', [('Location', url)])
         return []
     return app(environ, start_response)

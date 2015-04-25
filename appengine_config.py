@@ -8,10 +8,14 @@ import yaml
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
 mimetypes.add_type('image/svg+xml', '.svg')
 
-if os.path.exists('config/jetway.yaml'):
-  jetway_config = yaml.load(open('config/jetway.yaml'))
+if 'JETWAY_CONFIG' in os.environ:
+  _config_path = os.getenv('JETWAY_CONFIG')
+elif os.path.exists('config/jetway.yaml'):
+  _config_path = 'config/jetway.yaml'
 else:
-  jetway_config = yaml.load(open('config/jetway.yaml.example'))
+  _config_path = 'config/jetway.yaml.example'
+
+jetway_config = yaml.load(open(_config_path))
 
 if os.environ.get('TESTING'):
   service_account_key = json.load(open('testing/service_account_key.json'))

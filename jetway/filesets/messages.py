@@ -1,6 +1,7 @@
 from jetway.files import messages as file_messages
 from jetway.logs import messages as log_messages
 from jetway.projects import messages as project_messages
+from jetway.users import messages as user_messages
 from protorpc import message_types
 from protorpc import messages
 
@@ -78,6 +79,7 @@ class FilesetMessage(messages.Message):
   stats = messages.MessageField(StatsMessage, 10)
   resources = messages.MessageField(ResourceMessage, 11, repeated=True)
   files = messages.MessageField(FileMessage, 12, repeated=True)
+  created_by = messages.MessageField(user_messages.UserMessage, 13)
 
 
 ###

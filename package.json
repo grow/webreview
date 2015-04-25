@@ -3,9 +3,9 @@
   "private": true,
   "devDependencies": {
     "bower": "*",
-    "jshint-stylish": "*",
     "gulp": "*",
     "gulp-concat": "*",
-    "gulp-uglify": "*"
+    "gulp-uglify": "*",
+    "jshint-stylish": "*"
   }
 }

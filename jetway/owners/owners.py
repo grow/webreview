@@ -25,11 +25,9 @@ class Owner(object):
     self.user = user
 
   def __eq__(self, other):
-    if isinstance(other, orgs.Org):
-      return self.org == other
-    if isinstance(other, users.User):
-      return self.user == other
-    return False
+    if self is None or other is None:
+      return False
+    return self.key == other.key
 
   @classmethod
   def get_by_ident(cls, ident):
