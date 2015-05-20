@@ -5,7 +5,10 @@ from jetway.owners import owners
 from jetway.projects import projects
 from jetway.users import users
 from protorpc import remote
+import appengine_config
 import endpoints
+import os
+import webapp2
 
 
 # Command-line Grow SDK (API project: grow-prod).
@@ -24,6 +27,16 @@ endpoints_api = endpoints.api(
 
 
 class BaseFilesetService(object):
+
+  def _is_authorized_buildbot(self):
+    key = 'WebReview-Api-Key'
+    request = webapp2.Request(environ=dict(os.environ))
+    if (key in request.headers
+        and appengine_config.BUILDBOT_API_KEY is not None):
+      if request.headers[key] != appengine_config.BUILDBOT_API_KEY:
+        raise api.BadRequestError('Invalid API key.')
+      return True
+    return False
 
   def _get_project(self, request):
     try:
@@ -79,7 +92,8 @@ class FilesetService(api.Service, BaseFilesetService):
       project = projects.Project.get(owner, request.fileset.project.nickname)
     else:
       project = None
-    if not project.can(self.me, projects.Permission.READ):
+    if (not self._authorized_buildbot()
+        and not project.can(self.me, projects.Permission.READ)):
       raise api.ForbiddenError('Forbidden.')
     results = filesets.Fileset.search(project=project)
     resp = messages.SearchFilesetResponse()
@@ -120,10 +134,14 @@ class RequestSigningService(remote.Service, BaseFilesetService):
   @endpoints.method(messages.SignRequestsRequest,
                     messages.SignRequestsResponse)
   def sign_requests(self, request):
-    user = endpoints.get_current_user()
-    if user is None:
-      raise api.UnauthorizedError('You must be logged in to do this.')
-    me = users.User.get_by_email(user.email())
+    if self._is_authorized_buildbot():
+      email = appengine_config.BUILDBOT_SERVICE_ACCOUNT
+    else:
+      user = endpoints.get_current_user()
+      if user is None:
+        raise api.UnauthorizedError('You must be logged in to do this.')
+      email = user.email()
+    me = users.User.get_by_email(email)
     try:
       if request.fileset.ident:
         fileset = filesets.Fileset.get_by_ident(request.fileset.ident)
@@ -133,7 +151,8 @@ class RequestSigningService(remote.Service, BaseFilesetService):
     except filesets.FilesetDoesNotExistError:
       p = self._get_project(request)
       fileset = filesets.Fileset.create(p, request.fileset.name, me)
-    if not fileset.project.can(me, projects.Permission.WRITE):
+    if (not self._is_authorized_buildbot()
+        and not fileset.project.can(me, projects.Permission.WRITE)):
       raise api.ForbiddenError('Forbidden.')
     signed_reqs = fileset.sign_requests(request.unsigned_requests)
     resp = messages.SignRequestsResponse()

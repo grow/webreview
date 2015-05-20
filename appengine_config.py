@@ -54,6 +54,9 @@ elif IS_DEV_SERVER:
 else:
   PREVIEW_HOSTNAME = jetway_config['urls']['hostname']['prod']
 
+BUILDBOT_API_KEY = jetway_config['app'].get('webreview_buildbot_api_key')
+BUILDBOT_SERVICE_ACCOUNT = jetway_config['app'].get('webreview_buildbot_service_account')
+
 _token_age = 60 * 60 * 24 * 7 * 4  # 4 weeks.
 
 WEBAPP2_AUTH_CONFIG = {

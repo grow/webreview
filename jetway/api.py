@@ -59,11 +59,21 @@ class Service(remote.Service):
     except owners.OwnerDoesNotExistError as e:
       raise NotFoundError(str(e))
 
-  @webapp2.cached_property
-  def auth(self):
+  @property
+  def request(self):
     request = webapp2.Request(environ=dict(os.environ))
     request.app = webapp2.WSGIApplication(config=appengine_config.WEBAPP2_AUTH_CONFIG)
-    return webapp2_auth.get_auth(request=request)
+    return request
+
+  @webapp2.cached_property
+  def auth(self):
+    return webapp2_auth.get_auth(request=self.request)
+
+  @webapp2.cached_property
+  def is_authorized_buildbot_request(self):
+    return ('WebReview-Api-Key' in self.request.headers
+            and appengine_config.BUILDBOT_API_KEY is not None
+            and self.request.headers['WebReview-Api-Key'] == appengine_config.BUILDBOT_API_KEY)
 
   @webapp2.cached_property
   def me(self):
