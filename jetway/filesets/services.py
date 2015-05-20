@@ -15,7 +15,18 @@ import webapp2
 _jetway_client = (
     '578372381550-jfl3hdlf1q5rgib94pqsctv1kgkflu1a'
     '.apps.googleusercontent.com')
+
 endpoints_api = endpoints.api(
+    name='webreview',
+    version='v0',
+    allowed_client_ids=[_jetway_client, endpoints.API_EXPLORER_CLIENT_ID],
+    scopes=[
+        endpoints.EMAIL_SCOPE,
+        'https://www.googleapis.com/auth/plus.me',
+    ],
+)
+
+legacy_endpoints_api = endpoints.api(
     name='jetway',
     version='v0',
     allowed_client_ids=[_jetway_client, endpoints.API_EXPLORER_CLIENT_ID],
@@ -159,3 +170,8 @@ class RequestSigningService(remote.Service, BaseFilesetService):
     resp.fileset = fileset.to_message()
     resp.signed_requests = signed_reqs
     return resp
+
+
+@legacy_endpoints_api
+class LegacyRequestSigningService(RequestSigningService):
+  pass
