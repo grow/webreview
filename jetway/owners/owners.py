@@ -4,17 +4,18 @@ from jetway.orgs import orgs
 from jetway.owners import messages
 from jetway.users import users
 from jetway.teams import teams
+from jetway import api_errors as api
 
 
 class Error(Exception):
   pass
 
 
-class OwnerExistsError(Error):
+class OwnerExistsError(Error, api.ConflictError):
   pass
 
 
-class OwnerDoesNotExistError(Error):
+class OwnerDoesNotExistError(Error, api.NotFoundError):
   pass
 
 

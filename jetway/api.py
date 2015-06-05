@@ -1,40 +1,12 @@
+from .api_errors import *
 from .owners import owners
 from .projects import projects
 from .users import users
 from protorpc import remote
 from webapp2_extras import auth as webapp2_auth
 import appengine_config
-import httplib
 import os
 import webapp2
-
-
-class Error(Exception):
-  pass
-
-
-class ServiceError(remote.ApplicationError):
-  status = httplib.BAD_REQUEST
-
-
-class BadRequestError(remote.ApplicationError):
-  status = httplib.BAD_REQUEST
-
-
-class NotFoundError(ServiceError):
-  status = httplib.NOT_FOUND
-
-
-class ConflictError(ServiceError):
-  status = httplib.CONFLICT
-
-
-class ForbiddenError(ServiceError):
-  status = httplib.FORBIDDEN
-
-
-class UnauthorizedError(ServiceError):
-  status = httplib.UNAUTHORIZED
 
 
 class Service(remote.Service):
