@@ -45,6 +45,8 @@ class Project(ndb.Model):
   cover = ndb.StructuredProperty(Cover)
   visibility = msgprop.EnumProperty(messages.Visibility,
                                     default=messages.Visibility.PRIVATE)
+  repo = ndb.MessageProperty(messages.RepoMessage)
+  known_by_buildbot = ndb.BooleanField(default=False)
 
   def __repr__(self):
     return '{}/{}'.format(self.owner.nickname, self.nickname)
@@ -52,6 +54,13 @@ class Project(ndb.Model):
   @property
   def ident(self):
     return str(self.key.id())
+
+  @classmethod
+  def search_unknown_by_buildbot(cls):
+    query = cls.query()
+    query = query.filter(cls.known_by_buildbot == False)
+    results = query.fetch()
+    return results
 
   @classmethod
   def create(cls, owner, nickname, created_by, description=None):

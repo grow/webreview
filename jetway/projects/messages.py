@@ -30,6 +30,10 @@ class ProjectMessage(messages.Message):
   cover = messages.MessageField(CoverMessage, 8)
 
 
+class RepoMessage(messages.Message):
+  url = messages.StringField(1)
+
+
 ###
 
 
