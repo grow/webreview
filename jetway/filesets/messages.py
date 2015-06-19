@@ -80,6 +80,8 @@ class FilesetMessage(messages.Message):
   resources = messages.MessageField(ResourceMessage, 11, repeated=True)
   files = messages.MessageField(FileMessage, 12, repeated=True)
   created_by = messages.MessageField(user_messages.UserMessage, 13)
+  commit = messages.StringField(14)
+  commit_short = messages.StringField(15)
 
 
 ###

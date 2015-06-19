@@ -25,6 +25,7 @@ gulp.task('minify', function(){
     './bower_components/angular-bootstrap/ui-bootstrap.min.js',
     './bower_components/angular-ui-router/release/angular-ui-router.min.js',
     './bower_components/angular-xeditable/dist/js/xeditable.js',
+    './jetway/frontend/static/js/controllers.js',
     Path.JS_SOURCES,
   ])
       .pipe(concat('main.min.js'))

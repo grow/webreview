@@ -6,9 +6,12 @@
     <table class="table table-margin filesets">
       <tr ng-repeat="fileset in filesets">
         <td>
-          <b><a href="{{fileset.url}}">{{fileset.name}}</a></b>
+          <small>{{fileset.commit_short}}</small>
+        <td>
+          <a href="{{fileset.url}}">{{fileset.name || fileset.commit_short}}</a>
+        <td>
           <div class="meta">
-            Last modified by <a>{{fileset.modified_by}}</a> on {{fileset.modified|date:"medium"}}
+            <span title="by {{fileset.modified_by}}">{{fileset.modified|date:"medium"}}</span>
           </div>
     </table>
   </div>

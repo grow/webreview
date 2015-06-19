@@ -1,4 +1,6 @@
 *.py[cod]
+scripts/deploy_*
+config/jetway.*.yaml
 .DS_Store
 
 testing/*.zip

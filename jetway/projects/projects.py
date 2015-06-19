@@ -81,9 +81,10 @@ class Project(ndb.Model):
     return project
 
   @classmethod
-  def get(cls, owner, nickname):
+  def get(cls, owner=None, nickname=None):
     query = cls.query()
-    query = query.filter(cls.owner_key == owner.key)
+    if owner is not None:
+      query = query.filter(cls.owner_key == owner.key)
     query = query.filter(cls.nickname == nickname)
     project = query.get()
     if not project:

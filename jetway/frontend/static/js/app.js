@@ -1,6 +1,6 @@
 var _prefix = '/_jetway/' + __config.ver;
 
-angular.module('jetway', [
+var app = angular.module('jetway', [
   'ui.router',
   'ui.bootstrap',
   'jetwayFilters',
@@ -300,3 +300,5 @@ angular.module('jetway', [
     }
   };
 })
+
+.controller('HeaderController', HeaderController)

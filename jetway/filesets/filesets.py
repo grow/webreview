@@ -120,17 +120,36 @@ class Fileset(ndb.Model):
   stats = ndb.StructuredProperty(FilesetStats)
   resources = ndb.StructuredProperty(Resource, repeated=True)
   source_files = ndb.StructuredProperty(File, repeated=True)
+  commit = ndb.StringProperty()
 
   @classmethod
-  def create(cls, project, name, created_by=None):
-    try:
-      fileset = cls.get(name=name)
-#      raise FilesetExistsError('Fileset "{}" already exists.'.format(name))
-    except FilesetDoesNotExistError:
-      fileset = cls(project_key=project.key, name=name)
-    if created_by:
-      fileset.created_by_key = created_by.key
-    fileset.put()
+  def create(cls, project, commit=None, name=None, created_by=None):
+    # Actually "get_or_create".
+    if commit:
+      try:
+        fileset = cls.get_by_commit(commit)
+      except FilesetDoesNotExistError:
+        fileset = cls(project_key=project.key, commit=commit)
+        if created_by:
+          fileset.created_by_key = created_by.key
+        fileset.put()
+    else:
+      try:
+        fileset = cls.get(name=name)
+      except FilesetDoesNotExistError:
+        fileset = cls(project_key=project.key, name=name)
+      if created_by:
+        fileset.created_by_key = created_by.key
+      fileset.put()
+    return fileset
+
+  @classmethod
+  def get_by_commit(cls, commit):
+    query = cls.query()
+    query = query.filter(cls.commit == commit)
+    fileset = query.get()
+    if fileset is None:
+      raise FilesetDoesNotExistError('Fileset "{}" does not exist.'.format(commit))
     return fileset
 
   @classmethod
@@ -171,6 +190,10 @@ class Fileset(ndb.Model):
   def created_by(self):
     return self.created_by_key.get()
 
+  @property
+  def commit_short(self):
+    return self.commit and self.commit[:6]
+
   @classmethod
   def search(cls, project=None):
     query = cls.query()
@@ -196,6 +219,8 @@ class Fileset(ndb.Model):
     message.ident = self.ident
     message.url = self.url
     message.modified = self.modified
+    message.commit = self.commit
+    message.commit_short = self.commit_short
     if self.created_by_key:
       message.created_by = self.created_by.to_message()
     if self.log:

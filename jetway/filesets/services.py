@@ -58,7 +58,8 @@ class BaseFilesetService(object):
         return projects.Project.get_by_ident(request.fileset.project.ident)
       else:
         raise api.BadRequestError('Missing required field: project.')
-    except projects.ProjectDoesNotExistError as e:
+    except (projects.ProjectDoesNotExistError,
+            owners.OwnerDoesNotExistError) as e:
       raise api.NotFoundError(str(e))
 
   def _get_fileset(self, request):
@@ -103,7 +104,7 @@ class FilesetService(api.Service, BaseFilesetService):
       project = projects.Project.get(owner, request.fileset.project.nickname)
     else:
       project = None
-    if (not self._authorized_buildbot()
+    if (not self._is_authorized_buildbot()
         and not project.can(self.me, projects.Permission.READ)):
       raise api.ForbiddenError('Forbidden.')
     results = filesets.Fileset.search(project=project)
@@ -145,6 +146,7 @@ class RequestSigningService(remote.Service, BaseFilesetService):
   @endpoints.method(messages.SignRequestsRequest,
                     messages.SignRequestsResponse)
   def sign_requests(self, request):
+    allow_fileset_by_commit = request.fileset.commit
     if self._is_authorized_buildbot():
       email = appengine_config.BUILDBOT_SERVICE_ACCOUNT
     else:
@@ -154,14 +156,19 @@ class RequestSigningService(remote.Service, BaseFilesetService):
       email = user.email()
     me = users.User.get_by_email(email)
     try:
-      if request.fileset.ident:
+      if allow_fileset_by_commit:
+        fileset = filesets.Fileset.get_by_commit(request.fileset.commit)
+      elif request.fileset.ident:
         fileset = filesets.Fileset.get_by_ident(request.fileset.ident)
       else:
         p = self._get_project(request)
         fileset = p.get_fileset(request.fileset.name)
     except filesets.FilesetDoesNotExistError:
       p = self._get_project(request)
-      fileset = filesets.Fileset.create(p, request.fileset.name, me)
+      if allow_fileset_by_commit:
+        fileset = filesets.Fileset.create(p, commit=request.fileset.commit)
+      else:
+        fileset = filesets.Fileset.create(p, request.fileset.name, me)
     if (not self._is_authorized_buildbot()
         and not fileset.project.can(me, projects.Permission.WRITE)):
       raise api.ForbiddenError('Forbidden.')
