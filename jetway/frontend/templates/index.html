@@ -17,7 +17,7 @@
           <li>
             <a ui-sref="owner.projects({'owner': me.nickname})">
               <img class="avatar avatar-xs" src="{{me.avatar_url}}">
-              {{me.email}}
+              {{me.nickname}}
             </a>
           <li><a href="{{sign_out_url}}" target="_self">Sign out</a>
         {% else %}
@@ -25,7 +25,7 @@
         {% endif %}
       </ul>
       <form class="navbar-right navbar-form">
-        <a ui-sref="new()" class="btn btn-default">New site</a>
+        <a ui-sref="new()" class="btn btn-default">New</a>
       </form>
       <div class="navbar-header">
         <a class="navbar-brand" href="/">{{config.options.title}}</a>

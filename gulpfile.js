@@ -1,15 +1,29 @@
+var autoprefixer = require('gulp-autoprefixer');
 var concat = require('gulp-concat');
 var gulp = require('gulp');
 var stylish = require('jshint-stylish');
+var plumber = require('gulp-plumber');
 var uglify = require('gulp-uglify');
+var sass = require('gulp-sass');
 
 
 var Path = {
   CSS_OUT_DIR: './dist/css/',
-  CSS_SOURCES: './jetway/frontend/static/css/*.css',
+  CSS_SOURCES: './jetway/frontend/static/sass/*.scss',
   JS_OUT_DIR: './dist/js/',
   JS_SOURCES: './jetway/frontend/static/js/*.js',
 };
+
+
+gulp.task('sass', function() {
+  return gulp.src('./jetway/frontend/static/sass/*.scss')
+    .pipe(plumber())
+    .pipe(sass({
+        outputStyle: 'compressed'
+    }))
+    .pipe(autoprefixer())
+    .pipe(gulp.dest(Path.CSS_OUT_DIR));
+});
 
 
 gulp.task('minify', function(){
@@ -42,5 +56,5 @@ gulp.task('watch', function() {
 });
 
 
-gulp.task('build', ['minify']);
-gulp.task('default', ['minify', 'watch']);
+gulp.task('build', ['sass', 'minify']);
+gulp.task('default', ['sass', 'minify', 'watch']);

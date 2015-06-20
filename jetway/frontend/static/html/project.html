@@ -2,17 +2,29 @@
 <div ng-if="project.description">{{project.description}}</div>
 <div class="row">
   <div class="col-md-8">
-    <h2>Previews</h2>
+    <h2>Builds</h2>
     <table class="table table-margin filesets">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Preview</th>
+          <th>Updated</th>
+          <th>Status</th>
+        </tr>
+      </thead>
       <tr ng-repeat="fileset in filesets">
         <td>
-          <small>{{fileset.commit_short}}</small>
+          <small>{{fileset.commit.branch}} {{fileset.commit.sha|limitTo:6}}</small>
+        </td>
         <td>
-          <a href="{{fileset.url}}">{{fileset.name || fileset.commit_short}}</a>
+          <a href="{{fileset.url}}" class="commit-message">{{fileset.commit.message}}</a>
+        </td>
         <td>
           <div class="meta">
             <span title="by {{fileset.modified_by}}">{{fileset.modified|date:"medium"}}</span>
           </div>
+        <td>
+        </td>
     </table>
   </div>
   <div class="col-md-4">
