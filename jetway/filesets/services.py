@@ -155,16 +155,16 @@ class RequestSigningService(remote.Service, BaseFilesetService):
         raise api.UnauthorizedError('You must be logged in to do this.')
       email = user.email()
     me = users.User.get_by_email(email)
+    p = self._get_project(request)
     try:
       if allow_fileset_by_commit:
-        fileset = filesets.Fileset.get_by_commit(request.fileset.commit)
+        fileset = filesets.Fileset.get(project=p, commit=request.fileset.commit)
       elif request.fileset.ident:
         fileset = filesets.Fileset.get_by_ident(request.fileset.ident)
       else:
         p = self._get_project(request)
         fileset = p.get_fileset(request.fileset.name)
     except filesets.FilesetDoesNotExistError:
-      p = self._get_project(request)
       if allow_fileset_by_commit:
         fileset = filesets.Fileset.create(p, commit=request.fileset.commit)
       else:

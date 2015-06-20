@@ -4,6 +4,7 @@ from jetway.files import messages as file_messages
 from jetway.filesets import messages
 from jetway.server import utils
 from jetway.logs import logs
+from google.appengine.ext.ndb import msgprop
 import appengine_config
 import os
 import webapp2
@@ -120,36 +121,19 @@ class Fileset(ndb.Model):
   stats = ndb.StructuredProperty(FilesetStats)
   resources = ndb.StructuredProperty(Resource, repeated=True)
   source_files = ndb.StructuredProperty(File, repeated=True)
-  commit = ndb.StringProperty()
+  commit = msgprop.MessageProperty(messages.CommitMessage,
+                                   indexed_fields=['sha', 'branch'])
 
   @classmethod
   def create(cls, project, commit=None, name=None, created_by=None):
     # Actually "get_or_create".
-    if commit:
-      try:
-        fileset = cls.get_by_commit(commit)
-      except FilesetDoesNotExistError:
-        fileset = cls(project_key=project.key, commit=commit)
-        if created_by:
-          fileset.created_by_key = created_by.key
-        fileset.put()
-    else:
-      try:
-        fileset = cls.get(name=name)
-      except FilesetDoesNotExistError:
-        fileset = cls(project_key=project.key, name=name)
+    try:
+      fileset = cls.get(project=project, name=name, commit=commit)
+    except FilesetDoesNotExistError:
+      fileset = cls(project_key=project.key, commit=commit, name=name)
       if created_by:
         fileset.created_by_key = created_by.key
       fileset.put()
-    return fileset
-
-  @classmethod
-  def get_by_commit(cls, commit):
-    query = cls.query()
-    query = query.filter(cls.commit == commit)
-    fileset = query.get()
-    if fileset is None:
-      raise FilesetDoesNotExistError('Fileset "{}" does not exist.'.format(commit))
     return fileset
 
   @classmethod
@@ -161,12 +145,14 @@ class Fileset(ndb.Model):
     return fileset
 
   @classmethod
-  def get(cls, project=None, name=None):
+  def get(cls, project=None, name=None, commit=None):
     query = cls.query()
     if project is not None:
       query = query.filter(cls.project_key == project.key)
     if name is not None:
       query = query.filter(cls.name == name)
+    if commit:
+      query = query.filter(cls.commit.sha == commit.sha)
     fileset = query.get()
     if fileset is None:
       text = 'Fileset "{}" does not exist.'
@@ -174,9 +160,9 @@ class Fileset(ndb.Model):
     return fileset
 
   def __repr__(self):
-    return '<Filset: {}/{}@{} ({})>'.format(
-        self.project.owner.nickname, self.project.nickname, self.name,
-        self.ident)
+    return '<Fileset: {}/{}@{} ({})>'.format(
+        self.project.owner.nickname, self.project.nickname,
+        self.commit.sha, self.ident)
 
   @property
   def ident(self):
@@ -220,7 +206,6 @@ class Fileset(ndb.Model):
     message.url = self.url
     message.modified = self.modified
     message.commit = self.commit
-    message.commit_short = self.commit_short
     if self.created_by_key:
       message.created_by = self.created_by.to_message()
     if self.log:

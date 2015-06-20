@@ -6,6 +6,20 @@ from protorpc import message_types
 from protorpc import messages
 
 
+class AuthorMessage(messages.Message):
+  name = messages.StringField(1)
+  email = messages.StringField(2)
+
+
+class CommitMessage(messages.Message):
+  sha = messages.StringField(1)
+  author = messages.MessageField(AuthorMessage, 2)
+  date = message_types.DateTimeField(3)
+  message = messages.StringField(4)
+  has_unstaged_changes = messages.BooleanField(5)
+  branch = messages.StringField(6)
+
+
 class FileCountMessage(messages.Message):
   ext = messages.StringField(1)
   count = messages.IntegerField(2)
@@ -80,8 +94,7 @@ class FilesetMessage(messages.Message):
   resources = messages.MessageField(ResourceMessage, 11, repeated=True)
   files = messages.MessageField(FileMessage, 12, repeated=True)
   created_by = messages.MessageField(user_messages.UserMessage, 13)
-  commit = messages.StringField(14)
-  commit_short = messages.StringField(15)
+  commit = messages.MessageField(CommitMessage, 14)
 
 
 ###
