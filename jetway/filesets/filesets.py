@@ -1,15 +1,16 @@
+from . import utils as fileset_utils
 from google.appengine.ext import ndb
+from google.appengine.ext.ndb import msgprop
 from jetway.files import files
 from jetway.files import messages as file_messages
 from jetway.filesets import messages
-from jetway.server import utils
 from jetway.logs import logs
-from google.appengine.ext.ndb import msgprop
+from jetway.server import utils
 import appengine_config
 import os
 import webapp2
 
-gcs_bucket = appengine_config.GCS_BUCKET
+GCS_BUCKET = appengine_config.GCS_BUCKET
 
 
 class Error(Exception):
@@ -120,6 +121,7 @@ class Fileset(ndb.Model):
   log = ndb.StructuredProperty(logs.Log)
   stats = ndb.StructuredProperty(FilesetStats)
   resources = ndb.StructuredProperty(Resource, repeated=True)
+  finalized = ndb.BooleanProperty()
   source_files = ndb.StructuredProperty(File, repeated=True)
   commit = msgprop.MessageProperty(messages.CommitMessage,
                                    indexed_fields=['sha', 'branch'])
@@ -145,13 +147,21 @@ class Fileset(ndb.Model):
     return fileset
 
   @classmethod
+  def get_by_name_or_ident(cls, name_or_ident):
+    try:
+      int(name_or_ident)
+      return cls.get_by_ident(name_or_ident)
+    except ValueError:
+      return cls.get(name=name_or_ident)
+
+  @classmethod
   def get(cls, project=None, name=None, commit=None):
     query = cls.query()
     if project is not None:
       query = query.filter(cls.project_key == project.key)
     if name is not None:
       query = query.filter(cls.name == name)
-    if commit:
+    if commit is not None:
       query = query.filter(cls.commit.sha == commit.sha)
     fileset = query.get()
     if fileset is None:
@@ -159,10 +169,20 @@ class Fileset(ndb.Model):
       raise FilesetDoesNotExistError(text.format(name))
     return fileset
 
+  def __str__(self):
+    if self.commit and self.commit.branch:
+      return '{} ({} - {})'.format(self.project.name, self.commit.branch,
+                                   self.sha_short)
+    return '{} ({})'.format(self.project.name, self.ident)
+
+
   def __repr__(self):
-    return '<Fileset: {}/{}@{} ({})>'.format(
-        self.project.owner.nickname, self.project.nickname,
-        self.commit.sha, self.ident)
+    if self.commit and self.commit.sha:
+      return '<Fileset: {}/{}@{} ({})>'.format(
+          self.project.owner.nickname, self.project.nickname,
+          self.commit.sha, self.ident)
+    return '<Fileset: {}/{}>'.format(
+        self.project.owner.nickname, self.project.nickname)
 
   @property
   def ident(self):
@@ -177,18 +197,24 @@ class Fileset(ndb.Model):
     return self.created_by_key.get()
 
   @property
-  def commit_short(self):
-    return self.commit and self.commit[:6]
+  def sha_short(self):
+    return self.commit and self.commit.sha and self.commit.sha[:6]
 
   @classmethod
   def search(cls, project=None):
     query = cls.query()
+    query = query.order(-cls.modified)
     if project:
       query = query.filter(cls.project_key == project.key)
     return query.fetch()
 
   def delete(self):
     self.key.delete()
+
+  def finalize(self):
+    self.finalized = True
+    fileset_utils.send_finalized_email(self)
+    self.put()
 
   def update(self, message):
     if message.log:
@@ -206,6 +232,7 @@ class Fileset(ndb.Model):
     message.url = self.url
     message.modified = self.modified
     message.commit = self.commit
+    message.finalized = self.finalized
     if self.created_by_key:
       message.created_by = self.created_by.to_message()
     if self.log:
@@ -219,12 +246,15 @@ class Fileset(ndb.Model):
   @property
   def url(self):
     return utils.make_url(self.name, self.project.nickname,
-                          self.project.owner.nickname)
+                          self.project.owner.nickname, ident=self.ident)
+
+  @property
+  def root(self):
+    return '/{}/jetway/filesets/{}'.format(GCS_BUCKET, self.ident)
 
   @webapp2.cached_property
   def _signer(self):
-    root = '/{}/jetway/filesets/{}'.format(gcs_bucket, self.ident)
-    return files.Signer(root)
+    return files.Signer(self.root)
 
   def sign_requests(self, unsigned_requests):
     signed_reqs = []
@@ -254,3 +284,6 @@ class Fileset(ndb.Model):
       if path == resource.path:
         return resource.sha
     raise ValueError('Resource with path {} not found.'.format(path))
+
+  def get_diff(self):
+    pass

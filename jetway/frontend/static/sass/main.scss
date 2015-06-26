@@ -3,7 +3,13 @@ h1,
 h2,
 h3,
 p {
-  font-family: 'Roboto', arial, sans-serif;
+  font-family: 'RobotoDraft', 'Roboto', arial, sans-serif;
+  font-weight: 300;
+}
+
+h1 {
+  font-size: 26px;
+  margin-bottom: 40px;
 }
 
 h1,
@@ -21,8 +27,23 @@ a {
   color: #097be8;
 }
 
-.avatar {
+img.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  margin: 0 20px 0 0;
+}
 
+img.avatar-sm {
+  height: 30px;
+  width: 30px;
+  margin-right: 10px;
+}
+
+img.avatar-xs {
+  margin-right: 0;
+  height: 20px;
+  width: 20px;
 }
 
 .avatar.avatar-xs {
@@ -42,7 +63,29 @@ a {
 }
 
 .filesets {
-  .commit-message {
-    font-family: monospace;
+}
+
+.project-name {
+  margin-bottom: 20px;
+  clear: both;
+
+  &:after {
+    clear: both;
+    display: table;
+    content: '';
   }
+  
+  .left {
+    float: left;
+  }
+
+  .sep {
+    padding: 0 15px;
+    margin-top: 25px;
+    font-size: 26px;
+  }
+}
+
+.project-details {
+  clear: both;
 }

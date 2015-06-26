@@ -1,70 +1,15 @@
-<h1>{{project.nickname}}</h1>
-<div ng-if="project.description">{{project.description}}</div>
-<div class="row">
-  <div class="col-md-8">
-    <h2>Builds</h2>
-    <table class="table table-margin filesets">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Preview</th>
-          <th>Updated</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tr ng-repeat="fileset in filesets">
-        <td>
-          <small>{{fileset.commit.branch}} {{fileset.commit.sha|limitTo:6}}</small>
-        </td>
-        <td>
-          <a href="{{fileset.url}}" class="commit-message">{{fileset.commit.message}}</a>
-        </td>
-        <td>
-          <div class="meta">
-            <span title="by {{fileset.modified_by}}">{{fileset.modified|date:"medium"}}</span>
-          </div>
-        <td>
-        </td>
-    </table>
-  </div>
-  <div class="col-md-4">
-    <h2>Team</h2>
-    <table class="table table-margin">
-      <tr ng-repeat="membership in team.memberships">
-        <td>
-          <a ui-sref="owner.projects({'owner': membership.user.nickname})">
-            <img ng-src="{{membership.user.avatar_url}}" class="avatar avatar-xs">
-            {{membership.user.nickname}}
-          </a>
-        <td>
-          <form ng-submit="updateMembership(membership)">
-            <select ng-model="membership.role" ng-change="updateMembership(membership)" required>
-              <option value="READ_ONLY">Read only
-              <option value="WRITE_FULL">Write
-              <option value="ADMIN">Admin
-            </select>
-          </form>
-        <td>
-          <button class="btn btn-default btn-xs" ng-click="deleteMembership(membership)">x</button>
-    </table>
-    <form ng-submit="createMembership(membership)" class="form-inline">
-      <div class="form-group">
-        <input type="text" class="form-control" ng-model="membership.user.email" placeholder="Add by email" required>
-      </div>
-      <div class="form-group">
-        <select class="form-control" required>
-          <option>
-          <option value="READ_ONLY">Read only
-          <option value="WRITE_FULL">Write
-          <option value="ADMIN">Admin
-        </select>
-      </div>
-      <div class="form-group">
-        <button class="btn btn-default" type="submit">Add</button>
-      </div>
-    </form>
-    <h2>Settings</h2>
-    <div ng-click="deleteProject(project)" class="btn btn-danger btn-sm">Delete project</div>
-  </div>
-</div>
+<h1>
+  <img ng-src="{{project.avatar_url}}" class="avatar">
+  <a ui-sref="owner.projects({'owner': project.owner.nickname})">{{project.owner.nickname}}</a> / <a ui-sref="project.index({'owner': project.owner.nickname, 'project': project.nickname})">{{project.nickname}}</a>
+</h1>
 
+<div ng-if="project.description">{{project.description}}</div>
+
+<ul class="nav nav-tabs" role="tablist" style="margin-bottom: 30px">
+  <li ng-class="{'active': $state.is('project.index')}"><a ui-sref="project.index({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Builds</a></li>
+  <li ng-class="{'active': $state.is('project.translations')}"><a ui-sref="project.translations({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Translations</a></li>
+  <li ng-class="{'active': $state.is('project.team')}"><a ui-sref="project.team({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Team</a></li>
+  <li ng-class="{'active': $state.is('project.settings')}"><a ui-sref="project.settings({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Settings</a></li>
+</ul>
+
+<ui-view></ui-view>

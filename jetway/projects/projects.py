@@ -1,11 +1,12 @@
-import os
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from jetway.avatars import avatars
 from jetway.filesets import filesets
-from jetway.projects import messages
 from jetway.owners import owners
+from jetway.projects import messages
 from jetway.teams import teams
+import appengine_config
+import os
 
 
 Permission = messages.Permission
@@ -46,8 +47,16 @@ class Project(ndb.Model):
   visibility = msgprop.EnumProperty(messages.Visibility,
                                     default=messages.Visibility.PRIVATE)
 
-  def __repr__(self):
+  @property
+  def name(self):
     return '{}/{}'.format(self.owner.nickname, self.nickname)
+
+  @property
+  def name_padded(self):
+    return '{} / {}'.format(self.owner.nickname, self.nickname)
+
+  def __repr__(self):
+    return self.name
 
   @property
   def ident(self):
@@ -93,9 +102,12 @@ class Project(ndb.Model):
     return project
 
   @classmethod
-  def search(cls, owner=None):
+  def search(cls, owner=None, order=None):
     query = cls.query()
-    query = query.order(-cls.created)
+    if order is None:
+      query = query.order(-cls.created)
+    elif order == messages.Order.NAME:
+      query = query.order(-cls.nickname)
     if owner:
       query = query.filter(cls.owner_key == owner.key)
     return query.fetch()
@@ -124,8 +136,8 @@ class Project(ndb.Model):
     # Also delete filesets.
     _delete_project()
 
-  def create_fileset(self, name):
-    return filesets.Fileset.create(project=self, name=name)
+  def create_fileset(self, name, commit=None):
+    return filesets.Fileset.create(project=self, name=name, commit=commit)
 
   def get_fileset(self, name):
     return filesets.Fileset.get(project=self, name=name)
@@ -158,8 +170,13 @@ class Project(ndb.Model):
   def avatar_url(self):
     return avatars.Avatar.create_url(self)
 
+  @property
+  def url(self):
+    return '{}/{}'.format(appengine_config.BASE_URL, self.name)
+
   def to_message(self):
     message = messages.ProjectMessage()
+    message.name = self.name
     message.nickname = self.nickname
     message.ident = self.ident
     message.owner = self.owner.to_message()
@@ -181,11 +198,15 @@ class Project(ndb.Model):
   def search_teams(self, users=None):
     return teams.Team.search(projects=[self], users=None)
 
+  def list_users_to_notify(self):
+    return self.search_users(is_public=None)
+
   def search_users(self, is_public=True):
     team = self.get_team()
     users = []
     for membership in team.memberships:
-      if membership.is_public == is_public:
+      if (is_public is None
+          or membership.is_public == is_public):
         users.append(membership.user)
     return users
 

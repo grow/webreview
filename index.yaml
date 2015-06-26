@@ -10,8 +10,20 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Fileset
+  properties:
+  - name: project_key
+  - name: modified
+    direction: desc
+
 - kind: Project
   properties:
   - name: owner_key
   - name: created
+    direction: desc
+
+- kind: Project
+  properties:
+  - name: owner_key
+  - name: nickname
     direction: desc

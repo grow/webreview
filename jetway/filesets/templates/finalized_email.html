@@ -1,0 +1,35 @@
+{% extends "_base.html" %}
+
+{% block main %}
+  <h1>
+    <a href="{{fileset.project.url}}">
+      <img src="{{fileset.project.avatar_url}}">
+      {{fileset.project.name_padded}}
+    </a>
+  </h1>
+
+  <p>Your build is ready to preview.
+
+  <p class="centered">
+    <a href="{{fileset.url}}" class="button">View build »</a>
+  </p>
+
+  {% if fileset.commit %}
+    <div class="author">
+      {% if author %}
+        <img src="{{author.avatar_url}}" class="avatar">
+      {% endif %}
+      {{fileset.commit.author.name}}
+    </div>
+
+    <blockquote>{{fileset.commit.message}}</blockquote>
+  {% endif %}
+
+  {#
+  <div class="images">
+    <a href="{{user.url}}"><img src="{{user.avatar_url}}"></a><a href="{{project.url}}"><img src="{{project.url}}.png" alt="{{project.project_id}}"></a>
+  </div>
+  #}
+
+{% endblock %}
+

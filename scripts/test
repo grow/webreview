@@ -5,6 +5,8 @@ if [ -d env ]; then
   nosetests \
     -v \
     --rednose \
+    --nocapture \
+    --nologcapture \
     --with-gae \
     --without-sandbox \
     --with-coverage \

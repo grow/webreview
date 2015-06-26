@@ -38,8 +38,9 @@ class ProjectService(api.Service):
       owner = owners.Owner.get(request.project.owner.nickname)
     else:
       owner = None
-    results = projects.Project.search(owner=owner)
+    results = projects.Project.search(owner=owner, order=messages.Order.NAME)
     results = projects.Project.filter(results, self.me)
+    results = sorted(results, key=lambda project: project.name)
     resp = messages.SearchProjectResponse()
     resp.projects = [project.to_message() for project in results]
     return resp

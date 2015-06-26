@@ -1,0 +1,53 @@
+<section class="card">
+  <h3>Share a referral</h3>
+  <p>The ability to create and share referrals is in progress, and is coming soon!
+</section>
+
+<section class="card">
+<h3>Email a referral</h3>
+
+<p>Refer someone to Grow to gain karma points and project hosting credits. The more people that sign up under your referrals, the more free projects you'll get.
+
+<form ng-submit="createReferral(referral)" class="form-inline">
+  <div class="form-group">
+    <input type="text" class="form-control" ng-model="referral.email" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Send referral</button>
+  <div>
+    <label><input type="checkbox" ng-model="custom"> Add custom message</label>
+  </div>
+  <div ng-show="custom">
+    <textarea class="form-control" ng-model="referral.custom_message"></textarea>
+  </div>
+  <p class="help-block"><small>An invitation email will be sent from Grow as "{{me.nickname}} via Grow".</small>
+</form>
+
+<div ng-show="error" class="alert alert-warning">
+  {{error.error_message}}
+</div>
+
+</section>
+
+<section class="card">
+
+<h3>Your referrals</h3>
+
+<p>Here's everyone you've referred. If a referral is unredeemed, you can remind the person or cancel the referral.
+
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>Created
+      <th>Sent to
+      <th>Status
+  </thead>
+  <tr ng-repeat="referral in referrals">
+    <td>{{referral.created|date:'mediumDate'}}
+    <td>{{referral.email}}
+    <td>
+      {{referral.redeemed}}
+      <button ng-click="deleteReferral(referral)" class="btn btn-default btn-xs">
+        <span class="glyphicon glyphicon-remove"></span>
+      </button>
+</table>
+</section>

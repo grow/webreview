@@ -1,0 +1,21 @@
+<table class="table filesets" ng-if="filesets.length">
+  <tr ng-repeat="fileset in filesets">
+    <td>
+      <small>{{fileset.commit.branch}} {{fileset.commit.sha|limitTo:6}}</small>
+    </td>
+    <td>
+      <a href="{{fileset.url}}" class="commit-message">{{fileset.commit.message || fileset.ident}}</a>
+      <span ng-if="fileset.name">
+        – <a href="{{fileset.url}}">{{fileset.name}}</a>
+      </span>
+    </td>
+    <td>
+      <div class="meta">
+        <span title="by {{fileset.modified_by}}">{{fileset.modified|date:"medium"}}</span>
+      </div>
+    </td>
+  </tr>
+</table>
+<div ng-if="!filesets.length" class="empty">
+  <p>No builds yet.</p>
+</div>

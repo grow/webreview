@@ -1,0 +1,111 @@
+<style>
+  .wrap {
+    background: #f0f0f0;
+    padding: 20px;
+  }
+  .card h1 {
+    color: #333;
+    font-size: 20px;
+    font-weight: 400;
+    margin-top: 0;
+    text-decoration: underline;
+  }
+  .card h1 a {
+    color: #666;
+  }
+  .card p {
+    color: #666;
+    margin: 1em 0;
+  }
+  .card ul {
+    padding-left: 15px;
+  }
+  .card {
+    border-radius: 5px;
+    background-color: #fff;
+    background: #fff;
+    border-radius: 5px;
+    border-bottom: 1px solid rgba(0,0,0, .2);
+    color: #666;
+    font-size: 16px;
+    font-family: Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 300;
+    margin: -20px auto 0 auto;
+    margin: 0 auto;
+    max-width: 450px;
+    padding: 20px 15px;
+  }
+  .card > p:first-child {
+    margin-top: 0;
+  }
+  .card > p:last-child {
+    margin-bottom: 0;
+  }
+  .card .images {
+    margin: 10px 0;
+    text-align: center;
+  }
+  .card .images img,
+  .card .images a {
+    width: 80px;
+    height: 80px;
+    margin: 0;
+    display: inline-block;
+  }
+  .card a {
+    color: #427fed;
+    text-decoration: none;
+  }
+  .author {
+    font-size: 13px;
+  }
+  .avatar {
+    border-radius: 2px;
+    height: 20px;
+    margin-right: 5px;
+    width: 20px;
+    vertical-align: middle;
+  }
+  blockquote {
+    background: #f5f5f5;
+    font-size: 13px;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 15px;
+  }
+  .centered {
+    text-align: center;
+  }
+  .card .button {
+    background: #4285f4;
+    border-radius: 4px;
+    border-bottom: 3px solid #285e8e;
+    color: #fff;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    padding: 10px 20px;
+  }
+  .card .button-alt {
+    background: white;
+    border: 1px solid #dedede;
+    border-bottom: 3px solid #dedede;
+    color: #666;
+  }
+  .logo {
+    margin-top: 20px;
+    text-align: center;
+  }
+  .logo img {
+    height: 32px;
+    width: 90px;
+  }
+</style>
+
+<div class="wrap">
+  <div class="card">
+    {% block main %}
+    {% endblock %}
+  </div>
+  <div class="logo"><a href="{{config.BASE_URL}}"><img src="{{config.STATIC_URL}}/images/badge.png"></a></div>
+</div>

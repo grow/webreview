@@ -1,0 +1,34 @@
+<section>
+  <h1>Create organization</h1>
+  <div class="row">
+    <div class="col-md-8">
+      <form ng-submit="createOrg(org)">
+        <section class="card">
+          <div class="form-group">
+            <label>Organization name</label>
+            <input type="text" class="form-control" ng-model="org.nickname" autofocus>
+          </div>
+          <div class="form-group">
+            <label>Administration email</label>
+            <input type="text" class="form-control" ng-model="org.email">
+            <p class="help-block"><small>Administrative notifications such as project changes will be sent to this address.</small>
+          </div>
+        </section>
+        <div class="form-group">
+          <button class="btn btn-success">Create organization</button>
+          <a class="btn btn-default" ui-sref="settings.organizations()">Cancel</a>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-4">
+      <p>Take control of your team's web site production workflow by using organizations.
+      <p>Organizations let you:
+      <ul>
+        <li>Control review and approval workflow for launches.
+        <li>Group projects together by functional area.
+        <li>Manage teams and control access.
+        <li>View activity streams for all your projects.
+      </ul>
+    </div>
+  </div>
+</section>

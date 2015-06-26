@@ -40,6 +40,11 @@ REQUIRE_HTTPS_FOR_APP = jetway_config.get('require_https', {}).get('app_domain',
 
 GCS_SERVICE_ACCOUNT_EMAIL = service_account_key['client_email']
 
+_appid = os.getenv('APPLICATION_ID').replace('s~', '')
+_sender_name = 'WebReview'
+_sender_address = 'noreply@{}.appspotmail.com'.format(_appid)
+EMAIL_SENDER = '{} <{}>'.format(_sender_name, _sender_address)
+
 IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')
 
 if IS_DEV_SERVER:
@@ -56,6 +61,13 @@ else:
 
 BUILDBOT_API_KEY = jetway_config['app'].get('webreview_buildbot_api_key')
 BUILDBOT_SERVICE_ACCOUNT = jetway_config['app'].get('webreview_buildbot_service_account')
+
+BASE_URL = '{}://{}'.format(os.getenv('wsgi.url_scheme'), os.getenv('SERVER_NAME'))
+if IS_DEV_SERVER:
+  BASE_URL += ':{}'.format(os.getenv('SERVER_PORT'))
+
+STATIC_ROOT = '/_app/{}/static'.format(os.getenv('CURRENT_VERSION_ID', 'dev'))
+STATIC_URL = BASE_URL + STATIC_ROOT
 
 _token_age = 60 * 60 * 24 * 7 * 4  # 4 weeks.
 

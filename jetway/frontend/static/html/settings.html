@@ -1,16 +1,30 @@
-<div class="container">
-  <h1>Settings</h1>
-  <form ng-submit="updateMe(me)">
-    <div class="form-group">
-      <label>Email</label>
-      <input ng-model="me.email" class="form-control" disabled>
+<section>
+  <h1><img ng-src="{{me.avatar_url}}" class="avatar avatar-sm"> {{me.nickname}}</h1>
+  <div class="row">
+    <div class="col-md-4">
+      <nav>
+        <ul class="nav nav-stacked nav-pills">
+          <li ng-class="{active: $state.includes('settings.index')}">
+            <a ui-sref="settings.index()">Profile</a>
+          <li ng-class="{active: $state.includes('settings.organizations')}">
+            <a ui-sref="settings.organizations()">Organizations</a>
+          <li ng-class="{active: $state.includes('settings.notifications')}">
+            <a ui-sref="settings.notifications()">Notifications</a>
+          <!--li ng-class="{active: $state.includes('settings.accounts')}">
+            <a ui-sref="settings.accounts()">Accounts</a-->
+        </ul>
+      </nav>
+      <nav ng-repeat="org in orgs">
+        <h4><img ng-src="{{org.avatar_url}}" class="avatar avatar-sm"> {{org.nickname}}</h4>
+        <ul class="nav nav-stacked nav-pills">
+          <li ng-class="{active: $state.includes('settings.organization', {'org_nickname': org.nickname})}">
+            <a ui-sref="settings.organization({'org_nickname': org.nickname})">Profile</a>
+          <li ng-class="{active: $state.includes('settings.organization_members', {'org_nickname': org.nickname})}">
+            <a ui-sref="settings.organization_members({'org_nickname': org.nickname})">Members</a>
+        </ul>
+      </nav>
     </div>
-    <div class="form-group">
-      <label>Username</label>
-      <input ng-model="me.nickname" class="form-control" autofocus required>
+    <div class="col-md-8" ui-view ng-animate="'fade'">
     </div>
-    <div>
-      <button type="submit" class="btn btn-success">Save</button>
-    </div>
-  </form>
-</div>
+  </div>
+</section>

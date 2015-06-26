@@ -86,7 +86,7 @@ class Owner(object):
 
   @property
   def avatar_url(self):
-    return avatars.Avatar.create_url(self)
+    return avatars.Avatar.create_url(self._entity)
 
   def update(self, message):
     return self._entity.update(message)

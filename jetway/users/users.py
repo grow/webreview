@@ -1,6 +1,7 @@
 from google.appengine.ext import ndb
 from jetway.avatars import avatars
 from jetway.files import files
+from jetway.projects import messages as project_messages
 from jetway.teams import teams
 from jetway.users import messages
 from webapp2_extras import security
@@ -123,17 +124,22 @@ class User(BaseUser):
       except files.FileNotFoundError:
         resp_headers, content = avatars.Avatar.generate(ident)
     except avatars.AvatarDoesNotExistError:
-      try:
-        user = cls.get_by_ident(ident)
-        # User has already gone through the OAuth2 flow into Google.
-        if hasattr(user, 'picture'):
-          status = 302
-          resp_headers['Location'] = user.picture
-        # User has never signed in, use a default avatar.
-        else:
-          resp_headers, content = avatars.Avatar.generate(ident)
-      except UserDoesNotExistError:
-        status = 404
+
+      if letter == 'u':
+        try:
+          user = cls.get_by_ident(ident)
+          # User has already gone through the OAuth2 flow into Google.
+          if hasattr(user, 'picture'):
+            status = 302
+            resp_headers['Location'] = user.picture
+          # User has never signed in, use a default avatar.
+          else:
+            resp_headers, content = avatars.Avatar.generate(ident)
+        except UserDoesNotExistError:
+          status = 404
+      elif letter in ['p', 'o']:
+        resp_headers, content = avatars.Avatar.generate(ident)
+
     if if_none_match and if_none_match == resp_headers.get('ETag'):
       status = 304
     return status, resp_headers, content
@@ -174,6 +180,7 @@ class User(BaseUser):
     for project in user_projects:
       if project not in results:
         results.append(project)
+    results = sorted(results, key=lambda project: project.nickname)
     return results
 
   def regenerate_git_password(self):

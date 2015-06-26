@@ -1,9 +1,5 @@
 from jetway import testing
 from jetway.files import messages
-from jetway.orgs import orgs
-from jetway.owners import owners
-from jetway.projects import projects
-from jetway.users import users
 import base64
 import mimetypes
 import md5
@@ -14,11 +10,7 @@ class FilesetTestCase(testing.BaseTestCase):
 
   def setUp(self):
     super(FilesetTestCase, self).setUp()
-    creator = users.User.create('creator')
-    org = orgs.Org.create('owner', created_by=creator)
-    owner = owners.Owner.get('owner')
-    project = projects.Project.create(owner, 'project', created_by=creator)
-    self.fileset = project.create_fileset('master')
+    self.fileset = self.create_fileset()
 
   def _create_put_request(self, path, content):
     content_md5 = base64.b64encode(md5.new(content).digest())
@@ -48,6 +40,9 @@ class FilesetTestCase(testing.BaseTestCase):
         self._create_delete_request('/foo/index.html'),
     ]
     signed_reqs = self.fileset.sign_requests(reqs)
+
+  def test_finalize(self):
+    self.fileset.finalize()
 
 
 if __name__ == '__main__':

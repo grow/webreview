@@ -26,9 +26,10 @@ def parse_hostname(hostname, path=None, multitenant=False):
   return tuple(part if part else None for part in results[0])
 
 
-def make_url(fileset, project, owner, path=None,
+def make_url(name, project, owner, path=None,
              multitenant=False,
-             include_port=appengine_config.IS_DEV_SERVER):
+             include_port=appengine_config.IS_DEV_SERVER,
+             ident=None):
   preview_hostname = appengine_config.PREVIEW_HOSTNAME
   scheme = os.getenv('wsgi.url_scheme', 'http')
   if include_port:
@@ -38,9 +39,13 @@ def make_url(fileset, project, owner, path=None,
   else:
     sep = '.'
   if multitenant:
-    return '{scheme}://{fileset}--{project}--{owner}{sep}{hostname}'.format(
-        scheme=scheme, fileset=fileset, sep=sep, hostname=preview_hostname,
+    return '{scheme}://{name}--{project}--{owner}{sep}{hostname}'.format(
+        scheme=scheme, name=name, sep=sep, hostname=preview_hostname,
         owner=owner, project=project)
   else:
-    return '{scheme}://{fileset}{sep}{hostname}'.format(
-        scheme=scheme, fileset=fileset, sep=sep, hostname=preview_hostname)
+    if name:
+      return '{scheme}://{name}{sep}{hostname}'.format(
+          scheme=scheme, name=name, sep=sep, hostname=preview_hostname)
+    else:
+      return '{scheme}://{ident}{sep}{hostname}'.format(
+          scheme=scheme, ident=ident, sep=sep, hostname=preview_hostname)

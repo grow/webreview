@@ -1,40 +1,39 @@
 var autoprefixer = require('gulp-autoprefixer');
 var concat = require('gulp-concat');
+var es = require('event-stream');
 var gulp = require('gulp');
-var stylish = require('jshint-stylish');
 var plumber = require('gulp-plumber');
-var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
+var stylish = require('jshint-stylish');
+var uglify = require('gulp-uglify');
 
 
 var Path = {
   CSS_OUT_DIR: './dist/css/',
-  CSS_SOURCES: './jetway/frontend/static/sass/*.scss',
+  CSS_SOURCES: './jetway/frontend/static/sass/*',
   JS_OUT_DIR: './dist/js/',
   JS_SOURCES: './jetway/frontend/static/js/*.js',
 };
 
 
 gulp.task('sass', function() {
-  return gulp.src('./jetway/frontend/static/sass/*.scss')
+  var appFiles = gulp.src('./jetway/frontend/static/sass/*.scss')
     .pipe(plumber())
     .pipe(sass({
         outputStyle: 'compressed'
     }))
-    .pipe(autoprefixer())
-    .pipe(gulp.dest(Path.CSS_OUT_DIR));
+  var vendorFiles = gulp.src([
+    './bower_components/bootstrap/dist/css/bootstrap.min.css',
+  ])
+  return es.concat(vendorFiles, appFiles)
+      .pipe(concat('main.min.css'))
+      .pipe(autoprefixer())
+      .pipe(gulp.dest(Path.CSS_OUT_DIR));
 });
 
 
 gulp.task('minify', function(){
-  gulp.src([
-    './bower_components/bootstrap/dist/css/bootstrap.min.css',
-    Path.CSS_SOURCES,
-  ])
-      .pipe(concat('main.min.css'))
-      .pipe(gulp.dest(Path.CSS_OUT_DIR));
-
-  gulp.src([
+  return gulp.src([
     './bower_components/angular/angular.min.js',
     './bower_components/angular-bootstrap/ui-bootstrap.min.js',
     './bower_components/angular-ui-router/release/angular-ui-router.min.js',
@@ -48,11 +47,8 @@ gulp.task('minify', function(){
 
 
 gulp.task('watch', function() {
-  var paths = [
-    Path.JS_SOURCES,
-    Path.CSS_SOURCES,
-  ];
-  gulp.watch(paths, ['minify']);
+  gulp.watch([Path.JS_SOURCES], ['minify']);
+  gulp.watch([Path.CSS_SOURCES], ['sass']);
 });
 
 

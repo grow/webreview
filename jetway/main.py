@@ -29,6 +29,7 @@ frontend_app = webapp2.WSGIApplication([
 
 endpoints_app = endpoints.api_server([
     fileset_services.RequestSigningService,
+    fileset_services.NewRequestSigningService,
     fileset_services.LegacyRequestSigningService,
 ])
 

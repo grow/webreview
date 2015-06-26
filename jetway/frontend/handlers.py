@@ -41,7 +41,8 @@ class AvatarHandler(webapp2.RequestHandler):
     self.response.set_status(status)
 
   def get(self, letter, ident):
-    status, headers, content = users.User.get_response_for_avatar(self.request.headers, letter, ident)
+    status, headers, content = users.User.get_response_for_avatar(
+        self.request.headers, letter, ident)
     self.response.status = status
     self.response.headers.update(headers)
     if content:

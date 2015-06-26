@@ -26,6 +26,16 @@ endpoints_api = endpoints.api(
     ],
 )
 
+new_endpoints_api = endpoints.api(
+    name='webreview',
+    version='v1',
+    allowed_client_ids=[_jetway_client, endpoints.API_EXPLORER_CLIENT_ID],
+    scopes=[
+        endpoints.EMAIL_SCOPE,
+        'https://www.googleapis.com/auth/plus.me',
+    ],
+)
+
 legacy_endpoints_api = endpoints.api(
     name='jetway',
     version='v0',
@@ -51,11 +61,11 @@ class BaseFilesetService(object):
 
   def _get_project(self, request):
     try:
-      if request.fileset.project.owner:
+      if request.fileset.project and request.fileset.project.ident:
+        return projects.Project.get_by_ident(request.fileset.project.ident)
+      elif request.fileset.project.owner:
         o = owners.Owner.get(request.fileset.project.owner.nickname)
         return projects.Project.get(o, request.fileset.project.nickname)
-      elif request.fileset.project.ident:
-        return projects.Project.get_by_ident(request.fileset.project.ident)
       else:
         raise api.BadRequestError('Missing required field: project.')
     except (projects.ProjectDoesNotExistError,
@@ -120,14 +130,14 @@ class FilesetService(api.Service, BaseFilesetService):
     resp.fileset = fileset.to_message()
     return resp
 
-  @remote.method(messages.FinalizeFilesetRequest,
-                 messages.FinalizeFilesetResponse)
-  def finalize(self, request):
-    fileset = self._get_fileset(request)
-    fileset.update(request.fileset)
-    resp = messages.FinalizeFilesetResponse()
-    resp.fileset = fileset.to_message()
-    return resp
+#  @remote.method(messages.FinalizeFilesetRequest,
+#                 messages.FinalizeFilesetResponse)
+#  def finalize(self, request):
+#    fileset = self._get_fileset(request)
+#    fileset.update(request.fileset)
+#    resp = messages.FinalizeFilesetResponse()
+#    resp.fileset = fileset.to_message()
+#    return resp
 
   @remote.method(messages.GetPageSpeedResultRequest,
                  messages.GetPageSpeedResultResponse)
@@ -143,10 +153,7 @@ class FilesetService(api.Service, BaseFilesetService):
 @endpoints_api
 class RequestSigningService(remote.Service, BaseFilesetService):
 
-  @endpoints.method(messages.SignRequestsRequest,
-                    messages.SignRequestsResponse)
-  def sign_requests(self, request):
-    allow_fileset_by_commit = request.fileset.commit
+  def _get_me(self, request):
     if self._is_authorized_buildbot():
       email = appengine_config.BUILDBOT_SERVICE_ACCOUNT
     else:
@@ -154,21 +161,39 @@ class RequestSigningService(remote.Service, BaseFilesetService):
       if user is None:
         raise api.UnauthorizedError('You must be logged in to do this.')
       email = user.email()
-    me = users.User.get_by_email(email)
+    return users.User.get_by_email(email)
+
+  def _get_or_create_fileset(self, request, me):
+    allow_fileset_by_commit = (request.fileset.commit
+                               and self._is_authorized_buildbot())
     p = self._get_project(request)
     try:
       if allow_fileset_by_commit:
-        fileset = filesets.Fileset.get(project=p, commit=request.fileset.commit)
+        return filesets.Fileset.get(project=p, commit=request.fileset.commit)
       elif request.fileset.ident:
-        fileset = filesets.Fileset.get_by_ident(request.fileset.ident)
+        return filesets.Fileset.get_by_ident(request.fileset.ident)
       else:
         p = self._get_project(request)
-        fileset = p.get_fileset(request.fileset.name)
+        return p.get_fileset(request.fileset.name)
     except filesets.FilesetDoesNotExistError:
-      if allow_fileset_by_commit:
-        fileset = filesets.Fileset.create(p, commit=request.fileset.commit)
-      else:
-        fileset = filesets.Fileset.create(p, request.fileset.name, me)
+      return filesets.Fileset.create(
+          p, name=request.fileset.name, commit=request.fileset.commit, created_by=me)
+
+  @endpoints.method(messages.FinalizeRequest,
+                    messages.FinalizeResponse)
+  def finalize(self, request):
+    me = self._get_me(request)
+    fileset = self._get_or_create_fileset(request, me)
+    fileset.finalize()
+    resp = messages.FinalizeResponse()
+    resp.fileset = fileset.to_message()
+    return resp
+
+  @endpoints.method(messages.SignRequestsRequest,
+                    messages.SignRequestsResponse)
+  def sign_requests(self, request):
+    me = self._get_me(request)
+    fileset = self._get_or_create_fileset(request, me)
     if (not self._is_authorized_buildbot()
         and not fileset.project.can(me, projects.Permission.WRITE)):
       raise api.ForbiddenError('Forbidden.')
@@ -181,4 +206,9 @@ class RequestSigningService(remote.Service, BaseFilesetService):
 
 @legacy_endpoints_api
 class LegacyRequestSigningService(RequestSigningService):
+  pass
+
+
+@new_endpoints_api
+class NewRequestSigningService(RequestSigningService):
   pass

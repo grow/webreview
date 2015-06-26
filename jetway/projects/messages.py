@@ -19,6 +19,10 @@ class CoverMessage(messages.Message):
   content = messages.StringField(1)
 
 
+class Order(messages.Enum):
+  NAME = 0
+
+
 class ProjectMessage(messages.Message):
   nickname = messages.StringField(1)
   ident = messages.StringField(2)
@@ -28,6 +32,7 @@ class ProjectMessage(messages.Message):
   avatar_url = messages.StringField(6)
   visibility = messages.EnumField(Visibility, 7)
   cover = messages.MessageField(CoverMessage, 8)
+  name = messages.StringField(9)
 
 
 ###

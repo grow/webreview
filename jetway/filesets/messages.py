@@ -95,6 +95,7 @@ class FilesetMessage(messages.Message):
   files = messages.MessageField(FileMessage, 12, repeated=True)
   created_by = messages.MessageField(user_messages.UserMessage, 13)
   commit = messages.MessageField(CommitMessage, 14)
+  finalized = messages.BooleanField(15)
 
 
 ###
@@ -142,11 +143,11 @@ class SignRequestsResponse(messages.Message):
   signed_requests = messages.MessageField(file_messages.SignedRequest, 2, repeated=True)
 
 
-class FinalizeFilesetRequest(messages.Message):
+class FinalizeRequest(messages.Message):
   fileset = messages.MessageField(FilesetMessage, 1)
 
 
-class FinalizeFilesetResponse(messages.Message):
+class FinalizeResponse(messages.Message):
   fileset = messages.MessageField(FilesetMessage, 1)
 
 

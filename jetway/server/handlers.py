@@ -45,7 +45,7 @@ class RequestHandler(auth_handlers.SessionHandler):
         fileset_name = parts[0]
         if fileset_name is None:
           raise filesets.FilesetDoesNotExistError
-        fileset = filesets.Fileset.get(name=fileset_name)
+        fileset = filesets.Fileset.get_by_name_or_ident(fileset_name)
       if not fileset.project.can(self.me, projects.Permission.READ):
         if self.me:
           self.error(403, 'Forbidden', '{} does not have access to this page.'.format(self.me))

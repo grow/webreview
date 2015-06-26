@@ -33,11 +33,33 @@ var app = angular.module('jetway', [
         controller: OrgNewController,
         templateUrl: _prefix + '/static/html/orgs.new.html'
       })
+
     .state('settings', {
+      abstract: true,
       url: '/settings',
       templateUrl: _prefix + '/static/html/settings.html',
-      controller: SettingsController
+      controller: SettingsController 
     })
+      .state('settings.index', {
+        url: '',
+        templateUrl: _prefix + '/static/html/settings.index.html'
+      })
+      .state('settings.accounts', {
+        url: '/accounts',
+        templateUrl: _prefix + '/static/html/settings.accounts.html'
+      })
+/*
+      .state('settings.referrals', {
+        url: '/referrals',
+        templateUrl: _prefix + '/static/html/settings.referrals.html'
+        controller: ReferralsController
+      })
+      .state('settings.organizations', {
+        url: '/organizations',
+        templateUrl: _prefix + '/static/html/settings.orgs.html'
+        controller: SettingsOrgsController
+      })
+*/
 
     .state('deployments', {
       abstract: true,
@@ -134,27 +156,24 @@ var app = angular.module('jetway', [
     })
       .state('project.index', {
         url: '',
-        controller: ProjectIndexController
+        controller: ProjectIndexController,
+        templateUrl: _prefix + '/static/html/project.builds.html'
       })
-      .state('project.workspaces', {
-        url: '/workspaces',
-        controller: WorkspacesController,
-        templateUrl: _prefix + '/static/html/workspaces.html'
+      .state('project.translations', {
+        url: '/translations',
+        templateUrl: _prefix + '/static/html/project.translations.html'
       })
-      .state('project.launches', {
-        url: '/launches',
-        controller: LaunchesController,
-        templateUrl: _prefix + '/static/html/launches.html'
-      })
-      .state('project.collaborators', {
-        url: '/collaborators',
-        controller: CollaboratorsController,
-        templateUrl: _prefix + '/static/html/collaborators.html'
+      .state('project.team', {
+        url: '/team',
+        templateUrl: _prefix + '/static/html/project.team.html'
       })
       .state('project.settings', {
         url: '/settings',
-        controller: ProjectSettingsController,
         templateUrl: _prefix + '/static/html/project.settings.html'
+      })
+      .state('project.watchers', {
+        url: '/watchers',
+        templateUrl: _prefix + '/static/html/project.watchers.html'
       })
 
     .state('file', {

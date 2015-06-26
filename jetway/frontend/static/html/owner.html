@@ -1,2 +1,5 @@
-<h1>{{owner.nickname}}</h1>
+<h1>
+  <img ng-src="{{owner.avatar_url}}" class="avatar">
+  <a ui-sref="owner.projects({'owner': project.owner.nickname})">{{owner.nickname}}</a>
+</h1>
 <div ui-view></div>
