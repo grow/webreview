@@ -20,6 +20,9 @@ node --version 2>&1> /dev/null || {
   exit 1
 }
 
+xcode-select --install || {
+}
+
 virtualenv env
 source env/bin/activate
 pip install -r requirements.txt
@@ -36,6 +39,8 @@ else
   echo "Existing ./config/jetway.yaml file found, skipping config setup."
 fi
 
+echo "If lxml failed to compile, upgrade xcode and retry:"
+echo "  xcode-select --install"
 echo "Installation instructions for Google credentials:"
 echo "Visit the Google Developers Console at:"
 echo "  https://console.developers.google.com/project/apps~<PROJECT ID>/apiui/credential"
