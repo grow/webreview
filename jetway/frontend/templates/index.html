@@ -3,6 +3,7 @@
 <base href="/">
 <title>{{config.options.title}}</title>
 <link rel="stylesheet" href="/_jetway/{{version}}/static/css/main.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link href="//fonts.googleapis.com/css?family=RobotoDraft:100,300,400,500,700" rel="stylesheet">
 <link href="//fonts.googleapis.com/css?family=Roboto:700,500,400,300,100&amp;subset=latin,latin-ext,cyrillic,cyrillic-ext" rel="stylesheet">
 <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,300,200,100&amp;subset=latin,latin-ext,cyrillic,cyrillic-ext" rel="stylesheet">
@@ -13,21 +14,38 @@
 <body>
   <nav class="navbar navbar-default" role="navigation" ng-controller="HeaderController">
     <div class="container">
-      <ul class="nav navbar-nav navbar-right">
+      <ul class="nav navbar-nav navbar-right navbar-form">
         {% if me %}
-          <li>
-            <a ui-sref="owner.projects({'owner': me.nickname})">
+        <li>
+          <div class="btn-group" dropdown>
+            <div type="button" class="btn dropdown-toggle" dropdown-toggle>
+              New <span class="caret"></span>
+            </div>
+            <ul class="dropdown-menu" role="menu">
+              <li><a ui-sref="new()">New site</a></li>
+              <li><a ui-sref="orgs.new()">New organization</a></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="btn-group" dropdown>
+            <div class="btn dropdown-toggle" dropdown-toggle>
               <img class="avatar avatar-xs" src="{{me.avatar_url}}">
               {{me.nickname}}
-            </a>
-          <li><a href="{{sign_out_url}}" target="_self">Sign out</a>
+              <span class="caret"></span>
+            </div>
+            <ul class="dropdown-menu" role="menu">
+              <li><a ui-sref="owner.projects({'owner': me.nickname})">Your sites</a>
+              <li><a ui-sref="settings.index()">Settings</a>
+              <li role="separator" class="divider"></li>
+              <li><a href="{{sign_out_url}}" target="_self">Sign out</a>
+            </ul>
+          </div>
+        </li>
         {% else %}
           <li><a href="{{sign_in_url}}">Sign in</a>
         {% endif %}
       </ul>
-      <form class="navbar-right navbar-form">
-        <a ui-sref="new()" class="btn btn-default">New</a>
-      </form>
       <div class="navbar-header">
         <a class="navbar-brand" href="/">{{config.options.title}}</a>
       </div>

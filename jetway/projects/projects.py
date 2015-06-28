@@ -1,3 +1,4 @@
+from . import watchers
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from jetway.avatars import avatars
@@ -246,3 +247,19 @@ class Project(ndb.Model):
         if self.key in team.project_keys:
           return True
     return False
+
+  def create_watcher(self, user):
+    existing = self.get_watcher(user)
+    if existing:
+      return existing
+    return watchers.Watcher.create(project=self, user=user)
+
+  def get_watcher(self, user):
+    return watchers.Watcher.get(project=self, user=user)
+
+  def delete_watcher(self, user):
+    existing = self.get_watcher(user)
+    existing.delete()
+
+  def list_watchers(self):
+    return watchers.Watcher.search(project=self)

@@ -1,38 +1,11 @@
-<table class="table table-margin">
-  <tr ng-repeat="membership in team.memberships">
-    <td>
-      <a ui-sref="owner.projects({'owner': membership.user.nickname})">
-        <img ng-src="{{membership.user.avatar_url}}" class="avatar avatar-xs">
-        {{membership.user.nickname}}
-      </a>
-    </td>
-    <td>
-      <form ng-submit="updateMembership(membership)">
-        <select ng-model="membership.role" ng-change="updateMembership(membership)" required>
-          <option value="READ_ONLY">Read only
-          <option value="WRITE_FULL">Write
-          <option value="ADMIN">Admin
-        </select>
-      </form>
-    </td>
-    <td>
-      <button class="btn btn-default btn-xs" ng-click="deleteMembership(membership)">x</button>
-    </td>
-  </tr>
-</table>
-<form ng-submit="createMembership(membership)" class="form-inline">
-  <div class="form-group">
-    <input type="text" class="form-control form-control-md" ng-model="membership.user.email" placeholder="Add by username or email" required>
-  </div>
-  <div class="form-group">
-    <select class="form-control" required>
-      <option>
-      <option value="READ_ONLY">Read only
-      <option value="WRITE_FULL">Write
-      <option value="ADMIN">Admin
-    </select>
-  </div>
-  <div class="form-group">
-    <button class="btn btn-default" type="submit">Add</button>
-  </div>
+<form ng-submit="createWatcher(project)">
+  <button type="submit" class="btn btn-default">Notify me of activity on this project</button>
 </form>
+
+<p>
+  <table class="table">
+    <tr ng-repeat="watcher in watchers">
+      <td>{{watcher.user.nickname}}</td>
+    </tr>
+  </table>
+</p>

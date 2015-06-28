@@ -7,9 +7,10 @@
 
 <ul class="nav nav-tabs" role="tablist" style="margin-bottom: 30px">
   <li ng-class="{'active': $state.is('project.index')}"><a ui-sref="project.index({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Builds</a></li>
-  <li ng-class="{'active': $state.is('project.translations')}"><a ui-sref="project.translations({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Translations</a></li>
+  <li ng-class="{'active': $state.includes('project.translations')}"><a ui-sref="project.translations.index({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Translations</a></li>
   <li ng-class="{'active': $state.is('project.team')}"><a ui-sref="project.team({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Team</a></li>
   <li ng-class="{'active': $state.is('project.settings')}"><a ui-sref="project.settings({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Settings</a></li>
+  <li ng-class="{'active': $state.is('project.watchers')}"><a ui-sref="project.watchers({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Watchers ({{watchers.length || '0'}})</a></li>
 </ul>
 
 <ui-view></ui-view>

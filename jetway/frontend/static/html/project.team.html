@@ -20,9 +20,10 @@
     </td>
   </tr>
 </table>
+
 <form ng-submit="createMembership(membership)" class="form-inline">
   <div class="form-group">
-    <input type="text" class="form-control form-control-md" ng-model="membership.user.email" placeholder="Add by username or email" required>
+    <input type="text" class="form-control" ng-model="membership.user.email" placeholder="Add by username or email" required size="40">
   </div>
   <div class="form-group">
     <select class="form-control" required>

@@ -157,6 +157,7 @@ class Fileset(ndb.Model):
   @classmethod
   def get(cls, project=None, name=None, commit=None):
     query = cls.query()
+    query = query.order(-cls.modified)
     if project is not None:
       query = query.filter(cls.project_key == project.key)
     if name is not None:

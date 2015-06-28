@@ -1,3 +1,4 @@
+from . import service_messages
 from protorpc import remote
 from jetway import api
 from jetway.owners import owners
@@ -17,8 +18,8 @@ class ProjectService(api.Service):
             projects.ProjectDoesNotExistError) as e:
       raise api.NotFoundError(str(e))
 
-  @remote.method(messages.CreateProjectRequest,
-                 messages.CreateProjectResponse)
+  @remote.method(service_messages.CreateProjectRequest,
+                 service_messages.CreateProjectResponse)
   def create(self, request):
     try:
       owner = owners.Owner.get(request.project.owner.nickname)
@@ -27,12 +28,12 @@ class ProjectService(api.Service):
                                         created_by=self.me)
     except projects.ProjectExistsError as e:
       raise api.ConflictError(str(e))
-    resp = messages.CreateProjectResponse()
+    resp = service_messages.CreateProjectResponse()
     resp.project = project.to_message()
     return resp
 
-  @remote.method(messages.SearchProjectRequest,
-                 messages.SearchProjectResponse)
+  @remote.method(service_messages.SearchProjectRequest,
+                 service_messages.SearchProjectResponse)
   def search(self, request):
     if request.project and request.project.owner:
       owner = owners.Owner.get(request.project.owner.nickname)
@@ -41,46 +42,81 @@ class ProjectService(api.Service):
     results = projects.Project.search(owner=owner, order=messages.Order.NAME)
     results = projects.Project.filter(results, self.me)
     results = sorted(results, key=lambda project: project.name)
-    resp = messages.SearchProjectResponse()
+    resp = service_messages.SearchProjectResponse()
     resp.projects = [project.to_message() for project in results]
     return resp
 
-  @remote.method(messages.UpdateProjectRequest,
-                 messages.UpdateProjectResponse)
+  @remote.method(service_messages.UpdateProjectRequest,
+                 service_messages.UpdateProjectResponse)
   def update(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.ADMINISTER):
       raise api.ForbiddenError('Forbidden.')
     project.update(request.project)
-    resp = messages.UpdateProjectResponse()
+    resp = service_messages.UpdateProjectResponse()
     resp.project = project.to_message()
     return resp
 
-  @remote.method(messages.GetProjectRequest,
-                 messages.GetProjectResponse)
+  @remote.method(service_messages.GetProjectRequest,
+                 service_messages.GetProjectResponse)
   def get(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
       raise api.ForbiddenError('Forbidden.')
-    resp = messages.GetProjectResponse()
+    resp = service_messages.GetProjectResponse()
     resp.project = project.to_message()
     return resp
 
-  @remote.method(messages.DeleteProjectRequest,
-                 messages.DeleteProjectResponse)
+  @remote.method(service_messages.DeleteProjectRequest,
+                 service_messages.DeleteProjectResponse)
   def delete(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.ADMINISTER):
       raise api.ForbiddenError('Forbidden.')
     project.delete()
-    resp = messages.DeleteProjectResponse()
+    resp = service_messages.DeleteProjectResponse()
     return resp
 
-  @remote.method(messages.CanRequest,
-                 messages.CanResponse)
+  @remote.method(service_messages.CanRequest,
+                 service_messages.CanResponse)
   def can(self, request):
     project = self._get_project(request)
     can = project.can(self.me, request.permission)
-    resp = messages.CanResponse()
+    resp = service_messages.CanResponse()
     resp.can = can
+    return resp
+
+  @remote.method(service_messages.GetProjectRequest,
+                 service_messages.ListWatchersResponse)
+  def watch(self, request):
+    project = self._get_project(request)
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden.')
+    project.create_watcher(self.me)
+    watchers = project.list_watchers()
+    resp = service_messages.ListWatchersResponse()
+    resp.watchers = [watcher.to_message() for watcher in watchers]
+    return resp
+
+  @remote.method(service_messages.GetProjectRequest,
+                 service_messages.ListWatchersResponse)
+  def unwatch(self, request):
+    project = self._get_project(request)
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden.')
+    project.delete_watcher(self.me)
+    watchers = project.list_watchers()
+    resp = service_messages.ListWatchersResponse()
+    resp.watchers = [watcher.to_message() for watcher in watchers]
+    return resp
+
+  @remote.method(service_messages.ListWatchersRequest,
+                 service_messages.ListWatchersResponse)
+  def list_watchers(self, request):
+    project = self._get_project(request)
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden.')
+    watchers = project.list_watchers()
+    resp = service_messages.ListWatchersResponse()
+    resp.watchers = [watcher.to_message() for watcher in watchers]
     return resp

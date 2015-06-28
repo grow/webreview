@@ -160,9 +160,16 @@ var app = angular.module('jetway', [
         templateUrl: _prefix + '/static/html/project.builds.html'
       })
       .state('project.translations', {
+        abstract: true,
         url: '/translations',
         templateUrl: _prefix + '/static/html/project.translations.html'
       })
+        .state('project.translations.index', {
+          url: ''
+        })
+        .state('project.translations.locale', {
+          url: '/:locale'
+        })
       .state('project.team', {
         url: '/team',
         templateUrl: _prefix + '/static/html/project.team.html'

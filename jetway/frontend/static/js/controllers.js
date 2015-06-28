@@ -91,6 +91,23 @@ var ProjectController = function($scope, $stateParams, $state, grow) {
     'nickname': $stateParams['project']
   };
 
+  $scope.createWatcher = function(project) {
+    console.log(project);
+    grow.rpc('projects.watch', {
+      'project': project
+    }).execute(function(resp) {
+      $scope.watchers = resp['watchers'];
+      $scope.$apply();
+    });
+  };
+
+  $scope.rpcs.watchers = grow.rpc('projects.list_watchers', {
+    'project': project
+  }).execute(function(resp) {
+    $scope.watchers = resp['watchers'];
+    $scope.$apply();
+  });
+
   $scope.rpcs.project = grow.rpc('projects.get', {
     'project': project
   }).execute(function(resp) {

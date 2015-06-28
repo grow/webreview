@@ -12,6 +12,12 @@ indexes:
 
 - kind: Fileset
   properties:
+  - name: name
+  - name: modified
+    direction: desc
+
+- kind: Fileset
+  properties:
   - name: project_key
   - name: modified
     direction: desc
