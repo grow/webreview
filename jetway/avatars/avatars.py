@@ -44,7 +44,7 @@ class Avatar(ndb.Model):
 
   @webapp2.cached_property
   def _signer(self):
-    gcs_bucket = appengine_config.GCS_BUCKET
+    gcs_bucket = appengine_config.get_gcs_bucket()
     root = '/{}/jetway/avatars/{}'.format(gcs_bucket, self.ident)
     return files.Signer(root)
 
@@ -61,7 +61,7 @@ class Avatar(ndb.Model):
 
   @classmethod
   def create_upload_url(cls, entity):
-    gcs_bucket = appengine_config.GCS_BUCKET
+    gcs_bucket = appengine_config.get_gcs_bucket()
     letter = entity.key.kind()[:1].lower()
     avatar_ident = '{}/{}'.format(letter, entity.ident)
     root = '{}/jetway/avatars/{}'.format(gcs_bucket, avatar_ident)

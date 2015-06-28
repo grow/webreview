@@ -47,10 +47,10 @@ EMAIL_SENDER = '{} <{}>'.format(_sender_name, _sender_address)
 
 IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')
 
-if IS_DEV_SERVER:
-  GCS_BUCKET = 'grow-prod.appspot.com'
-else:
-  GCS_BUCKET = app_identity.get_default_gcs_bucket_name()
+def get_gcs_bucket():
+  if IS_DEV_SERVER:
+    return 'grow-prod.appspot.com'
+  return app_identity.get_default_gcs_bucket_name()
 
 if os.environ.get('TESTING'):
   PREVIEW_HOSTNAME = 'jetway-test.appspot.com'

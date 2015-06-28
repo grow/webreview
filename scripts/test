@@ -8,7 +8,6 @@ if [ -d env ]; then
     --nocapture \
     --nologcapture \
     --with-gae \
-    --without-sandbox \
     --with-coverage \
     --cover-erase \
     --cover-html \

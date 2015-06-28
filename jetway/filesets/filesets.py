@@ -10,8 +10,6 @@ import appengine_config
 import os
 import webapp2
 
-GCS_BUCKET = appengine_config.GCS_BUCKET
-
 
 class Error(Exception):
   pass
@@ -251,7 +249,8 @@ class Fileset(ndb.Model):
 
   @property
   def root(self):
-    return '/{}/jetway/filesets/{}'.format(GCS_BUCKET, self.ident)
+    gcs_bucket = appengine_config.get_gcs_bucket()
+    return '/{}/jetway/filesets/{}'.format(gcs_bucket, self.ident)
 
   @webapp2.cached_property
   def _signer(self):
