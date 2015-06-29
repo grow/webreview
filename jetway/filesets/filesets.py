@@ -141,7 +141,8 @@ class Fileset(ndb.Model):
     key = ndb.Key('Fileset', int(ident))
     fileset = key.get()
     if fileset is None:
-      raise FilesetDoesNotExistError('Fileset "{}" does not exist.'.format(ident))
+      text = 'Fileset "{}" does not exist.'.format(ident)
+      raise FilesetDoesNotExistError(text)
     return fileset
 
   @classmethod
@@ -153,13 +154,15 @@ class Fileset(ndb.Model):
       return cls.get(name=name_or_ident)
 
   @classmethod
-  def get(cls, project=None, name=None, commit=None):
+  def get(cls, project=None, name=None, commit=None, branch=None):
     query = cls.query()
     query = query.order(-cls.modified)
     if project is not None:
       query = query.filter(cls.project_key == project.key)
     if name is not None:
       query = query.filter(cls.name == name)
+    if branch is not None:
+      query = query.filter(cls.branch == branch)
     if commit is not None:
       query = query.filter(cls.commit.sha == commit.sha)
     fileset = query.get()
@@ -173,7 +176,6 @@ class Fileset(ndb.Model):
       return '{} ({} - {})'.format(self.project.name, self.commit.branch,
                                    self.sha_short)
     return '{} ({})'.format(self.project.name, self.ident)
-
 
   def __repr__(self):
     if self.commit and self.commit.sha:
@@ -239,7 +241,7 @@ class Fileset(ndb.Model):
     if self.stats:
       message.stats = self.stats.to_message()
     if self.resources:
-      message.resources = [resource.to_message() for resource in self.resources]
+      message.resources = [r.to_message() for r in self.resources]
     return message
 
   @property
@@ -277,7 +279,8 @@ class Fileset(ndb.Model):
     return self._signer.sign_get_request(unsigned_request)
 
   def get_headers_for_path(self, path, request_headers=None):
-    return self._signer.get_headers_for_path(path, request_headers=request_headers)
+    return self._signer.get_headers_for_path(
+        path, request_headers=request_headers)
 
   def get_sha_for_resource_path(self, path):
     for resource in self.resources:

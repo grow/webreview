@@ -1,3 +1,25 @@
+<div class="right">
+  <div class="btn-group" dropdown ng-if="watching != undefined">
+    <button ng-if="!watching" type="button" class="btn btn-default btn-sm" ng-click="watch(project)">
+      Watch
+    </button>
+    <button ng-if="watching" type="button" class="btn btn-default btn-sm" ng-click="unwatch(project)">
+      Unwatch
+    </button>
+    <button type="button" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle>
+      {{watchers.length || 0}}
+      <span class="caret" ng-if="watchers.length"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li ng-repeat="watcher in watchers">
+        <a ui-sref="owner.projects({'owner': watcher.user.nickname})">
+        {{watcher.user.nickname}}
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
 <h1>
   <img ng-src="{{project.avatar_url}}" class="avatar">
   <a ui-sref="owner.projects({'owner': project.owner.nickname})">{{project.owner.nickname}}</a> / <a ui-sref="project.index({'owner': project.owner.nickname, 'project': project.nickname})">{{project.nickname}}</a>
@@ -10,7 +32,6 @@
   <li ng-class="{'active': $state.includes('project.translations')}"><a ui-sref="project.translations.index({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Translations</a></li>
   <li ng-class="{'active': $state.is('project.team')}"><a ui-sref="project.team({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Team</a></li>
   <li ng-class="{'active': $state.is('project.settings')}"><a ui-sref="project.settings({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Settings</a></li>
-  <li ng-class="{'active': $state.is('project.watchers')}"><a ui-sref="project.watchers({'owner': project.owner.nickname, 'project': project.nickname})" role="tab" data-toggle="tab">Watchers ({{watchers.length || '0'}})</a></li>
 </ul>
 
 <ui-view></ui-view>

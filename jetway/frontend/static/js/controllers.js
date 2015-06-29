@@ -84,19 +84,39 @@ var OwnerController = function($scope, $stateParams, $rootScope, $http, grow) {
 };
 
 
-var ProjectController = function($scope, $stateParams, $state, grow) {
+var ProjectController = function($scope, $stateParams, $state, $rootScope, grow) {
   $scope.rpcs = {};
   var project = {
     'owner': {'nickname': $stateParams['owner']},
     'nickname': $stateParams['project']
   };
 
-  $scope.createWatcher = function(project) {
-    console.log(project);
+  var setWatchingStatus = function(watchers) {
+    var me = $rootScope.me;
+    $scope.watching = false;
+    watchers.forEach(function(watcher) {
+      if (watcher['user']['ident'] == me['ident']) {
+        $scope.watching = true;
+      }
+    });
+  };
+
+  $scope.unwatch = function(project) {
+    grow.rpc('projects.unwatch', {
+      'project': project
+    }).execute(function(resp) {
+      $scope.watchers = resp['watchers'];
+      $scope.watching = false;
+      $scope.$apply();
+    });
+  };
+
+  $scope.watch = function(project) {
     grow.rpc('projects.watch', {
       'project': project
     }).execute(function(resp) {
       $scope.watchers = resp['watchers'];
+      $scope.watching = true;
       $scope.$apply();
     });
   };
@@ -105,6 +125,7 @@ var ProjectController = function($scope, $stateParams, $state, grow) {
     'project': project
   }).execute(function(resp) {
     $scope.watchers = resp['watchers'];
+    setWatchingStatus($scope.watchers);
     $scope.$apply();
   });
 

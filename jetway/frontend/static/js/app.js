@@ -178,10 +178,6 @@ var app = angular.module('jetway', [
         url: '/settings',
         templateUrl: _prefix + '/static/html/project.settings.html'
       })
-      .state('project.watchers', {
-        url: '/watchers',
-        templateUrl: _prefix + '/static/html/project.watchers.html'
-      })
 
     .state('file', {
       url: '/:owner/:project/:branch/file/{file:.*}',
