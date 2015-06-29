@@ -31,15 +31,19 @@
           <div class="btn-group" dropdown>
             <div class="btn dropdown-toggle" dropdown-toggle>
               <img class="avatar avatar-xs" src="{{me.avatar_url}}">
-              {{me.nickname}}
               <span class="caret"></span>
             </div>
+            {% raw %}
             <ul class="dropdown-menu" role="menu">
-              <li><a ui-sref="owner.projects({'owner': me.nickname})">Your sites</a>
-              <li><a ui-sref="settings.index()">Settings</a>
+              <li class="dropdown-header">{{me.nickname}}</li>
               <li role="separator" class="divider"></li>
+              <li><a ui-sref="owner.projects({'owner': me.nickname})">Your sites</a>
+              <li ng-repeat="org in orgs"><a ui-sref="owner.projects({'owner': org.nickname})">{{org.nickname}}</a>
+              <li role="separator" class="divider"></li>
+              <li><a ui-sref="settings.index()">Settings</a>
               <li><a href="{{sign_out_url}}" target="_self">Sign out</a>
             </ul>
+            {% endraw %}
           </div>
         </li>
         {% else %}

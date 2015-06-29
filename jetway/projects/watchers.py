@@ -41,7 +41,7 @@ class Watcher(ndb.Model):
   @classmethod
   def search(cls, project):
     query = cls.query()
-    query.filter(cls.project_key == project.key)
+    query = query.filter(cls.project_key == project.key)
     return query.fetch()
 
   def to_message(self):

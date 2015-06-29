@@ -6,7 +6,7 @@
     <button ng-if="watching" type="button" class="btn btn-default btn-sm" ng-click="unwatch(project)">
       Unwatch
     </button>
-    <button type="button" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle>
+    <button type="button" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle ng-if="watchers.length">
       {{watchers.length || 0}}
       <span class="caret" ng-if="watchers.length"></span>
     </button>

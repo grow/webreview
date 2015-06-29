@@ -3,16 +3,16 @@ var HeaderController = function($scope, $rootScope, grow) {
     $rootScope.me = resp['me'];
     $scope.$apply();
   });
+  grow.rpc('me.search_orgs').execute(function(resp) {
+    $rootScope.orgs = resp['orgs'];
+    $rootScope.$apply();
+  });
 };
 
 
 var HomeController = function($scope, $rootScope) {
   $rootScope.$watch('me', function() {
     if ($rootScope.me) {
-      grow.rpc('me.search_orgs').execute(function(resp) {
-        $scope.orgs = resp['orgs'];
-        $scope.$apply();
-      });
       grow.rpc('me.search_projects').execute(function(resp) {
         $scope.projects = resp['projects'];
         $scope.$apply();

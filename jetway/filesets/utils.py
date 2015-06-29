@@ -14,9 +14,10 @@ _env = jinja2.Environment(loader=_loader, autoescape=True, trim_blocks=True)
 def send_finalized_email(fileset):
   subject = 'Preview: {}'.format(str(fileset))
   template_name = 'finalized_email.html'
-#  users = fileset.project.list_users_to_notify()
-#  emails = [user.email for user in users]
-  emails = ['jeremydw@google.com']
+  watchers = fileset.project.list_watchers()
+  if not watchers:
+    return
+  emails = [watcher.user.email for watcher in watchers]
   if not emails:
     return
 
