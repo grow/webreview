@@ -1,3 +1,21 @@
 .right {
   float: right;
 }
+
+nav.navbar {
+  border-radius: 0;
+  border-right: none;
+  border-left: none;
+
+  .navbar-right.navbar-nav > li > a {
+    padding: 7px 0;
+  }
+
+  .navbar-brand {
+    img {
+      margin: -12px -5px -10px 0;
+      height: 32px;
+      width: 32px;
+    }
+  }
+}

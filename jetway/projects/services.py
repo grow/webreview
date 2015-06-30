@@ -87,15 +87,14 @@ class ProjectService(api.Service):
     return resp
 
   @remote.method(service_messages.GetProjectRequest,
-                 service_messages.ListWatchersResponse)
+                 service_messages.CreateWatcherResponse)
   def watch(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
       raise api.ForbiddenError('Forbidden.')
-    project.create_watcher(self.me)
-    watchers = project.list_watchers()
-    resp = service_messages.ListWatchersResponse()
-    resp.watchers = [watcher.to_message() for watcher in watchers]
+    watcher = project.create_watcher(self.me)
+    resp = service_messages.CreateWatcherResponse()
+    resp.watcher = watcher.to_message()
     return resp
 
   @remote.method(service_messages.GetProjectRequest,
@@ -118,5 +117,40 @@ class ProjectService(api.Service):
       raise api.ForbiddenError('Forbidden.')
     watchers = project.list_watchers()
     resp = service_messages.ListWatchersResponse()
+    resp.watching = any(self.me == watcher.user for watcher in watchers)
     resp.watchers = [watcher.to_message() for watcher in watchers]
+    return resp
+
+  @remote.method(service_messages.ListNamedFilesetsRequest,
+                 service_messages.ListNamedFilesetsResponse)
+  def list_named_filesets(self, request):
+    project = self._get_project(request)
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden.')
+    named_filesets = project.list_named_filesets()
+    resp = service_messages.ListNamedFilesetsRequest()
+    resp.named_filesets = [named_fileset.to_message()
+                           for named_fileset in named_filesets]
+    return resp
+
+  @remote.method(service_messages.CreateNamedFilesetRequest,
+                 service_messages.CreateNamedFilesetResponse)
+  def create_named_fileset(self, request):
+    project = self._get_project(request)
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden.')
+    named_fileset = project.create_named_fileset(
+        request.named_fileset.name, request.named_fileset.branch)
+    resp = service_messages.CreateNamedFilesetResponse()
+    resp.named_fileset = named_fileset.to_message()
+    return resp
+
+  @remote.method(service_messages.DeleteNamedFilesetRequest,
+                 service_messages.DeleteNamedFilesetResponse)
+  def delete_named_fileset(self, request):
+    project = self._get_project(request)
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden.')
+    project.delete_named_fileset(request.named_fileset.name)
+    resp = service_messages.DeleteNamedFilesetResponse()
     return resp

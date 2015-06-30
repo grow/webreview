@@ -33,6 +33,12 @@ class NamedFileset(ndb.Model):
   def ident(self):
     return str(self.key.id())
 
+  @classmethod
+  def search(cls, project):
+    query = cls.query()
+    query = query.filter(cls.project_key == project.key)
+    return query.fetch()
+
   def get_fileset(self):
     return filesets.Fileset.get(branch=branch)
 

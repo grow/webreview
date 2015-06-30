@@ -1,3 +1,4 @@
+from ..filesets.named_fileset_messages import *
 from .messages import *
 from .watcher_messages import *
 from protorpc import messages
@@ -66,3 +67,34 @@ class ListWatchersRequest(messages.Message):
 
 class ListWatchersResponse(messages.Message):
   watchers = messages.MessageField(WatcherMessage, 1, repeated=True)
+  watching = messages.BooleanField(2)
+
+
+class CreateWatcherResponse(messages.Message):
+  watcher = messages.MessageField(WatcherMessage, 1)
+
+
+class ListNamedFilesetsRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class ListNamedFilesetsResponse(messages.Message):
+  named_filesets = messages.MessageField(NamedFilesetMessage, 1, repeated=True)
+
+
+class CreateNamedFilesetRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+  named_fileset = messages.MessageField(NamedFilesetMessage, 2)
+
+
+class CreateNamedFilesetResponse(messages.Message):
+  named_fileset = messages.MessageField(NamedFilesetMessage, 1)
+
+
+class DeleteNamedFilesetRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+  named_fileset = messages.MessageField(NamedFilesetMessage, 2)
+
+
+class DeleteNamedFilesetResponse(messages.Message):
+  named_fileset = messages.MessageField(NamedFilesetMessage, 1)

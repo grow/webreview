@@ -12,20 +12,23 @@ class Watcher(ndb.Model):
     return str(self.key.id())
 
   @classmethod
+  def _make_id(cls, project, user):
+    return '{}:{}'.format(project.ident, user.ident)
+
+  @classmethod
   def create(cls, project, user):
     watcher = cls.get(project, user)
     if watcher:
       return watcher
-    watcher = cls(project_key=project.key, user_key=user.key)
+    watcher = cls(id=cls._make_id(project, user))
+    watcher.project_key = project.key
+    watcher.user_key = user.key
     watcher.put()
     return watcher
 
   @classmethod
   def get(cls, project, user):
-    query = cls.query()
-    query.filter(cls.project_key == project.key)
-    query.filter(cls.user_key == user.key)
-    return query.get()
+    return cls.get_by_id(cls._make_id(project, user))
 
   def delete(self):
     self.key.delete()

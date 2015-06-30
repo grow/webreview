@@ -1,5 +1,6 @@
 *.py[cod]
 scripts/deploy_*
+config/*/*
 config/jetway.*.yaml
 .DS_Store
 

@@ -1,4 +1,5 @@
 from protorpc import messages
+from protorpc import message_types
 from jetway.owners import messages as owner_messages
 
 
@@ -33,5 +34,4 @@ class ProjectMessage(messages.Message):
   visibility = messages.EnumField(Visibility, 7)
   cover = messages.MessageField(CoverMessage, 8)
   name = messages.StringField(9)
-
-
+  built = message_types.DateTimeField(10)

@@ -91,16 +91,6 @@ var ProjectController = function($scope, $stateParams, $state, $rootScope, grow)
     'nickname': $stateParams['project']
   };
 
-  var setWatchingStatus = function(watchers) {
-    var me = $rootScope.me;
-    $scope.watching = false;
-    watchers.forEach(function(watcher) {
-      if (watcher['user']['ident'] == me['ident']) {
-        $scope.watching = true;
-      }
-    });
-  };
-
   $scope.unwatch = function(project) {
     grow.rpc('projects.unwatch', {
       'project': project
@@ -115,7 +105,10 @@ var ProjectController = function($scope, $stateParams, $state, $rootScope, grow)
     grow.rpc('projects.watch', {
       'project': project
     }).execute(function(resp) {
-      $scope.watchers = resp['watchers'];
+      if (!$scope.watchers) {
+        $scope.watchers = [];
+      }
+      $scope.watchers.push(resp['watcher']);
       $scope.watching = true;
       $scope.$apply();
     });
@@ -125,7 +118,7 @@ var ProjectController = function($scope, $stateParams, $state, $rootScope, grow)
     'project': project
   }).execute(function(resp) {
     $scope.watchers = resp['watchers'];
-    setWatchingStatus($scope.watchers);
+    $scope.watching = resp['watching'];
     $scope.$apply();
   });
 

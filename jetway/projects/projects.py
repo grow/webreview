@@ -47,6 +47,7 @@ class Project(ndb.Model):
   cover = ndb.StructuredProperty(Cover)
   visibility = msgprop.EnumProperty(messages.Visibility,
                                     default=messages.Visibility.PRIVATE)
+  built = ndb.DateTimeProperty()
 
   @property
   def name(self):
@@ -187,6 +188,7 @@ class Project(ndb.Model):
     message.visibility = self.visibility
     if self.cover:
       message.cover = self.cover.to_message()
+    message.built = self.built
     return message
 
   def update(self, message):
@@ -249,9 +251,6 @@ class Project(ndb.Model):
     return False
 
   def create_watcher(self, user):
-    existing = self.get_watcher(user)
-    if existing:
-      return existing
     return watchers.Watcher.create(project=self, user=user)
 
   def get_watcher(self, user):
@@ -259,7 +258,20 @@ class Project(ndb.Model):
 
   def delete_watcher(self, user):
     existing = self.get_watcher(user)
-    existing.delete()
+    if existing:
+      existing.delete()
 
   def list_watchers(self):
     return watchers.Watcher.search(project=self)
+
+  def create_named_fileset(self, name, branch):
+    return named_filesets.NamedFileset.create(
+        project=project, branch=branch, name=name)
+
+  def delete_named_fileset(self, name):
+    named_fileset = named_filesets.NamedFileset.get(name)
+    named_fileset.delete()
+    return
+
+  def list_named_filesets(self):
+    return named_filesets.NamedFileset.search(project=self)

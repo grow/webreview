@@ -51,6 +51,11 @@
         {% endif %}
       </ul>
       <div class="navbar-header">
+        {% if config.options.logo %}
+          <a class="navbar-brand" href="/">
+            <img alt="{{config.options.title}}" src="/_jetway/{{version}}/config/{{config.options.logo}}">
+          </a>
+        {% endif %}
         <a class="navbar-brand" href="/">{{config.options.title}}</a>
       </div>
     </div>
