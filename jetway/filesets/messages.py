@@ -105,6 +105,14 @@ class FilesetMessage(messages.Message):
   status = messages.EnumField(FilesetStatus, 16)
 
 
+class NamedFilesetMessage(messages.Message):
+  ident = messages.StringField(1)
+  name = messages.StringField(2)
+  branch = messages.StringField(3)
+  project = messages.MessageField(project_messages.ProjectMessage, 4)
+  created = message_types.DateTimeField(5)
+
+
 ###
 
 

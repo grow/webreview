@@ -15,6 +15,7 @@ class NamedFileset(ndb.Model):
   name = ndb.StringProperty()
   branch = ndb.StringProperty()
   project_key = ndb.KeyProperty()
+  created = ndb.DateTimeProperty(auto_now_add=True)
 
   @classmethod
   def create(cls, project, branch, name):
@@ -46,8 +47,14 @@ class NamedFileset(ndb.Model):
   def delete(self):
     self.key.delete()
 
+  @property
+  def project(self):
+    return self.project_key.get()
+
   def to_message(self):
     message = messages.NamedFilesetMessage()
+    message.name = self.name
     message.branch = self.branch
     message.project = self.project.to_message()
+    message.created = self.created
     return message
