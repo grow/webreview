@@ -21,7 +21,7 @@
 </div>
 
 <h1>
-  <img ng-src="{{project.avatar_url}}" class="avatar">
+  <img ng-src="{{project.avatar_url}}" class="avatar avatar-sm">
   <a ui-sref="owner.projects({'owner': project.owner.nickname})">{{project.owner.nickname}}</a> / <a ui-sref="project.index({'owner': project.owner.nickname, 'project': project.nickname})">{{project.nickname}}</a>
 </h1>
 

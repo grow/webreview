@@ -123,6 +123,7 @@ class Fileset(ndb.Model):
   source_files = ndb.StructuredProperty(File, repeated=True)
   commit = msgprop.MessageProperty(messages.CommitMessage,
                                    indexed_fields=['sha', 'branch'])
+  status = msgprop.EnumProperty(messages.FilesetStatus)
 
   @classmethod
   def create(cls, project, commit=None, name=None, created_by=None):
@@ -131,6 +132,7 @@ class Fileset(ndb.Model):
       fileset = cls.get(project=project, name=name, commit=commit)
     except FilesetDoesNotExistError:
       fileset = cls(project_key=project.key, commit=commit, name=name)
+      fileset.status = messages.FilesetStatus.BUILDING
       if created_by:
         fileset.created_by_key = created_by.key
       fileset.put()
@@ -214,6 +216,7 @@ class Fileset(ndb.Model):
 
   def finalize(self):
     self.finalized = True
+    self.status = messages.FilesetStatus.SUCCESS
     fileset_utils.send_finalized_email(self)
     self.put()
 
@@ -234,6 +237,7 @@ class Fileset(ndb.Model):
     message.modified = self.modified
     message.commit = self.commit
     message.finalized = self.finalized
+    message.status = self.status
     if self.created_by_key:
       message.created_by = self.created_by.to_message()
     if self.log:

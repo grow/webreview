@@ -3,6 +3,7 @@ from jetway.users import messages
 from jetway.owners import owners
 from jetway.projects import projects
 from jetway.users import users
+from jetway.projects import watcher_messages
 from protorpc import remote
 
 
@@ -58,6 +59,16 @@ class MeService(api.Service):
     resp = messages.SearchOrgsResponse()
     resp.orgs = [org.to_message() for org in results]
     return resp
+
+  @remote.method(watcher_messages.SearchWatchersRequest,
+                 watcher_messages.SearchWatchersResponse)
+  @api.me_required
+  def search_watchers(self, request):
+    results = self.me.search_orgs()
+    resp = watcher_messages.SearchWatchersResponse()
+    resp.orgs = [org.to_message() for org in results]
+    return resp
+
 
   @remote.method(messages.RegenerateGitPasswordRequest,
                  messages.RegenerateGitPasswordResponse)

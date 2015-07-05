@@ -48,16 +48,22 @@ var app = angular.module('jetway', [
         url: '/accounts',
         templateUrl: _prefix + '/static/html/settings.accounts.html'
       })
+      .state('settings.memberships', {
+        url: '/memberships',
+        templateUrl: _prefix + '/static/html/settings.memberships.html'
+      })
+      .state('settings.org', {
+        url: '/org',
+        abstract: true
+      })
+        .state('settings.org.index', {
+          url: '/:org'
+        })
 /*
       .state('settings.referrals', {
         url: '/referrals',
         templateUrl: _prefix + '/static/html/settings.referrals.html'
         controller: ReferralsController
-      })
-      .state('settings.organizations', {
-        url: '/organizations',
-        templateUrl: _prefix + '/static/html/settings.orgs.html'
-        controller: SettingsOrgsController
       })
 */
 

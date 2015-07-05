@@ -8,16 +8,15 @@ if [ -d env ]; then
     gcloud preview app deploy \
       --project=$1 \
       --version=$2 \
-      --env_vars=JETWAY_CONFIG=config/jetway.grow-prod.yaml \
-      app.yaml
-  elif [ $1]; then
+      app.grow-prod.yaml
+  elif [ $1 ]; then
     gcloud preview app deploy \
       --project=$1 \
       --version=auto \
-      --env_vars=JETWAY_CONFIG=config/jetway.grow-prod.yaml \
-      app.yaml
+      app.grow-prod.yaml
   else
-    gcloud preview app deploy app.yaml
+    echo "Usage: ./scripts/deploy <project>"
+    exit 1
   fi
   deactivate
 else

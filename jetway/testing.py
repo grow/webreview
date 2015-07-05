@@ -24,10 +24,13 @@ class BaseTestCase(unittest.TestCase):
     self.testbed.setup_env(testing='True')
     reload(appengine_config)
 
-  def create_fileset(self):
+  def create_project(self):
     creator = users.User.create('creator', email='creator@example.com')
-    org = orgs.Org.create('owner', created_by=creator)
+    orgs.Org.create('owner', created_by=creator)
     owner = owners.Owner.get('owner')
-    project = projects.Project.create(owner, 'project', created_by=creator)
+    return projects.Project.create(owner, 'project', created_by=creator)
+
+  def create_fileset(self):
+    project = self.create_project()
     commit = fileset_messages.CommitMessage(branch='master', sha='1234567890')
     return project.create_fileset('master', commit=commit)

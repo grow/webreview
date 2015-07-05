@@ -3,6 +3,7 @@ from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from jetway.avatars import avatars
 from jetway.filesets import filesets
+from jetway.filesets import named_filesets
 from jetway.owners import owners
 from jetway.projects import messages
 from jetway.teams import teams
@@ -266,10 +267,12 @@ class Project(ndb.Model):
 
   def create_named_fileset(self, name, branch):
     return named_filesets.NamedFileset.create(
-        project=project, branch=branch, name=name)
+        project=self, branch=branch, name=name)
 
   def delete_named_fileset(self, name):
     named_fileset = named_filesets.NamedFileset.get(name)
+    if named_fileset is None:
+      raise Error('Named fileset does not exist.')
     named_fileset.delete()
     return
 

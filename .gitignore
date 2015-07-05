@@ -3,6 +3,7 @@ scripts/deploy_*
 config/*/*
 config/jetway.*.yaml
 .DS_Store
+app.*.yaml
 
 testing/*.zip
 testing/*.json

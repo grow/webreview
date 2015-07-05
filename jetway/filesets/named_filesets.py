@@ -2,6 +2,7 @@ from google.appengine.ext import ndb
 from . import filesets
 from . import messages
 
+
 class Error(Exception):
   pass
 
@@ -40,7 +41,7 @@ class NamedFileset(ndb.Model):
     return query.fetch()
 
   def get_fileset(self):
-    return filesets.Fileset.get(branch=branch)
+    return filesets.Fileset.get(branch=self.branch)
 
   def delete(self):
     self.key.delete()

@@ -31,6 +31,12 @@ class ResourceMessage(messages.Message):
   sha = messages.StringField(3)
 
 
+class FilesetStatus(messages.Enum):
+  BUILDING = 0
+  SUCCESS = 1
+  BROKEN = 2
+
+
 class FileMessage(messages.Message):
   path = messages.StringField(1)
   created_by = messages.StringField(2)
@@ -96,6 +102,7 @@ class FilesetMessage(messages.Message):
   created_by = messages.MessageField(user_messages.UserMessage, 13)
   commit = messages.MessageField(CommitMessage, 14)
   finalized = messages.BooleanField(15)
+  status = messages.EnumField(FilesetStatus, 16)
 
 
 ###

@@ -22,7 +22,7 @@ def send_finalized_email(fileset):
     return
 
   kwargs = {
-    'config': appengine_config,
+    'config': appengine_config.jetway_config,
     'fileset': fileset,
   }
   if fileset.commit and fileset.commit.author:

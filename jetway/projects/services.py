@@ -137,7 +137,7 @@ class ProjectService(api.Service):
                  service_messages.CreateNamedFilesetResponse)
   def create_named_fileset(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.READ):
+    if not project.can(self.me, projects.Permission.WRITE):
       raise api.ForbiddenError('Forbidden.')
     named_fileset = project.create_named_fileset(
         request.named_fileset.name, request.named_fileset.branch)
