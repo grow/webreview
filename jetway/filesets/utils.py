@@ -22,8 +22,8 @@ def send_finalized_email(fileset):
     return
 
   kwargs = {
-    'config': appengine_config.jetway_config,
-    'fileset': fileset,
+      'config': appengine_config.jetway_config,
+      'fileset': fileset,
   }
   if fileset.commit and fileset.commit.author:
     kwargs['author'] = users.User.get_by_email(fileset.commit.author.email)

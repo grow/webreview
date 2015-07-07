@@ -16,7 +16,7 @@
 
   {% if fileset.commit %}
     <div class="author">
-      {% if author %}
+      {% if author.avatar_url %}
         <img src="{{author.avatar_url}}" class="avatar">
       {% endif %}
       {{fileset.commit.author.name}}

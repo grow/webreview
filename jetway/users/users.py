@@ -1,7 +1,7 @@
+import random
 from google.appengine.ext import ndb
 from jetway.avatars import avatars
 from jetway.files import files
-from jetway.projects import messages as project_messages
 from jetway.teams import teams
 from jetway.users import messages
 from webapp2_extras import security
@@ -46,9 +46,13 @@ class BaseUser(models.User):
   @classmethod
   def get_or_create_by_email(cls, email):
    found_user = cls.query(cls.email == email).get()
-   if found_user is None:
-     return cls.create(email, email=email)
-   return found_user
+   if found_user is not None:
+     return found_user
+   # Instead of using the email address for the nickname, strip the
+   # domain and use the username. If another user already has the same
+   # username, append some numbers and try again.
+   username = cls.create_unique_username(email)
+   return cls.create(username, email=email)
 
   @classmethod
   def get_multi_by_email(cls, emails):
@@ -60,6 +64,22 @@ class BaseUser(models.User):
         '{}.auth_id:{}'.format(name, auth_id) for auth_id in self.auth_ids
     ])
     self.key.delete()
+
+  @classmethod
+  def create_unique_username(cls, email):
+   username = email.split('@')[0]
+   try:
+     existing_user = cls.get(username)
+   except UserDoesNotExistError:
+     return username
+   while existing_user is not None:
+     num = int(random.random() * 1000)
+     username = '{}{}'.format(username, num)
+     try:
+       existing_user = cls.get(username)
+     except UserDoesNotExistError:
+       return username
+   return username
 
 
 class User(BaseUser):

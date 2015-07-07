@@ -140,7 +140,7 @@ class OAuth2CallbackHandler(SessionHandler):
     # If the user is signing in for the first time, create a ConnectedUser.
     user = users.User.get_by_auth_id(auth_id)
     if user is None:
-      nickname = data['email']
+      nickname = users.User.create_unique_username(data['email'])
       data.pop('id', None)
       unique_properties = ['nickname', 'email']
       ok, user = users.User.create_user(
@@ -148,7 +148,7 @@ class OAuth2CallbackHandler(SessionHandler):
           **data)
       if not ok:
         logging.exception('Invalid values: {}'.format(user))
-        self.error('Error creating user.')
+        self.error(500)
         return
 
     # Store the ConnectedUser in the session.

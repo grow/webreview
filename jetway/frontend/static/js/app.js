@@ -1,4 +1,4 @@
-var _prefix = '/_jetway/' + __config.ver;
+var _prefix = '/_app/' + __config.ver;
 
 var app = angular.module('jetway', [
   'ui.router',

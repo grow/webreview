@@ -707,6 +707,18 @@ var CollaboratorsController = function($scope, $state, $stateParams, grow) {
 
 
 var ProjectSettingsController = function($scope, $state, $rootScope, $stateParams, grow) {
+  $scope.createNamedFileset = function(project, namedFileset) {
+    grow.rpc('projects.list_named_filesets', {'project': project}).execute(function(resp) {
+      $scope.namedFilesets = resp['named_filesets'];
+      $scope.$apply();
+    });
+  };
+  $scope.listNamedFilesets = function(project) {
+    grow.rpc('projects.list_named_filesets', {'project': project}).execute(function(resp) {
+      $scope.namedFilesets = resp['named_filesets'];
+      $scope.$apply();
+    });
+  };
   $scope.deleteProject = function(project) {
     grow.rpc('projects.delete', {'project': project}).execute(function(resp) {
       $state.go('owner.projects', {'owner': project['owner']['nickname']});
