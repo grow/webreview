@@ -52,7 +52,7 @@ class RequestHandler(auth_handlers.SessionHandler):
           self.error(403, 'Forbidden', '{} does not have access to this page.'.format(self.me))
           return
         else:
-          self.error(404, 'You must be signed in to view this page.')
+          self.error(404, 'Not Found' 'You must be signed in to view this page.')
           return
       path = (self.request.path + 'index.html'
               if self.request.path.endswith('/') else self.request.path)

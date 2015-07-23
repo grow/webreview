@@ -94,7 +94,7 @@ class SessionHandler(webapp2.RequestHandler):
     from google.appengine.api import users as users_api
     user = users_api.get_current_user()
     if user:
-      return users.User.get_by_email(user.email())
+      return users.User.get_or_create_by_email(user.email())
     user_dict = self.auth.get_user_by_session()
     if user_dict:
       return users.User.get_by_auth_id(str(user_dict['user_id']))
@@ -147,13 +147,19 @@ class OAuth2CallbackHandler(SessionHandler):
       nickname = users.User.create_unique_username(data['email'])
       data.pop('id', None)
       unique_properties = ['nickname', 'email']
-      ok, user = users.User.create_user(
-          auth_id, unique_properties=unique_properties, nickname=nickname,
-          **data)
-      if not ok:
-        logging.exception('Invalid values: {}'.format(user))
-        self.error(500)
-        return
+      existing_user = users.User.get_by_email(data['email'])
+      if existing_user:
+        existing_user.auth_ids = [{'stringValue': auth_id}]
+        existing_user.populate(**data)
+        existing_user.put()
+      else:
+        ok, user = users.User.create_user(
+            auth_id, unique_properties=unique_properties, nickname=nickname,
+            **data)
+        if not ok:
+          logging.exception('Invalid values: {}'.format(user))
+          self.error(500)
+          return
 
     # Store the ConnectedUser in the session.
     self.auth.set_session({'user_id': auth_id}, remember=True)
