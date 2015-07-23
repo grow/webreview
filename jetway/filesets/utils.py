@@ -22,6 +22,7 @@ def send_finalized_email(fileset):
     return
 
   kwargs = {
+      'appengine_config': appengine_config,
       'config': appengine_config.jetway_config,
       'fileset': fileset,
   }

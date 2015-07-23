@@ -91,6 +91,10 @@ class SessionHandler(webapp2.RequestHandler):
 
   @webapp2.cached_property
   def me(self):
+    from google.appengine.api import users as users_api
+    user = users_api.get_current_user()
+    if user:
+      return users.User.get_by_email(user.email())
     user_dict = self.auth.get_user_by_session()
     if user_dict:
       return users.User.get_by_auth_id(str(user_dict['user_id']))

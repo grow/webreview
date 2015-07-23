@@ -8,6 +8,7 @@ app.*.yaml
 testing/*.zip
 testing/*.json
 config/*.json
+config/domain_access_users.txt
 *.der
 *.p12
 *.pem

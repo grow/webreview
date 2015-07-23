@@ -5,6 +5,7 @@ from jetway.filesets import filesets
 from jetway.owners import owners
 from jetway.projects import projects
 from jetway.server import utils
+from google.appengine.api import users
 import appengine_config
 import jinja2
 import os
@@ -19,7 +20,7 @@ class RequestHandler(auth_handlers.SessionHandler):
   def error(self, status, title, message):
       template = _env.get_template('error.html')
       html = template.render({
-        'error': {'title': title, 'message': message},
+          'error': {'title': title, 'message': message},
       })
       self.response.set_status(status)
       self.response.write(html)
@@ -50,9 +51,8 @@ class RequestHandler(auth_handlers.SessionHandler):
         if self.me:
           self.error(403, 'Forbidden', '{} does not have access to this page.'.format(self.me))
           return
-        elif appengine_config.ALLOWED_USER_DOMAINS is None:
-          self.redirect(self.create_sign_in_url())
-#          self.error(403, 'Unauthorized', 'You must be logged in to access this.')
+        else:
+          self.error(404, 'You must be signed in to view this page.')
           return
       path = (self.request.path + 'index.html'
               if self.request.path.endswith('/') else self.request.path)

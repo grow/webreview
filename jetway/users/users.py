@@ -25,7 +25,6 @@ class UserExistsError(Error):
 
 
 class BaseUser(models.User):
-
   email = ndb.StringProperty()
 
   def user_id(self):
@@ -89,6 +88,12 @@ class User(BaseUser):
   location = ndb.StringProperty()
   website_url = ndb.StringProperty()
   hashed_git_password = ndb.StringProperty()
+
+  def __repr__(self):
+    return str(self)
+
+  def __str__(self):
+    return self.nickname or self.email
 
   @classmethod
   def create(cls, nickname, **kwargs):

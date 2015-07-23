@@ -97,8 +97,8 @@
     text-align: center;
   }
   .logo img {
-    height: 32px;
-    width: 90px;
+    height: {{config.options.logo_sm_height or '32px'}};
+    width: {{config.options.logo_sm_width or '90px'}};
   }
 </style>
 
@@ -107,5 +107,7 @@
     {% block main %}
     {% endblock %}
   </div>
-  <div class="logo"><a href="{{config.BASE_URL}}"><img alt="{{config.options.title}}" src="{{config.BASE_URL}}/_app/{{version}}/config/{{config.options.logo}}"></a></div>
+  {% if config.options.logo_sm %}
+    <div class="logo"><a href="{{appengine_config.BASE_URL}}"><img alt="{{config.options.title}}" src="{{appengine_config.BASE_URL}}/_app/{{appengine_config.VERSION}}/config/{{config.options.logo_sm}}"></a></div>
+  {% endif %}
 </div>

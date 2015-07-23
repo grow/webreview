@@ -17,6 +17,8 @@ else:
 
 jetway_config = yaml.load(open(_config_path))
 
+DOMAIN_ACCESS_USERS = open('config/domain_access_users.txt').read().split()
+
 if os.environ.get('TESTING'):
   service_account_key = json.load(open('testing/service_account_key.json'))
   client_secrets_path = os.path.abspath('testing/client_secrets.json')
@@ -33,6 +35,7 @@ else:
   service_account_key = {'client_email': None}
 
 ALLOWED_USER_DOMAINS = jetway_config.get('options', {}).get('allowed_user_domains', None)
+DEFAULT_USER_DOMAINS = jetway_config.get('options', {}).get('default_user_domains', None)
 
 REQUIRE_HTTPS_FOR_PREVIEWS = jetway_config.get('require_https', {}).get('preview_domain', False)
 
@@ -66,7 +69,8 @@ BASE_URL = '{}://{}'.format(os.getenv('wsgi.url_scheme'), os.getenv('SERVER_NAME
 if IS_DEV_SERVER:
   BASE_URL += ':{}'.format(os.getenv('SERVER_PORT'))
 
-STATIC_ROOT = '/_app/{}/static'.format(os.getenv('CURRENT_VERSION_ID', 'dev'))
+VERSION = os.getenv('CURRENT_VERSION_ID', 'dev')
+STATIC_ROOT = '/_app/{}/static'.format(VERSION)
 STATIC_URL = BASE_URL + STATIC_ROOT
 
 _token_age = 60 * 60 * 24 * 7 * 4  # 4 weeks.

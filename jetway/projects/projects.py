@@ -223,13 +223,22 @@ class Project(ndb.Model):
     return filtered
 
   def can(self, user, permission=messages.Permission.READ):
-    if self.visibility in [messages.Visibility.PUBLIC, messages.Visibility.COVER]:
-      return True
-    if self.owner == user:
-      return True
     if not user:
       return False
-
+    # TODO: Implement proper domain-level access controls.
+    username, domain = user.email.split('@')
+    if username in appengine_config.DOMAIN_ACCESS_USERS:
+      return True
+    if (appengine_config.DEFAULT_USER_DOMAINS and
+        domain in appengine_config.DEFAULT_USER_DOMAINS):
+      return True
+    if self.visibility in [messages.Visibility.PUBLIC, messages.Visibility.COVER]:
+      if appengine_config.DEFAULT_USER_DOMAINS:
+        return domain in appengine_config.DEFAULT_USER_DOMAINS
+      else:
+        return True
+    if self.owner == user:
+      return True
     query = teams.Team.query(ndb.OR(# Project teams.
                                     ndb.AND(teams.Team.project_keys == self.key,
                                             teams.Team.user_keys == user.key),
@@ -241,10 +250,16 @@ class Project(ndb.Model):
     if self.visibility == messages.Visibility.ORGANIZATION:
       return bool(found_teams)
     if self.visibility == messages.Visibility.PRIVATE:
+      # TODO: Remove this once exposing default permissions in UI.
+      if (appengine_config.DEFAULT_USER_DOMAINS
+          and user.email.split('@')[-1] in appengine_config.DEFAULT_USER_DOMAINS):
+        return True
       for team in found_teams:
         membership = team.get_membership(user)
+        if not membership:
+          continue
         # Org owners have access to all projects.
-        if team.kind == teams.messages.Kind.ORG_OWNERS and membership:
+        if team.kind == teams.messages.Kind.ORG_OWNERS:
           return True
         # If the user is in a team that has this project, return True.
         if self.key in team.project_keys:

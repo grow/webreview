@@ -74,14 +74,23 @@ def allowed_user_domains_middleware(app):
   # switch this to use OAuth2 integration with Google Accounts. Implement
   # an SSO service for preview domains.
   def middleware(environ, start_response):
+    # Allow project-level permissions to control access to previews.
+    # But, require users to be signed in. Use App Engine sign in to avoid
+    # building an SSO login system for each preview domain.
+    user = users.get_current_user()
+    if utils.is_preview_server(environ['SERVER_NAME']):
+      if user is None:
+        url = users.create_login_url(environ['PATH_INFO'])
+        start_response('302', [('Location', url)])
+        return []
+      return app(environ, start_response)
     allowed_user_domains = config.ALLOWED_USER_DOMAINS
     # If all domains are allowed, continue.
     if allowed_user_domains is None:
       return app(environ, start_response)
-    user = users.get_current_user()
     # Redirect anonymous users to login.
     if user is None:
-      url =  users.create_login_url(environ['PATH_INFO'])
+      url = users.create_login_url(environ['PATH_INFO'])
       start_response('302', [('Location', url)])
       return []
     # Ban forbidden users.
