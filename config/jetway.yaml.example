@@ -10,6 +10,8 @@ app:
   # client_secrets_file: "client_secret_1234567890-XXXX.apps.googleusercontent.com.json"
   # Replace this with the filename of the service account key.
   # service_account_key_file: "example-123456789.json"
+  webreview_buildbot_api_key: "xxx-xxx-xxx"
+  webreview_buildbot_service_account: "xxx-xxx@developer.gserviceaccount.com"
 
 urls:
   # Where staging builds are served for previews.
