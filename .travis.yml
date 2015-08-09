@@ -12,9 +12,9 @@ script: |
   nosetests \
     -v \
     --rednose \
+    --nocapture \
+    --nologcapture \
     --with-gae \
-    --without-sandbox \
-    --gae-lib-root=google_appengine \
     --with-coverage \
     --cover-erase \
     --cover-html \
