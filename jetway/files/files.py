@@ -76,22 +76,22 @@ class Signer(object):
       stat = cloudstorage.stat(absolute_path)
     except cloudstorage.errors.NotFoundError as e:
       raise FileNotFoundError(str(e))
-
     headers = {}
     time_obj = datetime.fromtimestamp(stat.st_ctime).timetuple()
-    headers['Last-Modified'] =  time.strftime('%a, %d %b %Y %H:%M:%S GMT', time_obj)
+    time_format = '%a, %d %b %Y %H:%M:%S GMT'
+    headers['Last-Modified'] = time.strftime(time_format, time_obj)
     headers['ETag'] = '"{}"'.format(stat.etag)
-    headers['X-Jetway-Storage-Key'] = str(absolute_path)
+    headers['X-WebReview-Storage-Key'] = str(absolute_path)
     if stat.content_type:
       headers['Content-Type'] = stat.content_type
-
     # Only add X-AppEngine-BlobKey if needed, based on ETag.
     request_headers = request_headers or {}
     request_etag = request_headers.get('If-None-Match')
     if request_etag != headers['ETag']:
       key = blobstore.create_gs_key('/gs{}'.format(absolute_path))
       headers['X-AppEngine-BlobKey'] = key
-
+      if os.getenv('HTTP_RANGE'):
+        headers['X-AppEngine-BlobRange'] = os.getenv('HTTP_RANGE')
     return headers
 
   def delete(self, path, silent=False):
