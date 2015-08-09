@@ -17,7 +17,10 @@ else:
 
 jetway_config = yaml.load(open(_config_path))
 
-DOMAIN_ACCESS_USERS = open('config/domain_access_users.txt').read().split()
+if os.path.exists('config/domain_access_users.txt'):
+  DOMAIN_ACCESS_USERS = open('config/domain_access_users.txt').read().split()
+else:
+  DOMAIN_ACCESS_USERS = None
 
 if os.environ.get('TESTING'):
   service_account_key = json.load(open('testing/service_account_key.json'))
