@@ -14,6 +14,7 @@ script: |
     --rednose \
     --nocapture \
     --nologcapture \
+    --gae-lib-root=google_appengine \
     --with-gae \
     --with-coverage \
     --cover-erase \
