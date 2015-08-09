@@ -5,8 +5,6 @@ from jetway.filesets import filesets
 from jetway.owners import owners
 from jetway.projects import projects
 from jetway.server import utils
-from google.appengine.api import users
-import appengine_config
 import jinja2
 import os
 
@@ -49,14 +47,17 @@ class RequestHandler(auth_handlers.SessionHandler):
         fileset = filesets.Fileset.get_by_name_or_ident(fileset_name)
       if not fileset.project.can(self.me, projects.Permission.READ):
         if self.me:
-          self.error(403, 'Forbidden', '{} does not have access to this page.'.format(self.me))
+          text = '{} does not have access to this page.'.format(self.me)
+          self.error(403, 'Forbidden', text)
           return
         else:
-          self.error(404, 'Not Found' 'You must be signed in to view this page.')
+          text = 'You must be signed in to view this page.'
+          self.error(404, 'Not Found', text)
           return
       path = (self.request.path + 'index.html'
               if self.request.path.endswith('/') else self.request.path)
-      headers = fileset.get_headers_for_path(path, request_headers=self.request.headers)
+      headers = fileset.get_headers_for_path(
+          path, request_headers=self.request.headers)
       self.response.headers.update(headers)
 
     except (owners.OwnerDoesNotExistError,
@@ -72,3 +73,6 @@ class RequestHandler(auth_handlers.SessionHandler):
     if_none_match = self.request.headers.get('If-None-Match')
     if if_none_match and if_none_match == self.response.headers.get('ETag'):
       self.response.status = 304
+    if 'X-WebReview-Redirect-Status' in self.response.headers:
+      status = self.response.headers['X-WebReview-Redirect-Status']
+      self.response.status = int(status)

@@ -283,8 +283,21 @@ class Fileset(ndb.Model):
     return self._signer.sign_get_request(unsigned_request)
 
   def get_headers_for_path(self, path, request_headers=None):
-    return self._signer.get_headers_for_path(
-        path, request_headers=request_headers)
+    try:
+      return self._signer.get_headers_for_path(
+          path, request_headers=request_headers)
+    except files.FileNotFoundError:
+      # Implements trailing slash redirect if a leaf path doesn't exist but a
+      # corresponding resource with a trailing slash does.
+      if not path.endswith('/'):
+        if self._signer.get_headers_for_path(
+            path + '/index.html', request_headers=request_headers):
+          headers = {}
+          headers['X-WebReview-Redirect-Key'] = path + '/index.html'
+          headers['X-WebReview-Redirect-Status'] = '302'
+          headers['Location'] = path + '/'
+          return headers
+      raise
 
   def get_sha_for_resource_path(self, path):
     for resource in self.resources:
