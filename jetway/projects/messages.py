@@ -14,6 +14,7 @@ class Visibility(messages.Enum):
   ORGANIZATION = 2
   PRIVATE = 3
   COVER = 4
+  DOMAIN = 5
 
 
 class CoverMessage(messages.Message):

@@ -46,8 +46,7 @@ class Project(ndb.Model):
   created_by_key = ndb.KeyProperty()
   description = ndb.StringProperty()
   cover = ndb.StructuredProperty(Cover)
-  visibility = msgprop.EnumProperty(messages.Visibility,
-                                    default=messages.Visibility.PRIVATE)
+  visibility = msgprop.EnumProperty(messages.Visibility)
   built = ndb.DateTimeProperty()
 
   @property
@@ -232,13 +231,19 @@ class Project(ndb.Model):
     if (appengine_config.DEFAULT_USER_DOMAINS and
         domain in appengine_config.DEFAULT_USER_DOMAINS):
       return True
+    # Permit the owner.
+    if self.owner == user:
+      return True
+    # Permit domain users.
+    if (appengine_config.DEFUALT_USER_DOMAINS
+        and self.visibility == messages.Visibility.DOMAIN
+        and user.email.split('@')[-1] in appengine_config.DEFAULT_USER_DOMAINS):
+      return
     if self.visibility in [messages.Visibility.PUBLIC, messages.Visibility.COVER]:
       if appengine_config.DEFAULT_USER_DOMAINS:
         return domain in appengine_config.DEFAULT_USER_DOMAINS
       else:
         return True
-    if self.owner == user:
-      return True
     query = teams.Team.query(ndb.OR(# Project teams.
                                     ndb.AND(teams.Team.project_keys == self.key,
                                             teams.Team.user_keys == user.key),
@@ -247,6 +252,7 @@ class Project(ndb.Model):
                                             teams.Team.owner_key == self.owner.key,
                                             teams.Team.user_keys == user.key)))
     found_teams = query.fetch()
+    # Permit users part of the project's organization.
     if self.visibility == messages.Visibility.ORGANIZATION:
       return bool(found_teams)
     if self.visibility == messages.Visibility.PRIVATE:

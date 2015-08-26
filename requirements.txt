@@ -5,7 +5,7 @@ protorpc-standalone==0.9.1
 pycrypto==2.6
 
 pydenticon==0.1.1
-Pillow
+PIL
 
 # premailer.
 premailer==2.8.1

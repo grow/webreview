@@ -78,6 +78,11 @@ def allowed_user_domains_middleware(app):
     # But, require users to be signed in. Use App Engine sign in to avoid
     # building an SSO login system for each preview domain.
     user = users.get_current_user()
+    # TODO: Remove dirty hack to get around issues with Chrome Beta and
+    # Firefox. Note that this exposes all ttf and woff files.
+    # http://stackoverflow.com/questions/31140826
+    if environ['PATH_INFO'].endswith(('.ttf', '.woff')):
+      return app(environ, start_response)
     if utils.is_preview_server(environ['SERVER_NAME']):
       if user is None:
         url = users.create_login_url(environ['PATH_INFO'])

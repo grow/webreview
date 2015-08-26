@@ -7,6 +7,9 @@ import yaml
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
 mimetypes.add_type('image/svg+xml', '.svg')
+mimetypes.add_type('font/opentype', '.otf')
+mimetypes.add_type('font/ttf', '.ttf')
+mimetypes.add_type('font/woff', '.woff')
 
 if 'JETWAY_CONFIG' in os.environ:
   _config_path = os.getenv('JETWAY_CONFIG')

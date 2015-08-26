@@ -15,6 +15,12 @@ _env = jinja2.Environment(loader=_loader, autoescape=True, trim_blocks=True)
 
 class RequestHandler(auth_handlers.SessionHandler):
 
+  def _is_open_path(self, path):
+    # TODO: Remove dirty hack to get around issues with Chrome Beta and
+    # Firefox. Note that this exposes all ttf and woff files.
+    # http://stackoverflow.com/questions/31140826
+    return path.endswith(('.woff', '.ttf'))
+
   def error(self, status, title, message):
       template = _env.get_template('error.html')
       html = template.render({
@@ -45,7 +51,8 @@ class RequestHandler(auth_handlers.SessionHandler):
         if fileset_name is None:
           raise filesets.FilesetDoesNotExistError
         fileset = filesets.Fileset.get_by_name_or_ident(fileset_name)
-      if not fileset.project.can(self.me, projects.Permission.READ):
+      if (not self._is_open_path(self.request.path)
+          and not fileset.project.can(self.me, projects.Permission.READ)):
         if self.me:
           text = '{} does not have access to this page.'.format(self.me)
           self.error(403, 'Forbidden', text)
