@@ -235,7 +235,7 @@ class Project(ndb.Model):
     if self.owner == user:
       return True
     # Permit domain users.
-    if (appengine_config.DEFUALT_USER_DOMAINS
+    if (appengine_config.DEFAULT_USER_DOMAINS
         and self.visibility == messages.Visibility.DOMAIN
         and user.email.split('@')[-1] in appengine_config.DEFAULT_USER_DOMAINS):
       return
