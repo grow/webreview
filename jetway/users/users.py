@@ -33,10 +33,22 @@ class BaseUser(models.User):
 
   @classmethod
   def get_by_ident(cls, ident):
-    user = cls.get_by_id(int(ident))
-    if user is None:
-      raise UserDoesNotExistError()
-    return user
+    key = cls._key_from_ident(ident)
+    ent = key.get()
+    if ent is None:
+      raise UserDoesNotExistError('{} does not exist.'.format(ident))
+    if type(ent) != cls:
+      text = 'Retrieved model of type {}, expected {}.'
+      raise ModelKindError(text.format(type(ent), cls))
+    return ent
+
+  @classmethod
+  def _key_from_ident(cls, ident):
+    try:
+      return ndb.Key(urlsafe=ident)
+    # except (TypeError, ProtocolBufferDecodeError):
+    except:
+      return ndb.Key(cls, ident)
 
   @classmethod
   def get_by_email(cls, email):
@@ -114,7 +126,7 @@ class User(BaseUser):
 
   @property
   def ident(self):
-    return str(self.key.id())
+    return self.key.urlsafe()
 
   def to_message(self):
     message = messages.UserMessage()
@@ -207,16 +219,3 @@ class User(BaseUser):
         results.append(project)
     results = sorted(results, key=lambda project: project.nickname)
     return results
-
-  def regenerate_git_password(self):
-    git_password = security.generate_random_string(length=20)
-    hashed_password = security.generate_password_hash(git_password)
-    self.hashed_git_password = hashed_password
-    self.put()
-    return git_password
-
-  def check_hashed_git_password(self, git_password):
-    matched = security.check_password_hash(git_password, self.hashed_git_password)
-    if matched is not True:
-      raise BadGitPasswordError()
-    return True

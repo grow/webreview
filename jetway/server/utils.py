@@ -6,7 +6,7 @@ _HOSTNAME_RE = re.compile('^(?:(.*)--)?(.*)--([^\.]*)\.')
 
 
 def is_avatar_request(hostname):
-  return re.match('^avatars\d-dot-', hostname)
+  return re.match('^avatars-.-dot-', hostname)
 
 
 def is_preview_server(hostname, path=None):

@@ -42,6 +42,14 @@ class UtilsTestCase(testing.BaseTestCase):
     result = utils.make_url(fileset, project, owner, include_port=True)
     self.assertEqual(expected, result)
 
+  def test_is_avatar_request(self):
+    hostnames = [
+        'avatars-1-dot-foo',
+        'avatars-U-dot-foo',
+        'avatars-a-dot-foo',
+    ]
+    for hostname in hostnames:
+      self.assertTrue(utils.is_avatar_request(hostname))
 
 
 if __name__ == '__main__':
