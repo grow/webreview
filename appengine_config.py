@@ -25,7 +25,7 @@ if os.path.exists('config/domain_access_users.txt'):
 else:
   DOMAIN_ACCESS_USERS = None
 
-if os.environ.get('TESTING'):
+if os.environ.get('CI'):
   service_account_key = json.load(open('testing/service_account_key.json'))
   client_secrets_path = os.path.abspath('testing/client_secrets.json')
   client_secrets = json.load(open(client_secrets_path))

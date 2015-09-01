@@ -22,6 +22,7 @@ Run the below command and follow the on-screen instructions to install dependenc
 
     ./scripts/setup
 
+1. The Google App Engine SDK is required. Currently, the version packaged with the gcloud SDK is not compatible with the test runner, so you'll have to download the [standalone GoogleAppEngineLauncher](https://cloud.google.com/appengine/downloads).
 1. Run `./scripts/test` to verify tests pass.
 1. Run `./scripts/run` to start a development server.
 

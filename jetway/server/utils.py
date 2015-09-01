@@ -5,6 +5,10 @@ import re
 _HOSTNAME_RE = re.compile('^(?:(.*)--)?(.*)--([^\.]*)\.')
 
 
+def is_avatar_request(hostname):
+  return re.match('^avatars\d-dot-', hostname)
+
+
 def is_preview_server(hostname, path=None):
   return (hostname.endswith(appengine_config.PREVIEW_HOSTNAME)
           and hostname != appengine_config.PREVIEW_HOSTNAME

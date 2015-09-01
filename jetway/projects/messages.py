@@ -30,7 +30,6 @@ class ProjectMessage(messages.Message):
   ident = messages.StringField(2)
   owner = messages.MessageField(owner_messages.OwnerMessage, 3)
   description = messages.StringField(4)
-  git_url = messages.StringField(5)
   avatar_url = messages.StringField(6)
   visibility = messages.EnumField(Visibility, 7)
   cover = messages.MessageField(CoverMessage, 8)

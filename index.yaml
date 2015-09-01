@@ -25,6 +25,13 @@ indexes:
 
 - kind: Fileset
   properties:
+  - name: name
+  - name: project_key
+  - name: modified
+    direction: desc
+
+- kind: Fileset
+  properties:
   - name: project_key
   - name: modified
     direction: desc
@@ -39,11 +46,4 @@ indexes:
   properties:
   - name: owner_key
   - name: nickname
-    direction: desc
-
-- kind: Fileset
-  properties:
-  - name: name
-  - name: project_key
-  - name: modified
     direction: desc

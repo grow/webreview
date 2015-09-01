@@ -83,6 +83,8 @@ def allowed_user_domains_middleware(app):
     # http://stackoverflow.com/questions/31140826
     if environ['PATH_INFO'].endswith(('.ttf', '.woff')):
       return app(environ, start_response)
+    if utils.is_avatar_request(environ['SERVER_NAME']):
+      return app(environ, start_response)
     if utils.is_preview_server(environ['SERVER_NAME']):
       if user is None:
         url = users.create_login_url(environ['PATH_INFO'])
@@ -90,16 +92,19 @@ def allowed_user_domains_middleware(app):
         return []
       return app(environ, start_response)
     allowed_user_domains = config.ALLOWED_USER_DOMAINS
+    # TODO: We require App Engine Users API anonymous users to sign in,
+    # so don't continue.
     # If all domains are allowed, continue.
-    if allowed_user_domains is None:
-      return app(environ, start_response)
+    # if allowed_user_domains is None:
+    #  return app(environ, start_response)
     # Redirect anonymous users to login.
     if user is None:
       url = users.create_login_url(environ['PATH_INFO'])
       start_response('302', [('Location', url)])
       return []
     # Ban forbidden users.
-    if user.email().split('@')[-1] not in allowed_user_domains:
+    if (allowed_user_domains and
+       user.email().split('@')[-1] not in allowed_user_domains):
       start_response('403', [])
       url = users.create_logout_url(environ['PATH_INFO'])
       return ['Forbidden. <a href="{}">Sign out</a>.'.format(url)]

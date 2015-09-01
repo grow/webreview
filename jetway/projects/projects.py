@@ -61,6 +61,10 @@ class Project(ndb.Model):
     return self.name
 
   @property
+  def computed_visibility(self):
+    return self.visibility or messages.Visibility.DOMAIN
+
+  @property
   def ident(self):
     return str(self.key.id())
 
@@ -116,14 +120,17 @@ class Project(ndb.Model):
 
   def delete(self):
     from jetway.launches import launches
-    team_results = teams.Team.search(projects=[self], kind=teams.messages.Kind.DEFAULT)
+    team_results = teams.Team.search(
+        projects=[self],
+        kind=teams.messages.Kind.DEFAULT)
     launch_results = launches.Launch.search(project=self)
     fileset_results = filesets.Fileset.search(project=self)
 
     @ndb.transactional(retries=1, xg=True)
     def _delete_project():
       try:
-        project_team = teams.Team.get(self.ident, teams.messages.Kind.PROJECT_OWNERS)
+        project_team = teams.Team.get(
+            self.ident, teams.messages.Kind.PROJECT_OWNERS)
         project_team.delete()
       except teams.TeamDoesNotExistError:
         pass
@@ -160,15 +167,6 @@ class Project(ndb.Model):
     return owners.Owner.get_by_key(self.owner_key)
 
   @property
-  def git_url(self):
-    host = os.getenv('SERVER_NAME')
-    if os.getenv('SERVER_SOFTWARE').startswith('Dev'):
-      port = os.getenv('SERVER_PORT')
-      host = '{}:{}'.format(host, port)
-    scheme = os.getenv('wsgi.url_scheme')
-    return '{}://{}/{}/{}.git'.format(scheme, host, self.owner.nickname, self.nickname)
-
-  @property
   def avatar_url(self):
     return avatars.Avatar.create_url(self)
 
@@ -183,7 +181,6 @@ class Project(ndb.Model):
     message.ident = self.ident
     message.owner = self.owner.to_message()
     message.description = self.description
-    message.git_url = self.git_url
     message.avatar_url = self.avatar_url
     message.visibility = self.visibility
     if self.cover:
@@ -236,10 +233,10 @@ class Project(ndb.Model):
       return True
     # Permit domain users.
     if (appengine_config.DEFAULT_USER_DOMAINS
-        and self.visibility == messages.Visibility.DOMAIN
+        and self.computed_visibility == messages.Visibility.DOMAIN
         and user.email.split('@')[-1] in appengine_config.DEFAULT_USER_DOMAINS):
       return
-    if self.visibility in [messages.Visibility.PUBLIC, messages.Visibility.COVER]:
+    if self.computed_visibility in [messages.Visibility.PUBLIC, messages.Visibility.COVER]:
       if appengine_config.DEFAULT_USER_DOMAINS:
         return domain in appengine_config.DEFAULT_USER_DOMAINS
       else:
@@ -253,9 +250,9 @@ class Project(ndb.Model):
                                             teams.Team.user_keys == user.key)))
     found_teams = query.fetch()
     # Permit users part of the project's organization.
-    if self.visibility == messages.Visibility.ORGANIZATION:
+    if self.computed_visibility == messages.Visibility.ORGANIZATION:
       return bool(found_teams)
-    if self.visibility == messages.Visibility.PRIVATE:
+    if self.computed_visibility in [messages.Visibility.PRIVATE, messages.Visibility.DOMAIN]:
       # TODO: Remove this once exposing default permissions in UI.
       if (appengine_config.DEFAULT_USER_DOMAINS
           and user.email.split('@')[-1] in appengine_config.DEFAULT_USER_DOMAINS):
@@ -265,7 +262,9 @@ class Project(ndb.Model):
         if not membership:
           continue
         # Org owners have access to all projects.
-        if team.kind == teams.messages.Kind.ORG_OWNERS:
+        if team.kind == teams.messages.Kind.PROJECT_OWNERS:
+          return True
+        elif team.kind == teams.messages.Kind.ORG_OWNERS:
           return True
         # If the user is in a team that has this project, return True.
         if self.key in team.project_keys:

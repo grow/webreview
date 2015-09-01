@@ -51,7 +51,7 @@ class ProjectService(api.Service):
   def update(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.ADMINISTER):
-      raise api.ForbiddenError('Forbidden.')
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
     project.update(request.project)
     resp = service_messages.UpdateProjectResponse()
     resp.project = project.to_message()
@@ -62,7 +62,7 @@ class ProjectService(api.Service):
   def get(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden.')
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
     resp = service_messages.GetProjectResponse()
     resp.project = project.to_message()
     return resp
@@ -72,7 +72,7 @@ class ProjectService(api.Service):
   def delete(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.ADMINISTER):
-      raise api.ForbiddenError('Forbidden.')
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
     project.delete()
     resp = service_messages.DeleteProjectResponse()
     return resp
@@ -91,7 +91,7 @@ class ProjectService(api.Service):
   def watch(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden.')
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
     watcher = project.create_watcher(self.me)
     resp = service_messages.CreateWatcherResponse()
     resp.watcher = watcher.to_message()
@@ -102,7 +102,7 @@ class ProjectService(api.Service):
   def unwatch(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden.')
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
     project.delete_watcher(self.me)
     watchers = project.list_watchers()
     resp = service_messages.ListWatchersResponse()
@@ -114,7 +114,7 @@ class ProjectService(api.Service):
   def list_watchers(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden.')
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
     watchers = project.list_watchers()
     resp = service_messages.ListWatchersResponse()
     resp.watching = any(self.me == watcher.user for watcher in watchers)
@@ -126,7 +126,7 @@ class ProjectService(api.Service):
   def list_named_filesets(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden.')
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
     named_filesets = project.list_named_filesets()
     resp = service_messages.ListNamedFilesetsRequest()
     resp.named_filesets = [named_fileset.to_message()
@@ -138,7 +138,7 @@ class ProjectService(api.Service):
   def create_named_fileset(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.WRITE):
-      raise api.ForbiddenError('Forbidden.')
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
     named_fileset = project.create_named_fileset(
         request.named_fileset.name, request.named_fileset.branch)
     resp = service_messages.CreateNamedFilesetResponse()
@@ -150,7 +150,7 @@ class ProjectService(api.Service):
   def delete_named_fileset(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden.')
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
     project.delete_named_fileset(request.named_fileset.name)
     resp = service_messages.DeleteNamedFilesetResponse()
     return resp
