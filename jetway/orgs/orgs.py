@@ -1,8 +1,8 @@
+from . import memberships
+from . import messages
+from ..avatars import avatars
+from ..teams import teams
 from google.appengine.ext import ndb
-from jetway.avatars import avatars
-from jetway.memberships import memberships
-from jetway.orgs import messages
-from jetway.teams import teams
 import os
 
 

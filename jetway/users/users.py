@@ -132,6 +132,7 @@ class User(BaseUser):
     message = messages.UserMessage()
     if self.nickname:
       message.nickname = self.nickname
+    message.email = self.email
     message.ident = self.ident
     message.avatar_url = self.avatar_url
     message.description = self.description

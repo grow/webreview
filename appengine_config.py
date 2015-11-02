@@ -46,6 +46,8 @@ DEFAULT_USER_DOMAINS = jetway_config.get('options', {}).get('default_user_domain
 
 REQUIRE_HTTPS_FOR_PREVIEWS = jetway_config.get('require_https', {}).get('preview_domain', False)
 
+HTTPS_PROXY_ENABLED_FOR_PREVIEWS = jetway_config.get('require_https', {}).get('behind_proxy', False)
+
 REQUIRE_HTTPS_FOR_APP = jetway_config.get('require_https', {}).get('app_domain', False)
 
 GCS_SERVICE_ACCOUNT_EMAIL = service_account_key['client_email']
@@ -72,7 +74,8 @@ else:
 BUILDBOT_API_KEY = jetway_config['app'].get('webreview_buildbot_api_key')
 BUILDBOT_SERVICE_ACCOUNT = jetway_config['app'].get('webreview_buildbot_service_account')
 
-BASE_URL = '{}://{}'.format(os.getenv('wsgi.url_scheme'), os.getenv('SERVER_NAME'))
+APP_HOSTNAME = os.getenv('DEFAULT_VERSION_HOSTNAME', os.getenv('SERVER_NAME'))
+BASE_URL = '{}://{}'.format(os.getenv('wsgi.url_scheme'), APP_HOSTNAME)
 if IS_DEV_SERVER:
   BASE_URL += ':{}'.format(os.getenv('SERVER_PORT'))
 

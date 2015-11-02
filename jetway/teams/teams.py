@@ -30,9 +30,13 @@ class CannotDeleteMembershipError(Error):
 
 class TeamMembership(ndb.Model):
   role = msgprop.EnumProperty(messages.Role)
-  user_key = ndb.KeyProperty()
   is_public = ndb.BooleanProperty(default=False)
-  review_required = ndb.BooleanProperty(default=False)
+  domain_key = ndb.KeyProperty()
+  user_key = ndb.KeyProperty()
+
+  @property
+  def domain(self):
+    return self.domain_key.get()
 
   @property
   def user(self):
@@ -43,7 +47,6 @@ class TeamMembership(ndb.Model):
     message.user = self.user.to_message()
     message.is_public = self.is_public
     message.role = self.role
-    message.review_required = self.review_required
     return message
 
 
@@ -215,10 +218,9 @@ class Team(ndb.Model):
         return
     raise MembershipConflictError('Membership does not exist.')
 
-  def update_membership(self, user, role, review_required=False, is_public=False):
+  def update_membership(self, user, role, is_public=False):
     for membership in self.memberships:
       if membership.user_key == user.key:
         membership.role = role
-        membership.review_required = review_required
         membership.is_public = is_public
     self.put()
