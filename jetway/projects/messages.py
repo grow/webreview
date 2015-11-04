@@ -37,3 +37,63 @@ class ProjectMessage(messages.Message):
   built = message_types.DateTimeField(10)
   buildbot_job_id = messages.StringField(11)
   git_url = messages.StringField(12)
+
+
+###
+
+
+class CreateProjectRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class CreateProjectResponse(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class DeleteProjectRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class DeleteProjectResponse(messages.Message):
+  pass
+
+
+class UpdateProjectRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class UpdateProjectResponse(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class SearchProjectRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class SearchProjectResponse(messages.Message):
+  projects = messages.MessageField(ProjectMessage, 1, repeated=True)
+
+
+class GetProjectRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class GetProjectResponse(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class DeleteProjectRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class DeleteProjectResponse(messages.Message):
+  pass
+
+
+class CanRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+  permission = messages.EnumField(Permission, 2)
+
+
+class CanResponse(messages.Message):
+  can = messages.BooleanField(1)

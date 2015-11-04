@@ -80,6 +80,13 @@ class Project(ndb.Model):
     return str(self.key.id())
 
   @classmethod
+  def search_unknown_by_buildbot(cls):
+    query = cls.query()
+    query = query.filter(cls.known_by_buildbot == False)
+    results = query.fetch()
+    return results
+
+  @classmethod
   def create(cls, owner, nickname, created_by, description=None):
     try:
       cls.get(owner, nickname)
