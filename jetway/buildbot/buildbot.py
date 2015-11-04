@@ -43,17 +43,19 @@ class Buildbot(object):
     content = resp.json()
     return content
 
-  def get_contents(self, job_id, path=None):
+  def get_contents(self, job_id, path=None, ref=None):
     path = path or '/'
     try:
-      resp = requests.get(BASE + '/git/repos/{}/contents{}'.format(job_id, path))
+      request_path = BASE + '/git/repos/{}/contents{}'.format(job_id, path)
+      resp = requests.get(request_path)
     except Exception as e:
       raise Error(e)
     return resp.json()
 
-  def read_file(self, job_id, path):
+  def read_file(self, job_id, path, ref=None):
     try:
-      resp = requests.get(BASE + '/git/repos/{}/raw{}'.format(job_id, path))
+      request_path = BASE + '/git/repos/{}/raw{}'.format(job_id, path)
+      resp = requests.get(request_path)
     except Exception as e:
       raise Error(e)
     return resp.body

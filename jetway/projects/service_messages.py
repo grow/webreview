@@ -1,4 +1,5 @@
 from ..buildbot import messages as buildbot_messages
+from ..catalogs import messages as catalog_messages
 from ..filesets.named_fileset_messages import *
 from .messages import *
 from .watcher_messages import *
@@ -107,3 +108,20 @@ class ListBranchesRequest(messages.Message):
 
 class ListBranchesResponse(messages.Message):
   branches = messages.MessageField(buildbot_messages.BranchMessage, 1, repeated=True)
+
+
+class ProjectRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class ListCatalogsResponse(messages.Message):
+  catalogs = messages.MessageField(catalog_messages.CatalogMessage, 1, repeated=True)
+
+
+class GetCatalogRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+  catalog = messages.MessageField(catalog_messages.CatalogMessage, 2)
+
+
+class GetCatalogResponse(messages.Message):
+  catalog = messages.MessageField(catalog_messages.CatalogMessage, 1)

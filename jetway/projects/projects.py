@@ -347,6 +347,9 @@ class Project(ndb.Model):
     catalog_objs = []
     for item in items:
       if item['type'] == 'dir':
-        catalog = catalogs.Catalog(project=self, locale=item['name'])
+        catalog = self.get_catalog(locale=item['name'])
         catalog_objs.append(catalog)
     return catalog_objs
+
+  def get_catalog(self, locale):
+    return catalogs.Catalog(project=self, locale=locale)

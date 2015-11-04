@@ -165,3 +165,25 @@ class ProjectService(api.Service):
     resp = service_messages.ListBranchesResponse()
     resp.branches = branches
     return resp
+
+  @remote.method(service_messages.ProjectRequest,
+                 service_messages.ListCatalogsResponse)
+  def list_catalogs(self, request):
+    project = self._get_project(request)
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    catalogs = project.list_catalogs()
+    resp = service_messages.ListCatalogsResponse()
+    resp.catalogs = [catalog.to_message() for catalog in catalogs]
+    return resp
+
+  @remote.method(service_messages.ProjectRequest,
+                 service_messages.GetCatalogResponse)
+  def get_catalog(self, request):
+    project = self._get_project(request)
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    catalog = project.get_catalog(request.catalog.locale)
+    resp = service_messages.GetCatalogResponse()
+    resp.catalog = catalog.to_message()
+    return resp
