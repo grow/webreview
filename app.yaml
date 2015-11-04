@@ -4,6 +4,7 @@ threadsafe: true
 
 env_variables:
   JETWAY_CONFIG: config/jetway.grow-prod.yaml
+  GAE_USE_SOCKETS_HTTPLIB: 'anyvalue'  # https://github.com/shazow/urllib3/issues/618#issuecomment-101795512
 
 libraries:
 - name: lxml

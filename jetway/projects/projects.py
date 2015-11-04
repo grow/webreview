@@ -1,4 +1,6 @@
 from . import watchers
+from ..buildbot import buildbot
+from ..buildbot import messages as buildbot_messages
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from jetway.avatars import avatars
@@ -7,7 +9,10 @@ from jetway.filesets import named_filesets
 from jetway.owners import owners
 from jetway.projects import messages
 from jetway.teams import teams
+from protorpc import protojson
 import appengine_config
+import json
+import logging
 import os
 
 
@@ -48,10 +53,16 @@ class Project(ndb.Model):
   cover = ndb.StructuredProperty(Cover)
   visibility = msgprop.EnumProperty(messages.Visibility)
   built = ndb.DateTimeProperty()
+  buildbot_job_id = ndb.StringProperty()
+  git_url = ndb.StringProperty()
 
   @property
   def name(self):
     return '{}/{}'.format(self.owner.nickname, self.nickname)
+
+  @property
+  def permalink(self):
+    return '{}/{}'.format(appengine_config.BASE_URL, self.name)
 
   @property
   def name_padded(self):
@@ -82,6 +93,7 @@ class Project(ndb.Model):
         nickname=nickname,
         description=description)
     project.put()
+    project._create_buildbot_job()
     teams.Team.create(owner, None,
                       created_by=created_by, project=project,
                       kind=teams.messages.Kind.PROJECT_OWNERS)
@@ -298,3 +310,25 @@ class Project(ndb.Model):
 
   def list_named_filesets(self):
     return named_filesets.NamedFileset.search(project=self)
+
+  def _create_buildbot_job(self):
+    bot = buildbot.Buildbot()
+    try:
+      resp = bot.create_job(
+          git_url=self.git_url,
+          remote=self.permalink)
+      self.buildbot_job_id = str(resp['job_id'])
+      self.put()
+    except buildbot.Error:
+      logging.exception('Buildbot connection error.')
+
+  def list_branches(self):
+    bot = buildbot.Buildbot()
+    data = bot.list_branches(self.buildbot_job_id)
+    results = []
+    for branch_data in data:
+      branch_data = json.dumps(branch_data)
+      message_class = buildbot_messages.BranchMessage
+      branch_message = protojson.decode_message(message_class, branch_data)
+      results.append(branch_message)
+    return results

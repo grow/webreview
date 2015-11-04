@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./node_modules/.bin/gulp \
-  & dev_appserver.py --port=8088 --admin_port=8089 .
+#./node_modules/.bin/gulp \
+dev_appserver.py --port=8088 --admin_port=8089 .

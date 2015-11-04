@@ -35,3 +35,5 @@ class ProjectMessage(messages.Message):
   cover = messages.MessageField(CoverMessage, 8)
   name = messages.StringField(9)
   built = message_types.DateTimeField(10)
+  buildbot_job_id = messages.StringField(11)
+  git_url = messages.StringField(12)

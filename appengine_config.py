@@ -72,6 +72,9 @@ else:
   PREVIEW_HOSTNAME = jetway_config['urls']['hostname']['prod']
 
 BUILDBOT_API_KEY = jetway_config['app'].get('webreview_buildbot_api_key')
+BUILDBOT_URL = jetway_config['app'].get('webreview_buildbot_url')
+BUILDBOT_PASSWORD = jetway_config['app'].get('webreview_buildbot_password')
+BUILDBOT_USERNAME = jetway_config['app'].get('webreview_buildbot_username')
 BUILDBOT_SERVICE_ACCOUNT = jetway_config['app'].get('webreview_buildbot_service_account')
 
 APP_HOSTNAME = os.getenv('DEFAULT_VERSION_HOSTNAME', os.getenv('SERVER_NAME'))

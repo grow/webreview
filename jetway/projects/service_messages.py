@@ -1,3 +1,4 @@
+from ..buildbot import messages as buildbot_messages
 from ..filesets.named_fileset_messages import *
 from .messages import *
 from .watcher_messages import *
@@ -98,3 +99,11 @@ class DeleteNamedFilesetRequest(messages.Message):
 
 class DeleteNamedFilesetResponse(messages.Message):
   named_fileset = messages.MessageField(NamedFilesetMessage, 1)
+
+
+class ListBranchesRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+
+
+class ListBranchesResponse(messages.Message):
+  branches = messages.MessageField(buildbot_messages.BranchMessage, 1, repeated=True)

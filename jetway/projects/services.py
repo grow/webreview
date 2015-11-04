@@ -154,3 +154,14 @@ class ProjectService(api.Service):
     project.delete_named_fileset(request.named_fileset.name)
     resp = service_messages.DeleteNamedFilesetResponse()
     return resp
+
+  @remote.method(service_messages.ListBranchesRequest,
+                 service_messages.ListBranchesResponse)
+  def list_branches(self, request):
+    project = self._get_project(request)
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    branches = project.list_branches()
+    resp = service_messages.ListBranchesResponse()
+    resp.branches = branches
+    return resp

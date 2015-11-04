@@ -47,5 +47,7 @@ class OwnerService(api.Service):
   def get(self, request):
     owner = self.get_owner(request)
     resp = messages.GetOwnerResponse()
+    if owner is None:
+      raise api.NotFoundError(request.owner.nickname)
     resp.owner = owner.to_message()
     return resp
