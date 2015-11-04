@@ -1,6 +1,7 @@
 from . import watchers
 from ..buildbot import buildbot
 from ..buildbot import messages as buildbot_messages
+from ..catalogs import catalogs
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from jetway.avatars import avatars
@@ -339,3 +340,13 @@ class Project(ndb.Model):
       branch_message = protojson.decode_message(message_class, branch_data)
       results.append(branch_message)
     return results
+
+  def list_catalogs(self):
+    bot = buildbot.Buildbot()
+    items = bot.get_contents(self.buildbot_job_id, path='/translations/')
+    catalog_objs = []
+    for item in items:
+      if item['type'] == 'dir':
+        catalog = catalogs.Catalog(project=self, locale=item['name'])
+        catalog_objs.append(catalog)
+    return catalog_objs
