@@ -177,7 +177,7 @@ class ProjectService(api.Service):
     resp.catalogs = [catalog.to_message() for catalog in catalogs]
     return resp
 
-  @remote.method(service_messages.ProjectRequest,
+  @remote.method(service_messages.GetCatalogRequest,
                  service_messages.GetCatalogResponse)
   def get_catalog(self, request):
     project = self._get_project(request)

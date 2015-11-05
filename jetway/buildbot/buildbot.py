@@ -52,13 +52,13 @@ class Buildbot(object):
       raise Error(e)
     return resp.json()
 
-  def read_file(self, job_id, path, ref=None):
+  def read_file(self, job_id, path, ref):
     try:
-      request_path = BASE + '/git/repos/{}/raw{}'.format(job_id, path)
+      request_path = BASE + '/git/repos/{}/raw/{}{}'.format(job_id, ref, path)
       resp = requests.get(request_path)
     except Exception as e:
       raise Error(e)
-    return resp.body
+    return resp.content
 
 #  def write_file(self, job_id, path, contents):
 #    resp = requests.post(BASE + '/jobs/{}/contents/update'.format(job_id))

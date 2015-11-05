@@ -11,9 +11,10 @@ class Error(Exception):
 
 class Catalog(object):
 
-  def __init__(self, project, locale):
+  def __init__(self, project, locale, ref='master'):
     self.project = project
     self.locale = locale
+    self.ref = ref
 
   @property
   def path(self):
@@ -22,7 +23,7 @@ class Catalog(object):
   @property
   def content(self):
     bot = buildbot.Buildbot()
-    return bot.read_file(self.project.buildbot_job_id, path=self.path)
+    return bot.read_file(self.project.buildbot_job_id, path=self.path, ref=self.ref)
 
   @property
   def babel_catalog(self):
