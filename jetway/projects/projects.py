@@ -101,7 +101,7 @@ class Project(ndb.Model):
         nickname=nickname,
         description=description)
     project.put()
-    project._create_buildbot_job()
+    project._update_buildbot_job()
     teams.Team.create(owner, None,
                       created_by=created_by, project=project,
                       kind=teams.messages.Kind.PROJECT_OWNERS)
@@ -126,6 +126,21 @@ class Project(ndb.Model):
       text = 'Project {} does not exist.'
       raise ProjectDoesNotExistError(text.format(nickname))
     return project
+
+  def _update_buildbot_job(self):
+    if not self.git_url:
+      self.buildbot_job_id = None
+      self.put()
+      return
+    bot = buildbot.Buildbot()
+    try:
+      resp = bot.create_job(
+          git_url=self.git_url,
+          remote=self.permalink)
+      self.buildbot_job_id = str(resp['job_id'])
+      self.put()
+    except buildbot.Error:
+      logging.exception('Buildbot connection error.')
 
   @classmethod
   def search(cls, owner=None, order=None):
@@ -213,6 +228,9 @@ class Project(ndb.Model):
     if message.cover:
       self.cover = Cover.from_message(message.cover)
     self.visibility = message.visibility
+    self.git_url = message.git_url
+    if message.git_url != self.git_url:
+      self._update_buildbot_job()
     self.put()
 
   def search_teams(self, users=None):
@@ -318,17 +336,6 @@ class Project(ndb.Model):
 
   def list_named_filesets(self):
     return named_filesets.NamedFileset.search(project=self)
-
-  def _create_buildbot_job(self):
-    bot = buildbot.Buildbot()
-    try:
-      resp = bot.create_job(
-          git_url=self.git_url,
-          remote=self.permalink)
-      self.buildbot_job_id = str(resp['job_id'])
-      self.put()
-    except buildbot.Error:
-      logging.exception('Buildbot connection error.')
 
   def list_branches(self):
     bot = buildbot.Buildbot()
