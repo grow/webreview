@@ -2,7 +2,7 @@ from protorpc import remote
 import httplib
 
 
-class Error(Exception):
+class Error(remote.ApplicationError):
   pass
 
 

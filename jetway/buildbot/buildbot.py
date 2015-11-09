@@ -9,6 +9,14 @@ class Error(Exception):
   pass
 
 
+class ConnectionError(Error):
+  pass
+
+
+class IntegrationError(Error):
+  pass
+
+
 class Buildbot(object):
 
   @property
@@ -32,15 +40,20 @@ class Buildbot(object):
     try:
       resp = requests.post(BASE + '/jobs', json=data, auth=self.auth)
     except Exception as e:
-      raise Error(e)
-    return resp.json()
+      raise ConnectionError(e)
+    content = resp.json()
+    if 'error' in content:
+      raise IntegrationError(content['error'])
+    return content
 
   def list_branches(self, job_id):
     try:
       resp = requests.get(BASE + '/git/repos/{}/branches'.format(job_id))
     except Exception as e:
-      raise Error(e)
+      raise ConnectionError(e)
     content = resp.json()
+    if 'error' in content:
+      raise IntegrationError(content['error'])
     return content
 
   def get_contents(self, job_id, path=None, ref=None):
@@ -49,15 +62,18 @@ class Buildbot(object):
       request_path = BASE + '/git/repos/{}/contents{}'.format(job_id, path)
       resp = requests.get(request_path)
     except Exception as e:
-      raise Error(e)
-    return resp.json()
+      raise ConnectionError(e)
+    content = resp.json()
+    if 'error' in content:
+      raise IntegrationError(content['error'])
+    return content
 
   def read_file(self, job_id, path, ref):
     try:
       request_path = BASE + '/git/repos/{}/raw/{}{}'.format(job_id, ref, path)
       resp = requests.get(request_path)
     except Exception as e:
-      raise Error(e)
+      raise ConnectionError(e)
     return resp.content
 
 #  def write_file(self, job_id, path, contents):

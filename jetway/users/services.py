@@ -15,6 +15,7 @@ class MeService(api.Service):
   def get(self, request):
     resp = messages.GetMeResponse()
     resp.me = self.me.to_me_message()
+    resp.user = resp.me
     return resp
 
   @remote.method(messages.SignInRequest,
@@ -35,11 +36,12 @@ class MeService(api.Service):
   @api.me_required
   def update(self, request):
     try:
-      self.me.update(request.me)
+      self.me.update(request.user)
     except users.UserExistsError as e:
       raise api.ConflictError(str(e))
     resp = messages.UpdateMeResponse()
     resp.me = self.me.to_me_message()
+    resp.user = resp.me
     return resp
 
   @remote.method(messages.SearchProjectsRequest,
@@ -67,17 +69,6 @@ class MeService(api.Service):
     results = self.me.search_orgs()
     resp = watcher_messages.SearchWatchersResponse()
     resp.orgs = [org.to_message() for org in results]
-    return resp
-
-
-  @remote.method(messages.RegenerateGitPasswordRequest,
-                 messages.RegenerateGitPasswordResponse)
-  @api.me_required
-  def regenerate_git_password(self, request):
-    git_password = self.me.regenerate_git_password()
-    resp = messages.RegenerateGitPasswordResponse()
-    resp.me = self.me.to_me_message()
-    resp.git_password = git_password
     return resp
 
 

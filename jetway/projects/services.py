@@ -1,4 +1,5 @@
 from . import service_messages
+from ..buildbot import buildbot
 from protorpc import remote
 from jetway import api
 from jetway.owners import owners
@@ -22,9 +23,13 @@ class ProjectService(api.Service):
                  service_messages.CreateProjectResponse)
   def create(self, request):
     try:
-      owner = owners.Owner.get(request.project.owner.nickname)
+      try:
+        owner = owners.Owner.get(request.project.owner.nickname)
+      except owners.OwnerDoesNotExistError as e:
+        raise api.NotFoundError(str(e))
       project = projects.Project.create(owner, request.project.nickname,
                                         description=request.project.description,
+                                        git_url=request.project.git_url,
                                         created_by=self.me)
     except projects.ProjectExistsError as e:
       raise api.ConflictError(str(e))
@@ -161,7 +166,10 @@ class ProjectService(api.Service):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
       raise api.ForbiddenError('Forbidden ({})'.format(self.me))
-    branches = project.list_branches()
+    try:
+      branches = project.list_branches()
+    except buildbot.Error as e:
+      raise api.Error(str(e))
     resp = service_messages.ListBranchesResponse()
     resp.branches = branches
     return resp
@@ -172,9 +180,12 @@ class ProjectService(api.Service):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
       raise api.ForbiddenError('Forbidden ({})'.format(self.me))
-    catalogs = project.list_catalogs()
+    try:
+      catalogs = project.list_catalogs()
+    except buildbot.Error as e:
+      raise api.Error(str(e))
     resp = service_messages.ListCatalogsResponse()
-    resp.catalogs = [catalog.to_message() for catalog in catalogs]
+    resp.catalogs = [catalog.to_message(included=[]) for catalog in catalogs]
     return resp
 
   @remote.method(service_messages.GetCatalogRequest,
@@ -183,7 +194,10 @@ class ProjectService(api.Service):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
       raise api.ForbiddenError('Forbidden ({})'.format(self.me))
-    catalog = project.get_catalog(request.catalog.locale)
+    try:
+      catalog = project.get_catalog(request.catalog.locale)
+    except buildbot.Error as e:
+      raise api.Error(str(e))
     resp = service_messages.GetCatalogResponse()
     resp.catalog = catalog.to_message()
     return resp

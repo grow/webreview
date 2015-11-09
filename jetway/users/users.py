@@ -94,7 +94,6 @@ class BaseUser(models.User):
 
 
 class User(BaseUser):
-
   nickname = ndb.StringProperty()
   description = ndb.StringProperty()
   location = ndb.StringProperty()
@@ -132,11 +131,10 @@ class User(BaseUser):
     message = messages.UserMessage()
     if self.nickname:
       message.nickname = self.nickname
-    message.email = self.email
     message.ident = self.ident
     message.avatar_url = self.avatar_url
     message.description = self.description
-    message.location = self.description
+    message.location = self.location
     message.website_url = self.website_url
     return message
 

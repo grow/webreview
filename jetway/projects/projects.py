@@ -88,7 +88,7 @@ class Project(ndb.Model):
     return results
 
   @classmethod
-  def create(cls, owner, nickname, created_by, description=None):
+  def create(cls, owner, nickname, created_by, description=None, git_url=None):
     try:
       cls.get(owner, nickname)
       text = 'Project {}/{} already exists.'
@@ -99,9 +99,10 @@ class Project(ndb.Model):
         owner_key=owner.key,
         created_by_key=created_by.key,
         nickname=nickname,
+        git_url=git_url,
         description=description)
     project.put()
-    project._update_buildbot_job()
+    project._update_buildbot_job(project.git_url)
     teams.Team.create(owner, None,
                       created_by=created_by, project=project,
                       kind=teams.messages.Kind.PROJECT_OWNERS)
@@ -127,17 +128,19 @@ class Project(ndb.Model):
       raise ProjectDoesNotExistError(text.format(nickname))
     return project
 
-  def _update_buildbot_job(self):
-    if not self.git_url:
+  def _update_buildbot_job(self, git_url):
+    if git_url is None:
       self.buildbot_job_id = None
       self.put()
       return
+    logging.info('Buildbot URL update {} -> {}'.format(self, git_url))
     bot = buildbot.Buildbot()
     try:
       resp = bot.create_job(
-          git_url=self.git_url,
+          git_url=git_url,
           remote=self.permalink)
       self.buildbot_job_id = str(resp['job_id'])
+      logging.info('Buildbot job ID update {} -> {}'.format(self, self.buildbot_job_id))
       self.put()
     except buildbot.Error:
       logging.exception('Buildbot connection error.')
@@ -218,6 +221,8 @@ class Project(ndb.Model):
     message.description = self.description
     message.avatar_url = self.avatar_url
     message.visibility = self.visibility
+    message.git_url = self.git_url
+    message.buildbot_job_id = self.buildbot_job_id
     if self.cover:
       message.cover = self.cover.to_message()
     message.built = self.built
@@ -228,9 +233,9 @@ class Project(ndb.Model):
     if message.cover:
       self.cover = Cover.from_message(message.cover)
     self.visibility = message.visibility
-    self.git_url = message.git_url
     if message.git_url != self.git_url:
-      self._update_buildbot_job()
+      self._update_buildbot_job(message.git_url)
+    self.git_url = message.git_url
     self.put()
 
   def search_teams(self, users=None):

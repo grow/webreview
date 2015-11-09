@@ -21,16 +21,8 @@ class GetMeRequest(messages.Message):
 
 
 class GetMeResponse(messages.Message):
-  me = messages.MessageField(UserMessage, 1)
-
-
-class RegenerateGitPasswordRequest(messages.Message):
-  pass
-
-
-class RegenerateGitPasswordResponse(messages.Message):
-  me = messages.MessageField(UserMessage, 1)
-  git_password = messages.StringField(2)
+  me = messages.MessageField(UserMessage, 1)  # TODO: Deprecate "me".
+  user = messages.MessageField(UserMessage, 2)
 
 
 class SignInRequest(messages.Message):
@@ -50,11 +42,13 @@ class SignOutResponse(messages.Message):
 
 
 class UpdateMeRequest(messages.Message):
-  me = messages.MessageField(UserMessage, 1)
+  me = messages.MessageField(UserMessage, 1)  # TODO: Deprecate "me".
+  user = messages.MessageField(UserMessage, 2)
 
 
 class UpdateMeResponse(messages.Message):
-  me = messages.MessageField(UserMessage, 1)
+  me = messages.MessageField(UserMessage, 1)  # TODO: Deprecate "me".
+  user = messages.MessageField(UserMessage, 2)
 
 
 class SearchOrgsRequest(messages.Message):
