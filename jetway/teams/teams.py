@@ -29,7 +29,7 @@ class CannotDeleteMembershipError(Error):
 
 
 class TeamMembership(ndb.Model):
-  role = msgprop.EnumProperty(messages.Role)
+  role = msgprop.EnumProperty(messages.Role, default=messages.Role.READ_ONLY)
   is_public = ndb.BooleanProperty(default=False)
   domain_key = ndb.KeyProperty()
   user_key = ndb.KeyProperty()
@@ -196,6 +196,8 @@ class Team(ndb.Model):
         return membership
 
   def create_membership(self, user, role=None, is_public=False):
+    if role is None:
+      role = messages.Role.READ_ONLY
 #    if role is not None and self.kind != messages.Kind.PROJECT:
 #      raise ValueError('Role cannot be set for non-project teams.')
     for membership in self.memberships:

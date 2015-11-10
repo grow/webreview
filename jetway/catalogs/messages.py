@@ -13,3 +13,6 @@ class CatalogMessage(messages.Message):
   num_fuzzy = messages.IntegerField(6)
   num_translated = messages.IntegerField(7)
   num_messages = messages.IntegerField(8)
+  ident = messages.StringField(9)
+  sha = messages.StringField(10)
+  ref = messages.StringField(11)

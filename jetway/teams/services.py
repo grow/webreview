@@ -171,7 +171,6 @@ class TeamService(api.Service):
     user = self._get_user(request)
     team.update_membership(user,
                            role=request.membership.role,
-                           review_required=request.membership.review_required,
                            is_public=request.membership.is_public)
     resp = messages.UpdateMembershipResponse()
     resp.team = team.to_message()

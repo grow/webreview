@@ -26,6 +26,7 @@ class UserExistsError(Error):
 
 class BaseUser(models.User):
   email = ndb.StringProperty()
+  name = ndb.StringProperty()
 
   def user_id(self):
     # Provides compatibility with oauth2client.
@@ -136,6 +137,7 @@ class User(BaseUser):
     message.description = self.description
     message.location = self.location
     message.website_url = self.website_url
+    message.name = self.name
     return message
 
   def to_me_message(self):
@@ -187,6 +189,7 @@ class User(BaseUser):
     except UserDoesNotExistError:
       pass
     self.email = message.email
+    self.name = message.name
     self.nickname = message.nickname
     self.description = message.description
     self.location = message.location

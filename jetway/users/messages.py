@@ -11,6 +11,7 @@ class UserMessage(messages.Message):
   website_url = messages.StringField(5)
   description = messages.StringField(6)
   location = messages.StringField(7)
+  name = messages.StringField(8)
 
 
 ###

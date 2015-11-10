@@ -188,8 +188,8 @@ class ProjectService(api.Service):
     resp.catalogs = [catalog.to_message(included=[]) for catalog in catalogs]
     return resp
 
-  @remote.method(service_messages.GetCatalogRequest,
-                 service_messages.GetCatalogResponse)
+  @remote.method(service_messages.CatalogRequest,
+                 service_messages.CatalogResponse)
   def get_catalog(self, request):
     project = self._get_project(request)
     if not project.can(self.me, projects.Permission.READ):
@@ -198,6 +198,21 @@ class ProjectService(api.Service):
       catalog = project.get_catalog(request.catalog.locale)
     except buildbot.Error as e:
       raise api.Error(str(e))
-    resp = service_messages.GetCatalogResponse()
+    resp = service_messages.CatalogResponse()
+    resp.catalog = catalog.to_message()
+    return resp
+
+  @remote.method(service_messages.CatalogRequest,
+                 service_messages.CatalogResponse)
+  def update_translations(self, request):
+    project = self._get_project(request)
+    if not project.can(self.me, projects.Permission.READ):
+      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    try:
+      catalog = project.get_catalog(request.catalog.locale)
+    except buildbot.Error as e:
+      raise api.Error(str(e))
+    catalog.update_translations(request.catalog.translations)
+    resp = service_messages.CatalogResponse()
     resp.catalog = catalog.to_message()
     return resp

@@ -110,8 +110,11 @@ class FilesetService(api.Service, BaseFilesetService):
                  messages.SearchFilesetResponse)
   def search(self, request):
     if request.fileset.project:
-      owner = owners.Owner.get(request.fileset.project.owner.nickname)
-      project = projects.Project.get(owner, request.fileset.project.nickname)
+      if request.fileset.project.ident:
+        project = projects.Project.get_by_ident(request.fileset.project.ident)
+      else:
+        owner = owners.Owner.get(request.fileset.project.owner.nickname)
+        project = projects.Project.get(owner, request.fileset.project.nickname)
     else:
       project = None
     if (not self._is_authorized_buildbot()

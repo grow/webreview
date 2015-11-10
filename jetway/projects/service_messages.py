@@ -118,10 +118,10 @@ class ListCatalogsResponse(messages.Message):
   catalogs = messages.MessageField(catalog_messages.CatalogMessage, 1, repeated=True)
 
 
-class GetCatalogRequest(messages.Message):
+class CatalogRequest(messages.Message):
   project = messages.MessageField(ProjectMessage, 1)
   catalog = messages.MessageField(catalog_messages.CatalogMessage, 2)
 
 
-class GetCatalogResponse(messages.Message):
+class CatalogResponse(messages.Message):
   catalog = messages.MessageField(catalog_messages.CatalogMessage, 1)

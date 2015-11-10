@@ -48,7 +48,7 @@ class Buildbot(object):
 
   def list_branches(self, job_id):
     try:
-      resp = requests.get(BASE + '/git/repos/{}/branches'.format(job_id))
+      resp = requests.get(BASE + '/git/repos/{}/branches'.format(job_id), auth=self.auth)
     except Exception as e:
       raise ConnectionError(e)
     content = resp.json()
@@ -60,7 +60,7 @@ class Buildbot(object):
     path = path or '/'
     try:
       request_path = BASE + '/git/repos/{}/contents{}'.format(job_id, path)
-      resp = requests.get(request_path)
+      resp = requests.get(request_path, auth=self.auth)
     except Exception as e:
       raise ConnectionError(e)
     content = resp.json()
@@ -71,11 +71,22 @@ class Buildbot(object):
   def read_file(self, job_id, path, ref):
     try:
       request_path = BASE + '/git/repos/{}/raw/{}{}'.format(job_id, ref, path)
-      resp = requests.get(request_path)
+      resp = requests.get(request_path, auth=self.auth)
     except Exception as e:
       raise ConnectionError(e)
     return resp.content
 
-#  def write_file(self, job_id, path, contents):
-#    resp = requests.post(BASE + '/jobs/{}/contents/update'.format(job_id))
-#    return resp.body
+  def write_file(self, job_id, path, contents, ref, sha, committer, author):
+    data = {
+        'branch': ref,
+        'path': path,
+        'content': contents,
+        'sha': sha,
+        'committer': committer,
+        'author': author,
+    }
+    try:
+      resp = requests.post(BASE + '/jobs/{}/contents/update'.format(job_id), json=data)
+    except Exception as e:
+      raise ConnectionError(e)
+    return resp.body
