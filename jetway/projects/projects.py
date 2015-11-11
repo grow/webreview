@@ -2,6 +2,7 @@ from . import watchers
 from ..buildbot import buildbot
 from ..buildbot import messages as buildbot_messages
 from ..catalogs import catalogs
+from ..groups import groups
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from jetway.avatars import avatars
@@ -32,30 +33,17 @@ class ProjectDoesNotExistError(Error):
   pass
 
 
-class Cover(ndb.Model):
-  content = ndb.StringProperty()
-
-  @classmethod
-  def from_message(cls, message):
-    return cls(content=message.content)
-
-  def to_message(self):
-    message = messages.CoverMessage()
-    message.content = self.content
-    return message
-
-
 class Project(ndb.Model):
   created = ndb.DateTimeProperty(auto_now_add=True)
   nickname = ndb.StringProperty()
   owner_key = ndb.KeyProperty()
   created_by_key = ndb.KeyProperty()
   description = ndb.StringProperty()
-  cover = ndb.StructuredProperty(Cover)
   visibility = msgprop.EnumProperty(messages.Visibility)
   built = ndb.DateTimeProperty()
   buildbot_job_id = ndb.StringProperty()
   git_url = ndb.StringProperty()
+  group_key = ndb.KeyProperty()
 
   @property
   def name(self):
@@ -79,13 +67,6 @@ class Project(ndb.Model):
   @property
   def ident(self):
     return str(self.key.id())
-
-  @classmethod
-  def search_unknown_by_buildbot(cls):
-    query = cls.query()
-    query = query.filter(cls.known_by_buildbot == False)
-    results = query.fetch()
-    return results
 
   @classmethod
   def create(cls, owner, nickname, created_by, description=None, git_url=None):
@@ -205,6 +186,15 @@ class Project(ndb.Model):
     return owners.Owner.get_by_key(self.owner_key)
 
   @property
+  def group(self):
+    if self.group_key is None:
+      group = groups.Group.create()
+      self.group_key = group.key
+      self.put()
+      return group
+    return self.group_key.get()
+
+  @property
   def avatar_url(self):
     return avatars.Avatar.create_url(self)
 
@@ -223,15 +213,11 @@ class Project(ndb.Model):
     message.visibility = self.visibility
     message.git_url = self.git_url
     message.buildbot_job_id = self.buildbot_job_id
-    if self.cover:
-      message.cover = self.cover.to_message()
     message.built = self.built
     return message
 
   def update(self, message):
     self.description = message.description
-    if message.cover:
-      self.cover = Cover.from_message(message.cover)
     self.visibility = message.visibility
     if message.git_url != self.git_url:
       self._update_buildbot_job(message.git_url)

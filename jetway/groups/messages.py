@@ -21,6 +21,6 @@ class MembershipMessage(messages.Message):
 
 
 class GroupMessage(messages.Message):
-  ident = messages.StringField(2)
   users = messages.MessageField(MembershipMessage, 1, repeated=True)
   domains = messages.MessageField(MembershipMessage, 2, repeated=True)
+  ident = messages.StringField(3)

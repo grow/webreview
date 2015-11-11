@@ -17,10 +17,6 @@ class Visibility(messages.Enum):
   DOMAIN = 5
 
 
-class CoverMessage(messages.Message):
-  content = messages.StringField(1)
-
-
 class Order(messages.Enum):
   NAME = 0
 
@@ -32,7 +28,6 @@ class ProjectMessage(messages.Message):
   description = messages.StringField(4)
   avatar_url = messages.StringField(6)
   visibility = messages.EnumField(Visibility, 7)
-  cover = messages.MessageField(CoverMessage, 8)
   name = messages.StringField(9)
   built = message_types.DateTimeField(10)
   buildbot_job_id = messages.StringField(11)

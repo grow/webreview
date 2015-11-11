@@ -9,7 +9,7 @@ class Error(Exception):
 
 
 class Group(ndb.Model):
-  memberships = ndb.StructuredProperty(repeated=True)
+  memberships = ndb.StructuredProperty(memberships.Membership, repeated=True)
 
   @property
   def ident(self):
@@ -21,6 +21,12 @@ class Group(ndb.Model):
     group = key.get()
     if group is None:
       raise Error('Group does not exist.')
+    return group
+
+  @classmethod
+  def create(cls):
+    group = cls()
+    group.put()
     return group
 
   def validate(self):
