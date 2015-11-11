@@ -344,13 +344,18 @@ class Project(ndb.Model):
 
   def list_branches(self):
     bot = buildbot.Buildbot()
-    data = bot.list_branches(self.buildbot_job_id)
+    job = bot.get_job(self.buildbot_job_id)['job']
     results = []
-    for branch_data in data:
-      branch_data = json.dumps(branch_data)
-      message_class = buildbot_messages.BranchMessage
-      branch_message = protojson.decode_message(message_class, branch_data)
+    for ref, data in job['ref_map'].iteritems():
+      name = ref.replace('refs/heads/', '')
+      commit = buildbot_messages.CommitMessage(sha=data['sha'])
+      ident = self.ident + ':branch:' + name
+      branch_message = buildbot_messages.BranchMessage(
+          name=name,
+          commit=commit,
+          ident=ident)
       results.append(branch_message)
+    results = sorted(results, key=lambda message: message.name)
     return results
 
   def list_catalogs(self):

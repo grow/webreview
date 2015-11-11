@@ -46,9 +46,9 @@ class Buildbot(object):
       raise IntegrationError(content['error'])
     return content
 
-  def list_branches(self, job_id):
+  def get_job(self, job_id):
     try:
-      resp = requests.get(BASE + '/git/repos/{}/branches'.format(job_id), auth=self.auth)
+      resp = requests.get(BASE + '/jobs/{}'.format(job_id), auth=self.auth)
     except Exception as e:
       raise ConnectionError(e)
     content = resp.json()
