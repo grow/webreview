@@ -167,8 +167,7 @@ class RequestSigningService(remote.Service, BaseFilesetService):
     return users.User.get_by_email(email)
 
   def _get_or_create_fileset(self, request, me):
-    allow_fileset_by_commit = (request.fileset.commit
-                               and self._is_authorized_buildbot())
+    allow_fileset_by_commit = bool(request.fileset.commit)
     p = self._get_project(request)
     try:
       if allow_fileset_by_commit:

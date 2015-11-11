@@ -52,16 +52,20 @@ REQUIRE_HTTPS_FOR_APP = jetway_config.get('require_https', {}).get('app_domain',
 
 GCS_SERVICE_ACCOUNT_EMAIL = service_account_key['client_email']
 
-_appid = os.getenv('APPLICATION_ID', 'dev-webreview').split('~')[-1]
+IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')
+
+if IS_DEV_SERVER:
+  _appid = os.getenv('APPLICATION_ID').split('~')[-1]
+else:
+  _appid = 'webreview-local-dev'
+
 EMAIL_NAME = 'Web Review'
 EMAIL_ADDRESS = 'noreply@{}.appspotmail.com'.format(_appid)
 EMAIL_SENDER = '{} <{}>'.format(EMAIL_NAME, EMAIL_ADDRESS)
 
-IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')
-
 def get_gcs_bucket():
   if IS_DEV_SERVER:
-    return 'grow-prod.appspot.com'
+    return 'grow-webreview-dev'
   return app_identity.get_default_gcs_bucket_name()
 
 if os.environ.get('TESTING'):

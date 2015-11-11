@@ -47,7 +47,6 @@ class Catalog(object):
 
   @webapp2.cached_property
   def babel_catalog(self):
-#    fp = cStringIO.StringIO()
     fp = io.BytesIO()
     fp.write(self.content)
     fp.seek(0)
@@ -93,8 +92,10 @@ class Catalog(object):
     message.percent_translated = self.percent_translated
     return message
 
-  def update_translations(self, translation_messages, ref, sha, committer, author):
-    commit_message = '(auto commit from Web Review)'
+  def update_translations(self, translation_messages, ref, sha, committer, author,
+                          commit_message=None):
+    label = 'commit from Web Review - translations for {}'
+    commit_message = commit_message or label.format(self.locale)
     for message in translation_messages:
       try:
         self.babel_catalog[message.msgid].string = message.string
