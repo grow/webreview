@@ -1,10 +1,11 @@
 from . import service_messages
 from ..buildbot import buildbot
-from protorpc import remote
 from jetway import api
 from jetway.owners import owners
-from jetway.projects import projects
 from jetway.projects import messages
+from jetway.projects import projects
+from protorpc import remote
+import appengine_config
 
 
 class ProjectService(api.Service):
@@ -212,7 +213,23 @@ class ProjectService(api.Service):
       catalog = project.get_catalog(request.catalog.locale)
     except buildbot.Error as e:
       raise api.Error(str(e))
-    catalog.update_translations(request.catalog.translations)
+    committer = {
+        'name': appengine_config.EMAIL_NAME,
+        'email': appengine_config.EMAIL_ADDRESS,
+    }
+    author = {
+        'name': self.me.name or 'Web Review User',
+        'email': self.me.email,
+    }
+    try:
+      catalog.update_translations(
+          request.catalog.translations,
+          ref=request.catalog.ref,
+          sha=request.catalog.sha,
+          committer=committer,
+          author=author)
+    except buildbot.Error as e:
+      raise api.Error(str(e))
     resp = service_messages.CatalogResponse()
     resp.catalog = catalog.to_message()
     return resp

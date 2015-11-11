@@ -52,10 +52,10 @@ REQUIRE_HTTPS_FOR_APP = jetway_config.get('require_https', {}).get('app_domain',
 
 GCS_SERVICE_ACCOUNT_EMAIL = service_account_key['client_email']
 
-_appid = os.getenv('APPLICATION_ID').replace('s~', '')
-_sender_name = 'WebReview'
-_sender_address = 'noreply@{}.appspotmail.com'.format(_appid)
-EMAIL_SENDER = '{} <{}>'.format(_sender_name, _sender_address)
+_appid = os.getenv('APPLICATION_ID', 'dev-webreview').split('~')[-1]
+EMAIL_NAME = 'Web Review'
+EMAIL_ADDRESS = 'noreply@{}.appspotmail.com'.format(_appid)
+EMAIL_SENDER = '{} <{}>'.format(EMAIL_NAME, EMAIL_ADDRESS)
 
 IS_DEV_SERVER = os.getenv('SERVER_SOFTWARE', '').startswith('Dev')
 

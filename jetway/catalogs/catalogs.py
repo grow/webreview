@@ -1,10 +1,12 @@
 from . import messages
 from ..buildbot import buildbot
 from ..translations import translations
+from babel.messages import catalog
 from babel.messages import pofile
 import babel
-import io
 import cStringIO
+import io
+import webapp2
 
 
 class Error(Exception):
@@ -43,7 +45,7 @@ class Catalog(object):
     self.content = data['content'].encode('utf-8')
     self.sha = data['sha']
 
-  @property
+  @webapp2.cached_property
   def babel_catalog(self):
 #    fp = cStringIO.StringIO()
     fp = io.BytesIO()
@@ -92,15 +94,21 @@ class Catalog(object):
     return message
 
   def update_translations(self, translation_messages, ref, sha, committer, author):
+    commit_message = '(auto commit from Web Review)'
     for message in translation_messages:
-      self.babel_catalog[message.msgid] = message.string
+      try:
+        self.babel_catalog[message.msgid].string = message.string
+      except KeyError:
+        babel_message = catalog.Message(message.msgid, message.string)
+        self.babel_catalog[message.msgid] = babel_message
     fp = io.BytesIO()
-    pofile.write_po(fp, self.locale)
+    pofile.write_po(fp, self.babel_catalog)
     content = fp.getvalue()
     return self._bot.write_file(
         self.project.buildbot_job_id,
         path=self.path,
         contents=content,
+        message=commit_message,
         ref=ref,
         sha=sha,
         committer=committer,

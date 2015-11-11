@@ -76,17 +76,24 @@ class Buildbot(object):
       raise ConnectionError(e)
     return resp.content
 
-  def write_file(self, job_id, path, contents, ref, sha, committer, author):
+  def write_file(self, job_id, path, contents, message, ref, sha, committer, author):
     data = {
         'branch': ref,
         'path': path,
+        'message': message,
         'content': contents,
         'sha': sha,
         'committer': committer,
         'author': author,
     }
     try:
-      resp = requests.post(BASE + '/jobs/{}/contents/update'.format(job_id), json=data)
+      resp = requests.post(
+          BASE + '/jobs/{}/contents/update'.format(job_id),
+          json=data,
+          auth=self.auth)
     except Exception as e:
       raise ConnectionError(e)
-    return resp.body
+    result = resp.json()
+    if 'error' in result:
+      raise IntegrationError(result['error'])
+    return result

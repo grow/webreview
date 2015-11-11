@@ -188,7 +188,6 @@ class User(BaseUser):
         raise UserExistsError('Nickname already in use.')
     except UserDoesNotExistError:
       pass
-    self.email = message.email
     self.name = message.name
     self.nickname = message.nickname
     self.description = message.description
