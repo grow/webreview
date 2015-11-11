@@ -94,7 +94,7 @@ class Catalog(object):
 
   def update_translations(self, translation_messages, ref, sha, committer, author,
                           commit_message=None):
-    label = 'commit from Web Review - translations for {}'
+    label = '(webreview) translations for {}'
     commit_message = commit_message or label.format(self.locale)
     for message in translation_messages:
       try:
