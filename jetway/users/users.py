@@ -1,11 +1,10 @@
-import random
 from google.appengine.ext import ndb
 from jetway.avatars import avatars
 from jetway.files import files
-from jetway.teams import teams
 from jetway.users import messages
 from webapp2_extras import security
 from webapp2_extras.appengine.auth import models
+import random
 
 
 class Error(Exception):
@@ -201,21 +200,21 @@ class User(BaseUser):
     self.put()
 
   def search_teams(self):
-    query = teams.Team.query()
-    query = query.filter(teams.Team.user_keys == self.key)
+    from jetway.groups import groups
+    query = groups.Group.query()
+    query = query.filter(groups.Group.memberships.user_key == self.key)
     return query.fetch()
 
   def search_orgs(self):
-    team_ents = self.search_teams()
-    org_keys = list(set([team.owner_key for team in team_ents
-                         if team.kind != teams.messages.Kind.PROJECT_OWNERS]))
-    return filter(None, ndb.get_multi(org_keys))
+    # TODO: Implement.
+    return []
 
   def search_projects(self):
     team_ents = self.search_teams()
     project_keys = []
     for team in team_ents:
-      project_keys += team.project_keys
+      if team.project_key:
+        project_keys.append(team.project_key)
     team_projects = ndb.get_multi(list(set(project_keys)))
     from jetway.projects import projects
     user_projects = projects.Project.search(owner=self)

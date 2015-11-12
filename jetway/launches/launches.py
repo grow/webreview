@@ -2,7 +2,6 @@ from google.appengine.ext import ndb
 from jetway.filesets import filesets
 from jetway.projects import projects
 from jetway.launches import messages
-from jetway.teams import teams
 
 
 class Error(Exception):
@@ -127,19 +126,8 @@ class Launch(ndb.Model):
 
   @property
   def reviewers(self):
-    results = teams.Team.search(projects=[self.project])
-    team_user_keys = set()
-    for team in results:
-      for membership in team.memberships:
-        if membership.review_required:
-          team_user_keys.add(membership.user_key)
-    team_users = ndb.get_multi(list(team_user_keys))
-    reviewers = []
-    reviewers.extend(self.additional_reviewers)
-    for user in team_users:
-      reviewers.append(Reviewer(
-        user_key=user.key))
-    return reviewers
+    # TODO: Implement.
+    return []
 
   def to_message(self):
     message = messages.LaunchMessage()

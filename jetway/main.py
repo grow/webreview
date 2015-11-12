@@ -12,7 +12,6 @@ from .owners import services as owner_services
 from .projects import services as project_services
 from .server import handlers as server_handlers
 from .server import utils
-from .teams import services as team_services
 from .users import services as user_services
 from protorpc.wsgi import service
 import endpoints
@@ -56,7 +55,6 @@ api_app = service.service_mappings((
     ('/_api/owners.*', owner_services.OwnerService),
     ('/_api/orgs.*', org_services.OrgService),
     ('/_api/projects.*', project_services.ProjectService),
-    ('/_api/teams.*', team_services.TeamService),
     ('/_api/users.*', user_services.UserService),
 ), registry_path='/_api/protorpc')
 

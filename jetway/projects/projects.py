@@ -11,7 +11,6 @@ from jetway.filesets import filesets
 from jetway.filesets import named_filesets
 from jetway.owners import owners
 from jetway.projects import messages
-from jetway.teams import teams
 from protorpc import protojson
 import appengine_config
 import json
@@ -85,9 +84,6 @@ class Project(ndb.Model):
         description=description)
     project.put()
     project._update_buildbot_job(project.git_url)
-    teams.Team.create(owner, None,
-                      created_by=created_by, project=project,
-                      kind=teams.messages.Kind.PROJECT_OWNERS)
     return project
 
   @classmethod
@@ -140,22 +136,11 @@ class Project(ndb.Model):
 
   def delete(self):
     from jetway.launches import launches
-    team_results = teams.Team.search(
-        projects=[self],
-        kind=teams.messages.Kind.DEFAULT)
     launch_results = launches.Launch.search(project=self)
     fileset_results = filesets.Fileset.search(project=self)
 
     @ndb.transactional(retries=1, xg=True)
     def _delete_project():
-      try:
-        project_team = teams.Team.get(
-            self.ident, teams.messages.Kind.PROJECT_OWNERS)
-        project_team.delete()
-      except teams.TeamDoesNotExistError:
-        pass
-      for team in team_results:
-        team.remove_project(self)
       for launch in launch_results:
         launch.delete()
       for fileset in fileset_results:
@@ -170,9 +155,6 @@ class Project(ndb.Model):
 
   def get_fileset(self, name):
     return filesets.Fileset.get(project=self, name=name)
-
-  def get_team(self):
-    return teams.Team.get(self.ident, teams.messages.Kind.PROJECT_OWNERS)
 
   def search_filesets(self):
     query = filesets.Fileset.query()
@@ -232,18 +214,13 @@ class Project(ndb.Model):
     self.git_url = message.git_url
     self.put()
 
-  def search_teams(self, users=None):
-    return teams.Team.search(projects=[self], users=None)
-
   def list_users_to_notify(self):
     return self.search_users(is_public=None)
 
   def search_users(self, is_public=True):
-    team = self.get_team()
     users = []
-    for membership in team.memberships:
-      if (is_public is None
-          or membership.is_public == is_public):
+    for membership in self.group.memberships:
+      if membership.user_key:
         users.append(membership.user)
     return users
 

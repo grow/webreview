@@ -25,8 +25,10 @@ class Group(ndb.Model):
     return group
 
   @classmethod
-  def create(cls):
+  def create(cls, project=None):
     group = cls()
+    if project:
+      group.project_key = project
     group.put()
     return group
 
@@ -36,7 +38,9 @@ class Group(ndb.Model):
       if mem.role == messages.Role.ADMIN:
         num_admins += 1
     if num_admins < 1:
-      raise memberships.MembershipConflictError('Must be at least one admin.')
+      pass
+      # TODO: Decide if we need this check.
+      # raise memberships.MembershipConflictError('Must be at least one admin.')
 
   def create_membership(self, membership_message):
     mem = memberships.Membership.from_message(membership_message)

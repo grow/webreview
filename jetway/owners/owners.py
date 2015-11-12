@@ -3,7 +3,6 @@ from jetway.avatars import avatars
 from jetway.orgs import orgs
 from jetway.owners import messages
 from jetway.users import users
-from jetway.teams import teams
 from jetway import api_errors as api
 
 
@@ -107,16 +106,3 @@ class Owner(object):
     message.website_url = self._entity.website_url
     message.avatar_url = self.avatar_url
     return message
-
-  def create_team(self, nickname, created_by):
-    return teams.Team.create(self, nickname, created_by)
-
-  def search_teams(self):
-    return teams.Team.search(owner=self)
-
-  def get_team(self, nickname):
-    return teams.Team.get(self, nickname)
-
-  def delete_team(self, nickname):
-    team = self.get_team(nickname)
-    team.delete()
