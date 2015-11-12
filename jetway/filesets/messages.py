@@ -103,6 +103,7 @@ class FilesetMessage(messages.Message):
   commit = messages.MessageField(CommitMessage, 14)
   finalized = messages.BooleanField(15)
   status = messages.EnumField(FilesetStatus, 16)
+  subdomain = messages.StringField(17)
 
 
 class NamedFilesetMessage(messages.Message):

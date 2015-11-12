@@ -67,7 +67,7 @@ class File(ndb.Model):
 
   def to_message(self):
     message = messages.FileMessage()
-    message.path = self.apth
+    message.path = self.path
     message.created_by = self.created_by
     message.modified_by = self.modified_by
     message.ext = self.ext
@@ -238,6 +238,7 @@ class Fileset(ndb.Model):
     message.commit = self.commit
     message.finalized = self.finalized
     message.status = self.status
+    message.subdomain = self.subdomain
     if self.created_by_key:
       message.created_by = self.created_by.to_message()
     if self.log:
@@ -252,6 +253,12 @@ class Fileset(ndb.Model):
   def url(self):
     return utils.make_url(self.name, self.project.nickname,
                           self.project.owner.nickname, ident=self.ident)
+
+  @property
+  def subdomain(self):
+    return utils.make_subdomain(
+        self.name, self.project.nickname, self.project.owner.nickname,
+        ident=self.ident)
 
   @property
   def root(self):

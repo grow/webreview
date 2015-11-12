@@ -107,7 +107,7 @@ class Project(ndb.Model):
     return project
 
   def _update_buildbot_job(self, git_url):
-    if git_url is None:
+    if not git_url:
       self.buildbot_job_id = None
       self.put()
       return

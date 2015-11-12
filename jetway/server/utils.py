@@ -30,6 +30,15 @@ def parse_hostname(hostname, path=None, multitenant=False):
   return tuple(part if part else None for part in results[0])
 
 
+def make_subdomain(name, project, owner, ident=None, multitenant=False):
+  if multitenant:
+    return '{name}--{project}--{owner}'.format(
+        name=name, project=project, owner=owner)
+  elif name:
+    return name
+  return ident
+
+
 def make_url(name, project, owner, path=None,
              multitenant=False,
              include_port=appengine_config.IS_DEV_SERVER,
@@ -42,14 +51,6 @@ def make_url(name, project, owner, path=None,
     sep = '-dot-'
   else:
     sep = '.'
-  if multitenant:
-    return '{scheme}://{name}--{project}--{owner}{sep}{hostname}'.format(
-        scheme=scheme, name=name, sep=sep, hostname=preview_hostname,
-        owner=owner, project=project)
-  else:
-    if name:
-      return '{scheme}://{name}{sep}{hostname}'.format(
-          scheme=scheme, name=name, sep=sep, hostname=preview_hostname)
-    else:
-      return '{scheme}://{ident}{sep}{hostname}'.format(
-          scheme=scheme, ident=ident, sep=sep, hostname=preview_hostname)
+  subdomain = make_subdomain(name, project, owner, ident=ident, multitenant=multitenant)
+  return '{scheme}://{subdomain}{sep}{hostname}'.format(
+      scheme=scheme, subdomain=subdomain, sep=sep, hostname=preview_hostname)
