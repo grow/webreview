@@ -43,7 +43,7 @@ class ProjectPolicy(object):
       return True
     if self.mem is None:
       return False
-    return self.mem.role in [messages.Role.ADMIN, messages.Role.READ]
+    return self.mem.role in [messages.Role.ADMIN, messages.Role.READ, None]
 
   def can_write(self):
     if self.is_owner:

@@ -4,8 +4,7 @@ from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 
 
-class Error(Exception):
-  pass
+Error = memberships.Error
 
 
 class Group(ndb.Model):

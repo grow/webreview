@@ -21,9 +21,9 @@ class Membership(ndb.Model):
   def check_conflict(self, other_memberships):
     for mem in other_memberships:
       if self.user_key and self.user_key == mem.user_key:
-        raise MembershipConflictError()
+        raise MembershipConflictError('{} is already a member.'.format(self.user.nickname))
       if self.domain and self.domain == mem.domain:
-        raise MembershipConflictError()
+        raise MembershipConflictError('{} is already a member.'.format(self.domain))
 
   @classmethod
   def from_message(cls, message):

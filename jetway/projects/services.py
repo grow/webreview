@@ -2,6 +2,7 @@ from . import service_messages
 from ..buildbot import buildbot
 from ..policies import policies
 from jetway import api
+from jetway.groups import groups
 from jetway.owners import owners
 from jetway.projects import messages
 from jetway.projects import projects
@@ -230,7 +231,10 @@ class ProjectService(api.Service):
   def create_membership(self, request):
     project = self._get_project(request)
     self._get_policy(project).authorize_admin()
-    project.group.create_membership(request.membership)
+    try:
+      project.group.create_membership(request.membership)
+    except groups.Error as e:
+      raise api.Error(str(e))
     resp = service_messages.GroupResponse()
     resp.group = project.group.to_message()
     return resp
@@ -240,7 +244,10 @@ class ProjectService(api.Service):
   def delete_membership(self, request):
     project = self._get_project(request)
     self._get_policy(project).authorize_admin()
-    project.group.delete_membership(request.membership)
+    try:
+      project.group.delete_membership(request.membership)
+    except groups.Error as e:
+      raise api.Error(str(e))
     resp = service_messages.GroupResponse()
     resp.group = project.group.to_message()
     return resp
