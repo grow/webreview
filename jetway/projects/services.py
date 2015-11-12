@@ -60,9 +60,7 @@ class ProjectService(api.Service):
                  service_messages.UpdateProjectResponse)
   def update(self, request):
     project = self._get_project(request)
-    policy = self._get_policy(project)
-    if not project.can(self.me, projects.Permission.ADMINISTER):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_admin()
     project.update(request.project)
     resp = service_messages.UpdateProjectResponse()
     resp.project = project.to_message()
@@ -72,8 +70,7 @@ class ProjectService(api.Service):
                  service_messages.GetProjectResponse)
   def get(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_read()
     resp = service_messages.GetProjectResponse()
     resp.project = project.to_message()
     return resp
@@ -82,8 +79,7 @@ class ProjectService(api.Service):
                  service_messages.DeleteProjectResponse)
   def delete(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.ADMINISTER):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_admin()
     project.delete()
     resp = service_messages.DeleteProjectResponse()
     return resp
@@ -92,8 +88,7 @@ class ProjectService(api.Service):
                  service_messages.CreateWatcherResponse)
   def watch(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_read()
     watcher = project.create_watcher(self.me)
     resp = service_messages.CreateWatcherResponse()
     resp.watcher = watcher.to_message()
@@ -103,8 +98,7 @@ class ProjectService(api.Service):
                  service_messages.ListWatchersResponse)
   def unwatch(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_read()
     project.delete_watcher(self.me)
     watchers = project.list_watchers()
     resp = service_messages.ListWatchersResponse()
@@ -115,8 +109,7 @@ class ProjectService(api.Service):
                  service_messages.ListWatchersResponse)
   def list_watchers(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_read()
     watchers = project.list_watchers()
     resp = service_messages.ListWatchersResponse()
     resp.watching = any(self.me == watcher.user for watcher in watchers)
@@ -127,8 +120,7 @@ class ProjectService(api.Service):
                  service_messages.ListNamedFilesetsResponse)
   def list_named_filesets(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_read()
     named_filesets = project.list_named_filesets()
     resp = service_messages.ListNamedFilesetsRequest()
     resp.named_filesets = [named_fileset.to_message()
@@ -139,8 +131,7 @@ class ProjectService(api.Service):
                  service_messages.CreateNamedFilesetResponse)
   def create_named_fileset(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.WRITE):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_write()
     named_fileset = project.create_named_fileset(
         request.named_fileset.name, request.named_fileset.branch)
     resp = service_messages.CreateNamedFilesetResponse()
@@ -151,8 +142,7 @@ class ProjectService(api.Service):
                  service_messages.DeleteNamedFilesetResponse)
   def delete_named_fileset(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_write()
     project.delete_named_fileset(request.named_fileset.name)
     resp = service_messages.DeleteNamedFilesetResponse()
     return resp
@@ -161,8 +151,7 @@ class ProjectService(api.Service):
                  service_messages.ListBranchesResponse)
   def list_branches(self, request):
     project = self._get_project(request)
-    policy = self._get_policy(project)
-    policy.authorize_read()
+    self._get_policy(project).authorize_read()
     try:
       branches = project.list_branches()
     except buildbot.Error as e:
@@ -175,8 +164,7 @@ class ProjectService(api.Service):
                  service_messages.ListCatalogsResponse)
   def list_catalogs(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_read()
     try:
       catalogs = project.list_catalogs()
     except buildbot.Error as e:
@@ -189,8 +177,7 @@ class ProjectService(api.Service):
                  service_messages.CatalogResponse)
   def get_catalog(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_read()
     try:
       catalog = project.get_catalog(request.catalog.locale)
     except buildbot.Error as e:
@@ -203,8 +190,7 @@ class ProjectService(api.Service):
                  service_messages.CatalogResponse)
   def update_translations(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    self._get_policy(project).authorize_write()
     try:
       catalog = project.get_catalog(request.catalog.locale)
     except buildbot.Error as e:

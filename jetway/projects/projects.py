@@ -187,12 +187,17 @@ class Project(ndb.Model):
 
   @property
   def group(self):
-    if not self.group_key:
+    def _create_group():
       group = groups.Group.create()
       self.group_key = group.key
       self.put()
       return group
-    return self.group_key.get()
+    if not self.group_key:
+      return _create_group()
+    group = self.group_key.get()
+    if group is None:
+      return _create_group()
+    return group
 
   @property
   def avatar_url(self):
