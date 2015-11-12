@@ -28,6 +28,10 @@ class BaseUser(models.User):
   email = ndb.StringProperty()
   name = ndb.StringProperty()
 
+  @property
+  def domain(self):
+    return self.email.split('@')[-1]
+
   def user_id(self):
     # Provides compatibility with oauth2client.
     return str(self.key.id())

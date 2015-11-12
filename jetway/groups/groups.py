@@ -57,6 +57,7 @@ class Group(ndb.Model):
 
   def list_memberships(self, kind=None):
     mems = []
+    print 'foo', self.memberships
     for mem in self.memberships:
       if kind is None:
         mems.append(mem)
@@ -74,3 +75,12 @@ class Group(ndb.Model):
     message.domains = [mem.to_message()
                        for mem in self.list_memberships(messages.Kind.DOMAIN)]
     return message
+
+  def get_membership(self, user):
+    mems = self.list_memberships()
+    for mem in mems:
+      print mem.user_key, user.key
+      if mem.user_key == user.key:
+        return mem
+      if mem.domain == user.domain:
+        return mem

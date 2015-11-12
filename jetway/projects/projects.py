@@ -187,7 +187,7 @@ class Project(ndb.Model):
 
   @property
   def group(self):
-    if self.group_key is None:
+    if not self.group_key:
       group = groups.Group.create()
       self.group_key = group.key
       self.put()

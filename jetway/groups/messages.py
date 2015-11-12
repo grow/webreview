@@ -4,7 +4,7 @@ from protorpc import messages
 
 class Role(messages.Enum):
   ADMIN = 1
-  READ_ONLY = 2
+  READ = 2
   WRITE = 3
   WRITE_TRANSLATIONS = 4
 

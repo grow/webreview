@@ -1,5 +1,6 @@
 from . import service_messages
 from ..buildbot import buildbot
+from ..policies import policies
 from jetway import api
 from jetway.owners import owners
 from jetway.projects import messages
@@ -9,6 +10,9 @@ import appengine_config
 
 
 class ProjectService(api.Service):
+
+  def _get_policy(self, project):
+    return policies.ProjectPolicy(user=self.me, project=project)
 
   def _get_project(self, request):
     try:
@@ -56,6 +60,7 @@ class ProjectService(api.Service):
                  service_messages.UpdateProjectResponse)
   def update(self, request):
     project = self._get_project(request)
+    policy = self._get_policy(project)
     if not project.can(self.me, projects.Permission.ADMINISTER):
       raise api.ForbiddenError('Forbidden ({})'.format(self.me))
     project.update(request.project)
@@ -81,15 +86,6 @@ class ProjectService(api.Service):
       raise api.ForbiddenError('Forbidden ({})'.format(self.me))
     project.delete()
     resp = service_messages.DeleteProjectResponse()
-    return resp
-
-  @remote.method(service_messages.CanRequest,
-                 service_messages.CanResponse)
-  def can(self, request):
-    project = self._get_project(request)
-    can = project.can(self.me, request.permission)
-    resp = service_messages.CanResponse()
-    resp.can = can
     return resp
 
   @remote.method(service_messages.GetProjectRequest,
@@ -165,8 +161,8 @@ class ProjectService(api.Service):
                  service_messages.ListBranchesResponse)
   def list_branches(self, request):
     project = self._get_project(request)
-    if not project.can(self.me, projects.Permission.READ):
-      raise api.ForbiddenError('Forbidden ({})'.format(self.me))
+    policy = self._get_policy(project)
+    policy.authorize_read()
     try:
       branches = project.list_branches()
     except buildbot.Error as e:
