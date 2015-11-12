@@ -3,6 +3,7 @@ from jetway.filesets import filesets
 from jetway.filesets import messages
 from jetway.owners import owners
 from jetway.projects import projects
+from jetway.policies import policies
 from jetway.users import users
 from protorpc import remote
 import appengine_config
@@ -117,8 +118,9 @@ class FilesetService(api.Service, BaseFilesetService):
         project = projects.Project.get(owner, request.fileset.project.nickname)
     else:
       project = None
+    policy = policies.ProjectPolicy(self.me, project)
     if (not self._is_authorized_buildbot()
-        and not project.can(self.me, projects.Permission.READ)):
+        and not policy.can_read()):
       raise api.ForbiddenError('Forbidden.')
     results = filesets.Fileset.search(project=project)
     resp = messages.SearchFilesetResponse()
@@ -196,8 +198,9 @@ class RequestSigningService(remote.Service, BaseFilesetService):
   def sign_requests(self, request):
     me = self._get_me(request)
     fileset = self._get_or_create_fileset(request, me)
+    policy = policies.ProjectPolicy(me, fileset.project)
     if (not self._is_authorized_buildbot()
-        and not fileset.project.can(me, projects.Permission.WRITE)):
+        and not policy.can_write()):
       raise api.ForbiddenError('Forbidden.')
     signed_reqs = fileset.sign_requests(request.unsigned_requests)
     resp = messages.SignRequestsResponse()

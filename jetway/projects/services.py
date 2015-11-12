@@ -215,3 +215,32 @@ class ProjectService(api.Service):
     resp = service_messages.CatalogResponse()
     resp.catalog = catalog.to_message()
     return resp
+
+  @remote.method(service_messages.ProjectRequest,
+                 service_messages.GroupResponse)
+  def get_group(self, request):
+    project = self._get_project(request)
+    self._get_policy(project).authorize_read()
+    resp = service_messages.GroupResponse()
+    resp.group = project.group.to_message()
+    return resp
+
+  @remote.method(service_messages.MembershipRequest,
+                 service_messages.GroupResponse)
+  def create_membership(self, request):
+    project = self._get_project(request)
+    self._get_policy(project).authorize_admin()
+    project.group.create_membership(request.membership)
+    resp = service_messages.GroupResponse()
+    resp.group = project.group.to_message()
+    return resp
+
+  @remote.method(service_messages.MembershipRequest,
+                 service_messages.GroupResponse)
+  def delete_membership(self, request):
+    project = self._get_project(request)
+    self._get_policy(project).authorize_admin()
+    project.group.delete_membership(request.membership)
+    resp = service_messages.GroupResponse()
+    resp.group = project.group.to_message()
+    return resp

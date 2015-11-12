@@ -30,7 +30,12 @@ class Membership(ndb.Model):
     mem = cls()
     mem.role = message.role
     if message.user:
-      user = users.User.get_by_ident(message.user.ident)
+      if message.user.email:
+        user = users.User.get_or_create_by_email(message.user.email)
+      elif message.user.ident:
+        user = users.User.get_by_ident(message.user.email)
+      else:
+        raise ValueError('User not found.')
       mem.user_key = user.key
     if message.domain:
       mem.domain = message.domain

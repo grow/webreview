@@ -1,6 +1,7 @@
 from ..buildbot import messages as buildbot_messages
 from ..catalogs import messages as catalog_messages
 from ..filesets.named_fileset_messages import *
+from ..groups import messages as group_messages
 from .messages import *
 from .watcher_messages import *
 from protorpc import messages
@@ -125,3 +126,12 @@ class CatalogRequest(messages.Message):
 
 class CatalogResponse(messages.Message):
   catalog = messages.MessageField(catalog_messages.CatalogMessage, 1)
+
+
+class GroupResponse(messages.Message):
+  group = messages.MessageField(group_messages.GroupMessage, 1)
+
+
+class MembershipRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+  membership = messages.MessageField(group_messages.MembershipMessage, 2)

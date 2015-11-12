@@ -10,6 +10,7 @@ class Error(Exception):
 
 class Group(ndb.Model):
   memberships = ndb.StructuredProperty(memberships.Membership, repeated=True)
+  project_key = ndb.KeyProperty()
 
   @property
   def ident(self):
@@ -57,7 +58,6 @@ class Group(ndb.Model):
 
   def list_memberships(self, kind=None):
     mems = []
-    print 'foo', self.memberships
     for mem in self.memberships:
       if kind is None:
         mems.append(mem)
@@ -70,6 +70,8 @@ class Group(ndb.Model):
   def to_message(self):
     message = messages.GroupMessage()
     message.ident = self.ident
+    if self.project:
+      message.project = self.project.to_message()
     message.users = [mem.to_message()
                      for mem in self.list_memberships(messages.Kind.USER)]
     message.domains = [mem.to_message()
@@ -79,7 +81,6 @@ class Group(ndb.Model):
   def get_membership(self, user):
     mems = self.list_memberships()
     for mem in mems:
-      print mem.user_key, user.key
       if mem.user_key == user.key:
         return mem
       if mem.domain == user.domain:

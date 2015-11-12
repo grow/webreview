@@ -3,6 +3,7 @@ from ..buildbot import buildbot
 from ..buildbot import messages as buildbot_messages
 from ..catalogs import catalogs
 from ..groups import groups
+from ..policies import policies
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
 from jetway.avatars import avatars
@@ -191,12 +192,14 @@ class Project(ndb.Model):
       group = groups.Group.create()
       self.group_key = group.key
       self.put()
+      group.project = self
       return group
     if not self.group_key:
       return _create_group()
     group = self.group_key.get()
     if group is None:
       return _create_group()
+    group.project = self
     return group
 
   @property
@@ -246,64 +249,12 @@ class Project(ndb.Model):
 
   @classmethod
   def filter(cls, results, user, permission=messages.Permission.READ):
+    policy = policies.ProjectPolicy(user, self)
     filtered = []
     for project in results:
-      if project.can(user, permission):
+      if policy.can_read():
         filtered.append(project)
     return filtered
-
-  def can(self, user, permission=messages.Permission.READ):
-    if not user:
-      return False
-    # TODO: Implement proper domain-level access controls.
-    username, domain = user.email.split('@')
-    if username in appengine_config.DOMAIN_ACCESS_USERS:
-      return True
-    if (appengine_config.DEFAULT_USER_DOMAINS and
-        domain in appengine_config.DEFAULT_USER_DOMAINS):
-      return True
-    # Permit the owner.
-    if self.owner == user:
-      return True
-    # Permit domain users.
-    if (appengine_config.DEFAULT_USER_DOMAINS
-        and self.computed_visibility == messages.Visibility.DOMAIN
-        and user.email.split('@')[-1] in appengine_config.DEFAULT_USER_DOMAINS):
-      return
-    if self.computed_visibility in [messages.Visibility.PUBLIC, messages.Visibility.COVER]:
-      if appengine_config.DEFAULT_USER_DOMAINS:
-        return domain in appengine_config.DEFAULT_USER_DOMAINS
-      else:
-        return True
-    query = teams.Team.query(ndb.OR(# Project teams.
-                                    ndb.AND(teams.Team.project_keys == self.key,
-                                            teams.Team.user_keys == user.key),
-                                    # Org Owners team.
-                                    ndb.AND(teams.Team.kind == teams.messages.Kind.ORG_OWNERS,
-                                            teams.Team.owner_key == self.owner.key,
-                                            teams.Team.user_keys == user.key)))
-    found_teams = query.fetch()
-    # Permit users part of the project's organization.
-    if self.computed_visibility == messages.Visibility.ORGANIZATION:
-      return bool(found_teams)
-    if self.computed_visibility in [messages.Visibility.PRIVATE, messages.Visibility.DOMAIN]:
-      # TODO: Remove this once exposing default permissions in UI.
-      if (appengine_config.DEFAULT_USER_DOMAINS
-          and user.email.split('@')[-1] in appengine_config.DEFAULT_USER_DOMAINS):
-        return True
-      for team in found_teams:
-        membership = team.get_membership(user)
-        if not membership:
-          continue
-        # Org owners have access to all projects.
-        if team.kind == teams.messages.Kind.PROJECT_OWNERS:
-          return True
-        elif team.kind == teams.messages.Kind.ORG_OWNERS:
-          return True
-        # If the user is in a team that has this project, return True.
-        if self.key in team.project_keys:
-          return True
-    return False
 
   def create_watcher(self, user):
     return watchers.Watcher.create(project=self, user=user)

@@ -1,13 +1,13 @@
 from ..groups import groups
 from ..groups import messages
-from jetway import api
+from jetway import api_errors
 
 
 class Error(Exception):
   pass
 
 
-class ForbiddenError(Error, api.ForbiddenError):
+class ForbiddenError(Error, api_errors.ForbiddenError):
   pass
 
 

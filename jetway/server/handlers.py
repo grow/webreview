@@ -3,6 +3,7 @@ from jetway.auth import handlers as auth_handlers
 from jetway.files import files
 from jetway.filesets import filesets
 from jetway.owners import owners
+from jetway.policies import policies
 from jetway.projects import projects
 from jetway.server import utils
 import jinja2
@@ -51,8 +52,8 @@ class RequestHandler(auth_handlers.SessionHandler):
         if fileset_name is None:
           raise filesets.FilesetDoesNotExistError
         fileset = filesets.Fileset.get_by_name_or_ident(fileset_name)
-      if (not self._is_open_path(self.request.path)
-          and not fileset.project.can(self.me, projects.Permission.READ)):
+      policy = policies.ProjectPolicy(self.me, fileset.project)
+      if not self._is_open_path(self.request.path) and not policy.can_read():
         if self.me:
           text = '{} does not have access to this page.'.format(self.me)
           self.error(403, 'Forbidden', text)
