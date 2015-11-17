@@ -32,7 +32,7 @@ handlers:
   secure: always
 
 - url: /_ah/spi/.*
-  script: jetway.main.endpoints_app
+  script: app.main.endpoints_app
 
 - url: /_app/[^/]*/config/(.*\.(svg|png|gif|jpg))$
   static_files: config/\1
@@ -45,13 +45,13 @@ handlers:
   static_dir: dist/js
 
 - url: /_app/[^/]*/static/html
-  static_dir: jetway/frontend/static/html
+  static_dir: app/frontend/static/html
 
 - url: /_app/[^/]*/static/images
-  static_dir: jetway/frontend/static/images
+  static_dir: app/frontend/static/images
 
 - url: /.*
-  script: jetway.main.app
+  script: app.main.app
 
 skip_files:
 - ^(.*/)?#.*#

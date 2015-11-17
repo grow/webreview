@@ -12,8 +12,8 @@ if [ -d env ]; then
     --cover-erase \
     --cover-html \
     --cover-html-dir=htmlcov \
-    --cover-package=jetway \
-    jetway/
+    --cover-package=app \
+    app/
   deactivate
 else
   echo 'Run ./scripts/setup first.'
