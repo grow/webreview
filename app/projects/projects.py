@@ -39,11 +39,11 @@ class Project(ndb.Model):
   owner_key = ndb.KeyProperty()
   created_by_key = ndb.KeyProperty()
   description = ndb.StringProperty()
-  visibility = msgprop.EnumProperty(messages.Visibility)
   built = ndb.DateTimeProperty()
   buildbot_job_id = ndb.StringProperty()
   git_url = ndb.StringProperty()
   group_key = ndb.KeyProperty()
+  translation_branch = ndb.StringProperty()
 
   @property
   def name(self):
@@ -59,10 +59,6 @@ class Project(ndb.Model):
 
   def __repr__(self):
     return self.name
-
-  @property
-  def computed_visibility(self):
-    return self.visibility or messages.Visibility.DOMAIN
 
   @property
   def ident(self):
@@ -200,15 +196,15 @@ class Project(ndb.Model):
     message.owner = self.owner.to_message()
     message.description = self.description
     message.avatar_url = self.avatar_url
-    message.visibility = self.visibility
     message.git_url = self.git_url
     message.buildbot_job_id = self.buildbot_job_id
     message.built = self.built
+    message.translation_branch = self.translation_branch
     return message
 
   def update(self, message):
     self.description = message.description
-    self.visibility = message.visibility
+    self.translation_branch = message.translation_branch
     if message.git_url != self.git_url:
       self._update_buildbot_job(message.git_url)
     self.git_url = message.git_url

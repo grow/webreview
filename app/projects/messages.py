@@ -9,14 +9,6 @@ class Permission(messages.Enum):
   ADMINISTER = 3
 
 
-class Visibility(messages.Enum):
-  PUBLIC = 1
-  ORGANIZATION = 2
-  PRIVATE = 3
-  COVER = 4
-  DOMAIN = 5
-
-
 class Order(messages.Enum):
   NAME = 0
 
@@ -27,11 +19,11 @@ class ProjectMessage(messages.Message):
   owner = messages.MessageField(owner_messages.OwnerMessage, 3)
   description = messages.StringField(4)
   avatar_url = messages.StringField(6)
-  visibility = messages.EnumField(Visibility, 7)
   name = messages.StringField(9)
   built = message_types.DateTimeField(10)
   buildbot_job_id = messages.StringField(11)
   git_url = messages.StringField(12)
+  translation_branch = messages.StringField(13)
 
 
 ###
