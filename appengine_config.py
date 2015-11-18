@@ -44,6 +44,8 @@ else:
 ALLOWED_USER_DOMAINS = jetway_config.get('options', {}).get('allowed_user_domains', None)
 DEFAULT_USER_DOMAINS = jetway_config.get('options', {}).get('default_user_domains', None)
 
+DEFAULT_DOMAIN = 'google.com'
+
 REQUIRE_HTTPS_FOR_PREVIEWS = jetway_config.get('require_https', {}).get('preview_domain', False)
 
 HTTPS_PROXY_ENABLED_FOR_PREVIEWS = jetway_config.get('require_https', {}).get('behind_proxy', False)

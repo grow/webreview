@@ -7,7 +7,7 @@ class Role(messages.Enum):
   ADMIN = 1
   READ = 2
   WRITE = 3
-  WRITE_TRANSLATIONS = 4
+  TRANSLATE = 4
 
 
 class Kind(messages.Enum):

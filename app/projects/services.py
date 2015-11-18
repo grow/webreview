@@ -155,7 +155,7 @@ class ProjectService(api.Service):
     self._get_policy(project).authorize_read()
     try:
       branches = project.list_branches()
-    except buildbot.Error as e:
+    except (buildbot.Error, projects.GitIntegrationError) as e:
       raise api.Error(str(e))
     resp = service_messages.ListBranchesResponse()
     resp.branches = branches
@@ -168,7 +168,7 @@ class ProjectService(api.Service):
     self._get_policy(project).authorize_read()
     try:
       catalogs = project.list_catalogs()
-    except buildbot.Error as e:
+    except (buildbot.Error, projects.GitIntegrationError) as e:
       raise api.Error(str(e))
     resp = service_messages.ListCatalogsResponse()
     resp.catalogs = [catalog.to_message(included=[]) for catalog in catalogs]
@@ -181,7 +181,7 @@ class ProjectService(api.Service):
     self._get_policy(project).authorize_read()
     try:
       catalog = project.get_catalog(request.catalog.locale)
-    except buildbot.Error as e:
+    except (buildbot.Error, projects.GitIntegrationError) as e:
       raise api.Error(str(e))
     resp = service_messages.CatalogResponse()
     resp.catalog = catalog.to_message()
@@ -222,6 +222,19 @@ class ProjectService(api.Service):
   def get_group(self, request):
     project = self._get_project(request)
     self._get_policy(project).authorize_read()
+    resp = service_messages.GroupResponse()
+    resp.group = project.group.to_message()
+    return resp
+
+  @remote.method(service_messages.MembershipRequest,
+                 service_messages.GroupResponse)
+  def update_membership(self, request):
+    project = self._get_project(request)
+    self._get_policy(project).authorize_admin()
+    try:
+      project.group.update_membership(request.membership)
+    except groups.Error as e:
+      raise api.Error(str(e))
     resp = service_messages.GroupResponse()
     resp.group = project.group.to_message()
     return resp

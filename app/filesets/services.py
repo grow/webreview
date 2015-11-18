@@ -166,7 +166,7 @@ class RequestSigningService(remote.Service, BaseFilesetService):
       if user is None:
         raise api.UnauthorizedError('You must be logged in to do this.')
       email = user.email()
-    return users.User.get_by_email(email)
+    return users.User.get_or_create_by_email(email)
 
   def _get_or_create_fileset(self, request, me):
     allow_fileset_by_commit = bool(request.fileset.commit)
@@ -197,11 +197,14 @@ class RequestSigningService(remote.Service, BaseFilesetService):
                     messages.SignRequestsResponse)
   def sign_requests(self, request):
     me = self._get_me(request)
-    fileset = self._get_or_create_fileset(request, me)
-    policy = policies.ProjectPolicy(me, fileset.project)
+    project = self._get_project(request)
+    policy = policies.ProjectPolicy(me, project)
     if (not self._is_authorized_buildbot()
         and not policy.can_write()):
-      raise api.ForbiddenError('Forbidden.')
+      text = 'Forbidden. {} cannot write to {}.'
+      raise api.ForbiddenError(text.format(me.email, project.name))
+
+    fileset = self._get_or_create_fileset(request, me)
     signed_reqs = fileset.sign_requests(request.unsigned_requests)
     resp = messages.SignRequestsResponse()
     resp.fileset = fileset.to_message()

@@ -21,14 +21,20 @@ class Membership(ndb.Model):
   def check_conflict(self, other_memberships):
     for mem in other_memberships:
       if self.user_key and self.user_key == mem.user_key:
-        raise MembershipConflictError('{} is already a member.'.format(self.user.nickname))
+        text = '{} is already a member.'
+        raise MembershipConflictError(text.format(self.user.nickname))
       if self.domain and self.domain == mem.domain:
-        raise MembershipConflictError('{} is already a member.'.format(self.domain))
+        text = '{} is already a member.'
+        raise MembershipConflictError(text.format(self.domain))
 
   @classmethod
   def from_message(cls, message):
     mem = cls()
-    mem.role = message.role
+    mem.update(message)
+    return mem
+
+  def update(self, message):
+    self.role = message.role
     if message.user:
       if message.user.email:
         user = users.User.get_or_create_by_email(message.user.email)
@@ -36,10 +42,12 @@ class Membership(ndb.Model):
         user = users.User.get_by_ident(message.user.email)
       else:
         raise ValueError('User not found.')
-      mem.user_key = user.key
+      self.user_key = user.key
     if message.domain:
-      mem.domain = message.domain
-    return mem
+      self.domain = message.domain
+    if not self.role:
+      self.role = messages.Role.READ
+    return self
 
   @webapp2.cached_property
   def user(self):
@@ -48,6 +56,7 @@ class Membership(ndb.Model):
 
   def to_message(self):
     message = messages.MembershipMessage()
+    message.role = self.role
     if self.user_key:
       message.user = self.user.to_message()
     if self.domain:

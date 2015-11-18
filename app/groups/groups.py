@@ -27,7 +27,7 @@ class Group(ndb.Model):
   def create(cls, project=None):
     group = cls()
     if project:
-      group.project_key = project
+      group.project_key = project.key
     group.put()
     return group
 
@@ -40,6 +40,19 @@ class Group(ndb.Model):
       pass
       # TODO: Decide if we need this check.
       # raise memberships.MembershipConflictError('Must be at least one admin.')
+
+  def update_membership(self, membership_message):
+    new_mem = memberships.Membership.from_message(membership_message)
+    for i, mem in enumerate(self.memberships):
+      if new_mem.user_key and mem.user_key == new_mem.user_key:
+        mem.update(membership_message)
+        self.memberships[i] = mem
+      if new_mem.domain and mem.domain == new_mem.domain:
+        mem.update(membership_message)
+        self.memberships[i] = mem
+    self.validate()
+    self.put()
+    return self
 
   def create_membership(self, membership_message):
     mem = memberships.Membership.from_message(membership_message)

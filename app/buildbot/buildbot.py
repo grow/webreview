@@ -39,6 +39,7 @@ class Buildbot(object):
     }
     try:
       resp = requests.post(BASE + '/jobs', json=data, auth=self.auth)
+      resp.raise_for_status()
     except Exception as e:
       raise ConnectionError(e)
     content = resp.json()
@@ -49,6 +50,7 @@ class Buildbot(object):
   def get_job(self, job_id):
     try:
       resp = requests.get(BASE + '/jobs/{}'.format(job_id), auth=self.auth)
+      resp.raise_for_status()
     except Exception as e:
       raise ConnectionError(e)
     content = resp.json()
@@ -61,6 +63,7 @@ class Buildbot(object):
     try:
       request_path = BASE + '/git/repos/{}/contents{}'.format(job_id, path)
       resp = requests.get(request_path, auth=self.auth)
+      resp.raise_for_status()
     except Exception as e:
       raise ConnectionError(e)
     content = resp.json()
@@ -72,6 +75,7 @@ class Buildbot(object):
     try:
       request_path = BASE + '/git/repos/{}/raw/{}{}'.format(job_id, ref, path)
       resp = requests.get(request_path, auth=self.auth)
+      resp.raise_for_status()
     except Exception as e:
       raise ConnectionError(e)
     return resp.content
@@ -91,6 +95,7 @@ class Buildbot(object):
           BASE + '/jobs/{}/contents/update'.format(job_id),
           json=data,
           auth=self.auth)
+      resp.raise_for_status()
     except Exception as e:
       raise ConnectionError(e)
     result = resp.json()

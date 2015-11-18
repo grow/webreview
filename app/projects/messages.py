@@ -13,6 +13,13 @@ class Order(messages.Enum):
   NAME = 0
 
 
+class BuildbotGitStatus(messages.Enum):
+  NONE = 1
+  SYNCING = 2
+  ERROR = 3
+  CONNECTED = 4
+
+
 class ProjectMessage(messages.Message):
   nickname = messages.StringField(1)
   ident = messages.StringField(2)
@@ -24,6 +31,7 @@ class ProjectMessage(messages.Message):
   buildbot_job_id = messages.StringField(11)
   git_url = messages.StringField(12)
   translation_branch = messages.StringField(13)
+  buildbot_git_status = messages.EnumField(BuildbotGitStatus, 14)
 
 
 ###
@@ -75,12 +83,3 @@ class DeleteProjectRequest(messages.Message):
 
 class DeleteProjectResponse(messages.Message):
   pass
-
-
-class CanRequest(messages.Message):
-  project = messages.MessageField(ProjectMessage, 1)
-  permission = messages.EnumField(Permission, 2)
-
-
-class CanResponse(messages.Message):
-  can = messages.BooleanField(1)

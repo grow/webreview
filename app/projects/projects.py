@@ -3,6 +3,7 @@ from ..buildbot import buildbot
 from ..buildbot import messages as buildbot_messages
 from ..catalogs import catalogs
 from ..groups import groups
+from ..groups import messages as group_messages
 from ..policies import policies
 from google.appengine.ext import ndb
 from google.appengine.ext.ndb import msgprop
@@ -33,6 +34,10 @@ class ProjectDoesNotExistError(Error):
   pass
 
 
+class GitIntegrationError(Error):
+  pass
+
+
 class Project(ndb.Model):
   created = ndb.DateTimeProperty(auto_now_add=True)
   nickname = ndb.StringProperty()
@@ -44,6 +49,7 @@ class Project(ndb.Model):
   git_url = ndb.StringProperty()
   group_key = ndb.KeyProperty()
   translation_branch = ndb.StringProperty()
+  buildbot_git_status = msgprop.EnumProperty(messages.BuildbotGitStatus)
 
   @property
   def name(self):
@@ -79,6 +85,7 @@ class Project(ndb.Model):
         git_url=git_url,
         description=description)
     project.put()
+    project._init_default_group()
     project._update_buildbot_job(project.git_url)
     return project
 
@@ -118,6 +125,16 @@ class Project(ndb.Model):
       self.put()
     except buildbot.Error:
       logging.exception('Buildbot connection error.')
+
+  def _init_default_group(self):
+    group = groups.Group.create(self)
+    if appengine_config.DEFAULT_DOMAIN:
+      mem_message = group_messages.MembershipMessage(
+          domain=appengine_config.DEFAULT_DOMAIN)
+      group.create_membership(mem_message)
+    self.group_key = group.key
+    self.put()
+    return group
 
   @classmethod
   def search(cls, owner=None, order=None):
@@ -257,7 +274,12 @@ class Project(ndb.Model):
   def list_named_filesets(self):
     return named_filesets.NamedFileset.search(project=self)
 
+  def verify_repo_status(self):
+    if not self.buildbot_job_id:
+      raise GitIntegrationError('Git repository not initialized.')
+
   def list_branches(self):
+    self.verify_repo_status()
     bot = buildbot.Buildbot()
     job = bot.get_job(self.buildbot_job_id)['job']
     results = []
@@ -274,6 +296,7 @@ class Project(ndb.Model):
     return results
 
   def list_catalogs(self):
+    self.verify_repo_status()
     bot = buildbot.Buildbot()
     items = bot.get_contents(self.buildbot_job_id, path='/translations/')
     catalog_objs = []
@@ -284,4 +307,5 @@ class Project(ndb.Model):
     return catalog_objs
 
   def get_catalog(self, locale):
+    self.verify_repo_status()
     return catalogs.Catalog(project=self, locale=locale)
