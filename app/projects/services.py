@@ -167,7 +167,7 @@ class ProjectService(api.Service):
     project = self._get_project(request)
     self._get_policy(project).authorize_read()
     try:
-      catalogs = project.list_catalogs()
+      catalogs = project.list_catalogs(ref=request.branch)
     except (buildbot.Error, projects.GitIntegrationError) as e:
       raise api.Error(str(e))
     resp = service_messages.ListCatalogsResponse()
@@ -180,7 +180,9 @@ class ProjectService(api.Service):
     project = self._get_project(request)
     self._get_policy(project).authorize_read()
     try:
-      catalog = project.get_catalog(request.catalog.locale)
+      catalog = project.get_catalog(
+          locale=request.catalog.locale,
+          ref=request.catalog.ref)
     except (buildbot.Error, projects.GitIntegrationError) as e:
       raise api.Error(str(e))
     resp = service_messages.CatalogResponse()

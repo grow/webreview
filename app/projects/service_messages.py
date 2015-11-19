@@ -113,6 +113,7 @@ class ListBranchesResponse(messages.Message):
 
 class ProjectRequest(messages.Message):
   project = messages.MessageField(ProjectMessage, 1)
+  branch = messages.StringField(2)
 
 
 class ListCatalogsResponse(messages.Message):

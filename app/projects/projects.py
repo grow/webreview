@@ -295,10 +295,13 @@ class Project(ndb.Model):
     results = sorted(results, key=lambda message: message.name)
     return results
 
-  def list_catalogs(self):
+  def list_catalogs(self, ref=None):
     self.verify_repo_status()
     bot = buildbot.Buildbot()
-    items = bot.get_contents(self.buildbot_job_id, path='/translations/')
+    items = bot.get_contents(
+        self.buildbot_job_id,
+        path='/translations/',
+        ref=ref)
     catalog_objs = []
     for item in items:
       if item['type'] == 'dir':
@@ -306,6 +309,6 @@ class Project(ndb.Model):
         catalog_objs.append(catalog)
     return catalog_objs
 
-  def get_catalog(self, locale):
+  def get_catalog(self, locale, ref=None):
     self.verify_repo_status()
-    return catalogs.Catalog(project=self, locale=locale)
+    return catalogs.Catalog(project=self, locale=locale, ref=ref)
