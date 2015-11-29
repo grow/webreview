@@ -34,21 +34,8 @@ handlers:
 - url: /_ah/spi/.*
   script: app.main.endpoints_app
 
-- url: /_app/[^/]*/config/(.*\.(svg|png|gif|jpg))$
-  static_files: config/\1
-  upload: config/.*\.(svg|png|gif|jpg)$
-
-- url: /_app/[^/]*/static/css
-  static_dir: dist/css
-
-- url: /_app/[^/]*/static/js
-  static_dir: dist/js
-
-- url: /_app/[^/]*/static/html
-  static_dir: app/frontend/static/html
-
-- url: /_app/[^/]*/static/images
-  static_dir: app/frontend/static/images
+- url: /assets
+  static_dir: webreview-fe/dist/assets
 
 - url: /.*
   script: app.main.app
