@@ -15,16 +15,9 @@ gaenv -h 2>&1> /dev/null || {
   sudo pip install gaenv
 }
 
-node --version 2>&1> /dev/null || {
-  echo "node not installed. Install from: http://nodejs.org/"
-  exit 1
-}
-
 virtualenv env
 source env/bin/activate
 pip install --upgrade --allow-unverified PIL --allow-external PIL -r requirements.txt
-npm install
-./node_modules/.bin/bower install
 gaenv --lib lib --no-import
 deactivate
 
