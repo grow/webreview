@@ -35,7 +35,7 @@ handlers:
   script: app.main.endpoints_app
 
 - url: /assets
-  static_dir: webreview-fe/dist/assets
+  static_dir: dist/assets
 
 - url: /.*
   script: app.main.app
@@ -56,6 +56,8 @@ skip_files:
 - env
 - htmlconv
 - lib/Crypto
+- lib/PIL
 - node_modules
 - testing
 - ^.*.example
+- webreview-fe

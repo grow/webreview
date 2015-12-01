@@ -9,7 +9,7 @@ import webapp2
 
 _path = os.path.abspath(
     os.path.join(
-        os.path.dirname(__file__), '..', '..', 'webreview-fe', 'dist'))
+        os.path.dirname(__file__), '..', '..', 'dist'))
 _loader = jinja2.FileSystemLoader(_path)
 _env = jinja2.Environment(loader=_loader, autoescape=True, trim_blocks=True)
 

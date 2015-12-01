@@ -65,7 +65,8 @@ class Avatar(ndb.Model):
     letter = entity.key.kind()[:1].lower()
     avatar_ident = '{}/{}'.format(letter, entity.ident)
     root = '{}/jetway/avatars/{}'.format(gcs_bucket, avatar_ident)
-    return blobstore.create_upload_url('/avatars/{}'.format(avatar_ident), gs_bucket_name=root)
+    return blobstore.create_upload_url(
+        '/avatars/{}'.format(avatar_ident), gs_bucket_name=root)
 
   def update(self, gs_object_name):
     if self.gs_basename:
@@ -80,7 +81,7 @@ class Avatar(ndb.Model):
       return path
     num = owner.ident[0]
     scheme = os.getenv('wsgi.url_scheme')
-    hostname = os.getenv('DEFAULT_VERSION_HOSTNAME')
+    hostname = os.getenv('HTTP_HOST')
     sep = '.' if scheme == 'http' else '-dot-'
     return '//avatars-{}{}{}{}'.format(num, sep, hostname, path)
 
