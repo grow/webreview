@@ -83,3 +83,8 @@ class DeleteProjectRequest(messages.Message):
 
 class DeleteProjectResponse(messages.Message):
   pass
+
+
+class TransferOwnerRequest(messages.Message):
+  project = messages.MessageField(ProjectMessage, 1)
+  owner = messages.MessageField(owner_messages.OwnerMessage, 2)

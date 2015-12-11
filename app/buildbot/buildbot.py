@@ -4,6 +4,8 @@ import requests
 
 BASE = '{}/api'.format(appengine_config.BUILDBOT_URL)
 
+VERIFY = False
+
 
 class Error(Exception):
   pass
@@ -38,7 +40,8 @@ class Buildbot(object):
         'env': self.env,
     }
     try:
-      resp = requests.post(BASE + '/jobs', json=data, auth=self.auth)
+      resp = requests.post(BASE + '/jobs', json=data, auth=self.auth,
+                           verify=VERIFY)
       resp.raise_for_status()
     except Exception as e:
       raise ConnectionError(e)
@@ -49,7 +52,8 @@ class Buildbot(object):
 
   def get_job(self, job_id):
     try:
-      resp = requests.get(BASE + '/jobs/{}'.format(job_id), auth=self.auth)
+      resp = requests.get(BASE + '/jobs/{}'.format(job_id), auth=self.auth,
+                          verify=VERIFY)
       resp.raise_for_status()
     except Exception as e:
       raise ConnectionError(e)
@@ -62,7 +66,7 @@ class Buildbot(object):
     path = path or '/'
     try:
       request_path = BASE + '/git/repos/{}/contents{}'.format(job_id, path)
-      resp = requests.get(request_path, auth=self.auth)
+      resp = requests.get(request_path, auth=self.auth, verify=VERIFY)
       resp.raise_for_status()
     except Exception as e:
       raise ConnectionError(e)
@@ -74,13 +78,14 @@ class Buildbot(object):
   def read_file(self, job_id, path, ref):
     try:
       request_path = BASE + '/git/repos/{}/raw/{}{}'.format(job_id, ref, path)
-      resp = requests.get(request_path, auth=self.auth)
+      resp = requests.get(request_path, auth=self.auth, verify=VERIFY)
       resp.raise_for_status()
     except Exception as e:
       raise ConnectionError(e)
     return resp.content
 
-  def write_file(self, job_id, path, contents, message, ref, sha, committer, author):
+  def write_file(self, job_id, path, contents, message, ref, sha,
+                 committer, author):
     data = {
         'branch': ref,
         'path': path,
@@ -94,7 +99,8 @@ class Buildbot(object):
       resp = requests.post(
           BASE + '/jobs/{}/contents/update'.format(job_id),
           json=data,
-          auth=self.auth)
+          auth=self.auth,
+          verify=VERIFY)
       resp.raise_for_status()
     except Exception as e:
       raise ConnectionError(e)

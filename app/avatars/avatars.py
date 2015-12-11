@@ -83,6 +83,8 @@ class Avatar(ndb.Model):
     scheme = os.getenv('wsgi.url_scheme')
     hostname = os.getenv('HTTP_HOST')
     sep = '.' if scheme == 'http' else '-dot-'
+    if '-dot-' in hostname:
+      return '//{}{}'.format(hostname, path)
     return '//avatars-{}{}{}{}'.format(num, sep, hostname, path)
 
   @classmethod

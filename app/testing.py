@@ -34,3 +34,7 @@ class BaseTestCase(unittest.TestCase):
     project = self.create_project()
     commit = fileset_messages.CommitMessage(branch='master', sha='1234567890')
     return project.create_fileset('master', commit=commit)
+
+  def create_owner(self, nickname, email):
+    creator = users.User.create(nickname, email=email)
+    return owners.Owner.get(creator.nickname)

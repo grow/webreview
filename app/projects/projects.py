@@ -110,6 +110,8 @@ class Project(ndb.Model):
     return project
 
   def _update_buildbot_job(self, git_url):
+    if self.git_url == git_url and self.buildbot_job_id:
+      return
     if not git_url:
       self.buildbot_job_id = None
       self.put()
@@ -121,7 +123,8 @@ class Project(ndb.Model):
           git_url=git_url,
           remote=self.permalink)
       self.buildbot_job_id = str(resp['job_id'])
-      logging.info('Buildbot job ID update {} -> {}'.format(self, self.buildbot_job_id))
+      text = 'Buildbot job ID update {} -> {}'
+      logging.info(text.format(self, self.buildbot_job_id))
       self.put()
     except buildbot.Error:
       logging.exception('Buildbot connection error.')
@@ -222,9 +225,12 @@ class Project(ndb.Model):
   def update(self, message):
     self.description = message.description
     self.translation_branch = message.translation_branch
-    if message.git_url != self.git_url:
-      self._update_buildbot_job(message.git_url)
+    self._update_buildbot_job(message.git_url)
     self.git_url = message.git_url
+    self.put()
+
+  def transfer_owner(self, owner):
+    self.owner_key = owner.key
     self.put()
 
   def list_users_to_notify(self):

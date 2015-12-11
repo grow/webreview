@@ -266,3 +266,14 @@ class ProjectService(api.Service):
     resp = service_messages.GroupResponse()
     resp.group = project.group.to_message()
     return resp
+
+  @remote.method(service_messages.TransferOwnerRequest,
+                 service_messages.GetProjectResponse)
+  def transfer_owner(self, request):
+    project = self._get_project(request)
+    self._get_policy(project).authorize_admin()
+    owner = owners.Owner.get(request.owner.nickname)
+    project.transfer_owner(owner)
+    resp = service_messages.GetProjectResponse()
+    resp.project = project.to_message()
+    return resp
