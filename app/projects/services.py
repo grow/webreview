@@ -269,7 +269,7 @@ class ProjectService(api.Service):
 
   @remote.method(service_messages.TransferOwnerRequest,
                  service_messages.GetProjectResponse)
-  def transfer_owner(self, request):
+  def transfer(self, request):
     project = self._get_project(request)
     self._get_policy(project).authorize_admin()
     owner = owners.Owner.get(request.owner.nickname)

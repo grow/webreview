@@ -245,9 +245,9 @@ class Project(ndb.Model):
 
   @classmethod
   def filter(cls, results, user, permission=messages.Permission.READ):
-    policy = policies.ProjectPolicy(user, self)
     filtered = []
     for project in results:
+      policy = policies.ProjectPolicy(user, project)
       if policy.can_read():
         filtered.append(project)
     return filtered

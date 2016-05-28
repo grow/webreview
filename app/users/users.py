@@ -124,6 +124,8 @@ class User(BaseUser):
     query = query.filter(cls.nickname == nickname)
     user = query.get()
     if user is None:
+      user = cls.get_by_email(nickname)
+    if user is None:
       raise UserDoesNotExistError('User "{}" not found.'.format(nickname))
     return user
 
