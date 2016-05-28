@@ -30,6 +30,8 @@ class Org(ndb.Model):
   location = ndb.StringProperty()
   description = ndb.StringProperty()
   website_url = ndb.StringProperty()
+  owner_key = ndb.KeyProperty()
+  group_key = ndb.KeyProperty()
 
   def __repr__(self):
     return '<Org: {}>'.format(self.nickname)
@@ -42,7 +44,8 @@ class Org(ndb.Model):
     except OrgDoesNotExistError:
       org = cls(
           nickname=nickname,
-          created_by_key=created_by.key)
+          created_by_key=created_by.key,
+          owner_key=created_by.key)
       org.put()
       return org
 
@@ -72,6 +75,13 @@ class Org(ndb.Model):
   def ident(self):
     return str(self.key.id())
 
+  @property
+  def owner(self):
+    if self.owner_key:
+      return self.owner_key.get()
+    if self.created_by_key:
+      return self.created_by_key.get()
+
   def update(self, message):
     try:
       if Org.get(message.nickname) != self:
@@ -92,6 +102,29 @@ class Org(ndb.Model):
   def avatar_url(self):
     return avatars.Avatar.create_url(self)
 
+  @classmethod
+  def search(cls, owner=None):
+    query = cls.query()
+    if owner:
+      query = query.filter(cls.owner_key == owner.key)
+    return query.fetch()
+
+  @property
+  def group(self):
+    def _create_group():
+      group = groups.Group.create()
+      self.group_key = group.key
+      self.put()
+      group.org = self
+      return group
+    if not self.group_key:
+      return _create_group()
+    group = self.group_key.get()
+    if group is None:
+      return _create_group()
+    group.org = self
+    return group
+
   def to_message(self):
     message = messages.OrgMessage()
     message.nickname = self.nickname
@@ -101,4 +134,5 @@ class Org(ndb.Model):
     message.updated = self.updated
     message.avatar_url = self.avatar_url
     message.ident = self.ident
+    message.owner = self.owner.to_message()
     return message

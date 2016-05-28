@@ -204,12 +204,21 @@ class User(BaseUser):
   def search_teams(self):
     from app.groups import groups
     query = groups.Group.query()
+    query = query.filter(groups.Group.project_key != None)
     query = query.filter(groups.Group.memberships.user_key == self.key)
     return query.fetch()
 
   def search_orgs(self):
-    # TODO: Implement.
-    return []
+    from app.groups import groups
+    query = groups.Group.query()
+    query = query.filter(groups.Group.org_key != None)
+    query = query.filter(groups.Group.memberships.user_key == self.key)
+    results = query.fetch()
+    org_keys = [result.org_key for result in results]
+    from app.orgs import orgs
+    org_ents = orgs.Org.search(owner=self) or []
+    org_ents += ndb.get_multi(list(set(org_keys)))
+    return org_ents
 
   def search_projects(self):
     team_ents = self.search_teams()

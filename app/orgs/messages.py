@@ -1,5 +1,6 @@
 from protorpc import messages
 from protorpc import message_types
+from ..users import messages as user_messages
 
 
 class OrgMessage(messages.Message):
@@ -11,3 +12,4 @@ class OrgMessage(messages.Message):
   updated = message_types.DateTimeField(6)
   avatar_url = messages.StringField(7)
   ident = messages.StringField(8)
+  owner = messages.MessageField(user_messages.UserMessage, 9)

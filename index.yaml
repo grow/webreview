@@ -44,6 +44,16 @@ indexes:
   - name: modified
     direction: desc
 
+- kind: Group
+  properties:
+  - name: memberships.user_key
+  - name: org_key
+
+- kind: Group
+  properties:
+  - name: memberships.user_key
+  - name: project_key
+
 - kind: Project
   properties:
   - name: owner_key

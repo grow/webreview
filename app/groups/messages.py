@@ -1,4 +1,5 @@
 from ..projects import messages as project_messages
+from ..orgs import messages as org_messages
 from ..users import messages as user_messages
 from protorpc import messages
 
@@ -26,3 +27,4 @@ class GroupMessage(messages.Message):
   domains = messages.MessageField(MembershipMessage, 2, repeated=True)
   ident = messages.StringField(3)
   project = messages.MessageField(project_messages.ProjectMessage, 4)
+  org = messages.MessageField(org_messages.OrgMessage, 5)

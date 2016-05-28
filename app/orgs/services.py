@@ -71,3 +71,12 @@ class OrgService(api.Service):
     message = service_messages.SearchMembersResponse()
     message.users = [user.to_message() for user in results]
     return message
+
+  @remote.method(service_messages.GetOrgRequest,
+                 service_messages.GroupResponse)
+  def get_group(self, request):
+    org = orgs.Org.get(request.org.nickname)
+#    self._get_policy(project).authorize_read()
+    resp = service_messages.GroupResponse()
+    resp.group = org.group.to_message()
+    return resp

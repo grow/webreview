@@ -1,6 +1,7 @@
-from protorpc import messages
+from ..groups import messages as group_messages
 from app.orgs import messages as org_messages
 from app.users import messages as user_messages
+from protorpc import messages
 
 
 class CreateOrgRequest(messages.Message):
@@ -49,3 +50,7 @@ class SearchMembersRequest(messages.Message):
 
 class SearchMembersResponse(messages.Message):
   users = messages.MessageField(user_messages.UserMessage, 1, repeated=True)
+
+
+class GroupResponse(messages.Message):
+  group = messages.MessageField(group_messages.GroupMessage, 1)
