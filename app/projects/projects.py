@@ -147,7 +147,10 @@ class Project(ndb.Model):
     elif order == messages.Order.NAME:
       query = query.order(-cls.nickname)
     if owner:
-      query = query.filter(cls.owner_key == owner.key)
+      if isinstance(owner, list):
+        query = query.filter(cls.owner_key.IN([o.key for o in owner]))
+      else:
+        query = query.filter(cls.owner_key == owner.key)
     return query.fetch()
 
   def delete(self):
