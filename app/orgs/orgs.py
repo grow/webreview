@@ -1,6 +1,7 @@
 from . import memberships
 from . import messages
 from ..avatars import avatars
+from app.groups import groups
 from google.appengine.ext import ndb
 import os
 
@@ -55,6 +56,14 @@ class Org(ndb.Model):
     if results:
       team.delete()
     self.key.delete()
+
+  @classmethod
+  def get_by_ident(cls, ident):
+    key = ndb.Key('Org', int(ident))
+    project = key.get()
+    if project is None:
+      raise OrgDoesNotExistError('Org {} does not exist.'.format(ident))
+    return project
 
   @classmethod
   def get(cls, nickname):

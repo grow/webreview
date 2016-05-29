@@ -41,6 +41,9 @@ class ProjectPolicy(object):
   def can_read(self):
     if self.is_owner:
       return True
+    if self.project.owner.org:
+      if self.user.key == self.project.owner.org.owner_key:
+        return True
     if self.mem is None:
       return False
     return self.mem.role in [messages.Role.ADMIN, messages.Role.READ, None]

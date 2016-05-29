@@ -1,8 +1,9 @@
-from protorpc import remote
 from app import api
+from app.groups import groups
 from app.orgs import orgs
 from app.orgs import service_messages
 from app.users import users
+from protorpc import remote
 import logging
 
 
@@ -77,6 +78,32 @@ class OrgService(api.Service):
   def get_group(self, request):
     org = orgs.Org.get(request.org.nickname)
 #    self._get_policy(project).authorize_read()
+    resp = service_messages.GroupResponse()
+    resp.group = org.group.to_message()
+    return resp
+
+  @remote.method(service_messages.MembershipRequest,
+                 service_messages.GroupResponse)
+  def update_membership(self, request):
+    org = self._get_org(request)
+#    self._get_policy(org).authorize_admin()
+    try:
+      org.group.update_membership(request.membership)
+    except groups.Error as e:
+      raise api.Error(str(e))
+    resp = service_messages.GroupResponse()
+    resp.group = org.group.to_message()
+    return resp
+
+  @remote.method(service_messages.MembershipRequest,
+                 service_messages.GroupResponse)
+  def create_membership(self, request):
+    org = self._get_org(request)
+#    self._get_policy(org).authorize_admin()
+    try:
+      org.group.create_membership(request.membership)
+    except groups.Error as e:
+      raise api.Error(str(e))
     resp = service_messages.GroupResponse()
     resp.group = org.group.to_message()
     return resp

@@ -2,6 +2,7 @@ import appengine_config
 import cloudstorage
 from datetime import datetime
 from google.appengine.ext import blobstore
+from google.appengine.ext import ndb
 from app.files import messages
 from app.utils import gcs
 import os
@@ -14,6 +15,11 @@ class Error(Exception):
 
 class FileNotFoundError(Error):
   pass
+
+
+class FileMap(ndb.Model):
+  md5 = ndb.StringProperty()
+  path = ndb.StringProperty()
 
 
 class Signer(object):

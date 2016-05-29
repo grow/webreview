@@ -54,3 +54,8 @@ class SearchMembersResponse(messages.Message):
 
 class GroupResponse(messages.Message):
   group = messages.MessageField(group_messages.GroupMessage, 1)
+
+
+class MembershipRequest(messages.Message):
+  org = messages.MessageField(org_messages.OrgMessage, 1)
+  membership = messages.MessageField(group_messages.MembershipMessage, 2)
