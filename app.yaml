@@ -1,4 +1,3 @@
-version: jetway
 api_version: 1
 runtime: python27
 threadsafe: true

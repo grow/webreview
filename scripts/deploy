@@ -5,11 +5,11 @@
 if [ -d env ]; then
   source env/bin/activate
   if [ $2 ]; then
-    gcloud preview app deploy --project=$1 --version=$2 app.yaml
+    gcloud preview app deploy --no-promote --project=$1 --version=$2 app.yaml
   elif [ $1]; then
-    gcloud preview app deploy --project=$1 app.yaml
+    gcloud preview app deploy --no-promote --project=$1 app.yaml
   else
-    gcloud preview app deploy app.yaml
+    gcloud preview app deploy --no-promote app.yaml
   fi
   deactivate
 else
