@@ -22,7 +22,6 @@ frontend_app = webapp2.WSGIApplication([
 #    ('/_jetway/sheets/(.*)', sheets_handlers.SheetsHandler),
     ('/avatars/(u|o|p)/(.*)', frontend_handlers.AvatarHandler),
     ('/me/signout', auth_handlers.SignOutHandler),
-    ('/[^/]*/[^/]*.git.*', frontend_handlers.GitRedirectHandler),
     ('.*', frontend_handlers.FrontendHandler),
 ], config=config.WEBAPP2_AUTH_CONFIG)
 

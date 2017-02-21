@@ -27,7 +27,10 @@ class OrgService(api.Service):
       service_messages.GetOrgRequest,
       service_messages.GetOrgResponse)
   def get(self, request):
-    org = orgs.Org.get(request.org.nickname)
+    try:
+      org = orgs.Org.get(request.org.nickname)
+    except Exception as e:
+      raise remote.ApplicationError(str(e))
     message = service_messages.GetOrgResponse()
     message.org = org.to_message()
     return message

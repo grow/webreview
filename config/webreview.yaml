@@ -1,0 +1,16 @@
+options:
+  title: Web Review
+
+app:
+  client_secrets_file: "client_secret_696801287973-6usfr61a10jr8k7o16pebmqvmajgq3dd.apps.googleusercontent.com.json"
+  service_account_key_file: betawebreview-349110b1b659.json
+  api_key: "xxx"
+
+urls:
+  hostname:
+    prod: betawebreview.appspot.com 
+    dev: webreview.dev.example.com
+
+require_https:
+  preview_domain: yes
+  app_domain: yes

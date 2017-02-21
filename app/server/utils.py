@@ -12,7 +12,7 @@ def is_avatar_request(hostname):
 def is_preview_server(hostname, path=None):
   return (hostname.endswith(appengine_config.PREVIEW_HOSTNAME)
           and hostname != appengine_config.PREVIEW_HOSTNAME
-          and not re.match('^avatars\d-dot-', hostname))
+          and not re.match('^avatars-\w-dot-', hostname))
 
 
 def parse_hostname(hostname, path=None, multitenant=False):

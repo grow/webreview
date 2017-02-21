@@ -230,7 +230,8 @@ class User(BaseUser):
     from app.projects import projects
     user_projects = projects.Project.search(owner=self)
     org_ents = self.search_orgs()
-    user_projects += projects.Project.search(owner=org_ents)
+    if org_ents:
+      user_projects += projects.Project.search(owner=org_ents)
     results = filter(None, team_projects)
     for project in user_projects:
       if project not in results:

@@ -59,27 +59,3 @@ class AvatarHandler(webapp2.RequestHandler):
       avatar.update(gs_object_name)
     except avatars.AvatarDoesNotExistError:
       avatar = avatars.Avatar.create(letter, ident, gs_object_name)
-
-
-class GitRedirectHandler(webapp2.RequestHandler):
-
-  def dispatch(self):
-    args, kwargs = self.request.route_args, self.request.route_kwargs
-    if kwargs:
-      args = ()
-    try:
-      return self.respond(*args, **kwargs)
-    except Exception, e:
-      return self.handle_exception(e, self.app.debug)
-
-  def respond(self):
-    if os.getenv('SERVER_SOFTWARE').startswith('Dev'):
-      port = int(os.getenv('SERVER_PORT')) + 1000
-      host = '{}:{}'.format(os.getenv('SERVER_NAME'), port)
-    else:
-      host = 'git.growlaunches.com'
-    scheme = os.getenv('wsgi.url_scheme')
-    url = '{}://{}{}'.format(scheme, host, self.request.path)
-    if self.request.query_string:
-      url += '?' + self.request.query_string
-    self.redirect(url, permanent=True)
