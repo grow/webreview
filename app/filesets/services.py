@@ -135,15 +135,6 @@ class FilesetService(api.Service, BaseFilesetService):
     resp.fileset = fileset.to_message()
     return resp
 
-#  @remote.method(messages.FinalizeFilesetRequest,
-#                 messages.FinalizeFilesetResponse)
-#  def finalize(self, request):
-#    fileset = self._get_fileset(request)
-#    fileset.update(request.fileset)
-#    resp = messages.FinalizeFilesetResponse()
-#    resp.fileset = fileset.to_message()
-#    return resp
-
   @remote.method(messages.GetPageSpeedResultRequest,
                  messages.GetPageSpeedResultResponse)
   def get_pagespeed_result(self, request):

@@ -5,7 +5,6 @@ from .avatars import services as avatar_services
 from .comments import services as comment_services
 from .filesets import services as fileset_services
 from .frontend import handlers as frontend_handlers
-#from .sheets import handlers as sheets_handlers
 from .launches import services as launch_services
 from .orgs import services as org_services
 from .owners import services as owner_services
