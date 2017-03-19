@@ -121,7 +121,7 @@ class Org(ndb.Model):
   @property
   def group(self):
     def _create_group():
-      group = groups.Group.create()
+      group = groups.Group.create(org=self)
       self.group_key = group.key
       self.put()
       group.org = self

@@ -9,8 +9,8 @@ Error = memberships.Error
 
 class Group(ndb.Model):
   memberships = ndb.StructuredProperty(memberships.Membership, repeated=True)
-  project_key = ndb.KeyProperty()
-  org_key = ndb.KeyProperty()
+  project_keys = ndb.KeyProperty(repeated=True)
+  org_keys = ndb.KeyProperty(repeated=True)
 
   @property
   def ident(self):
@@ -28,9 +28,13 @@ class Group(ndb.Model):
   def create(cls, project=None, org=None):
     group = cls()
     if project:
-      group.project_key = project.key
+      if group.project_keys:
+        group.project_keys.append(project.key)
+      group.project_keys = [project.key]
     if org:
-      group.org_key = org.key
+      if group.org_keys:
+        group.org_keys.append(org.key)
+      group.org_keys = [org.key]
     group.put()
     return group
 
@@ -89,10 +93,10 @@ class Group(ndb.Model):
   def to_message(self):
     message = messages.GroupMessage()
     message.ident = self.ident
-    if hasattr(self, 'project') and self.project:
-      message.project = self.project.to_message()
-    if hasattr(self, 'org') and self.org:
-      message.org = self.org.to_message()
+#    if hasattr(self, 'project') and self.project:
+#      message.project = self.project.to_message()
+#    if hasattr(self, 'org') and self.org:
+#      message.org = self.org.to_message()
     message.users = [mem.to_message()
                      for mem in self.list_memberships(messages.Kind.USER)]
     message.domains = [mem.to_message()

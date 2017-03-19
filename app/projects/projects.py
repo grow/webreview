@@ -190,7 +190,7 @@ class Project(ndb.Model):
   @property
   def group(self):
     def _create_group():
-      group = groups.Group.create()
+      group = groups.Group.create(project=self)
       self.group_key = group.key
       self.put()
       group.project = self

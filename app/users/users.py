@@ -204,35 +204,40 @@ class User(BaseUser):
   def search_teams(self):
     from app.groups import groups
     query = groups.Group.query()
-    query = query.filter(groups.Group.project_key != None)
+    query = query.filter(groups.Group.project_keys != None)
     query = query.filter(groups.Group.memberships.user_key == self.key)
     return query.fetch()
 
   def search_orgs(self):
     from app.groups import groups
     query = groups.Group.query()
-    query = query.filter(groups.Group.org_key != None)
+    query = query.filter(groups.Group.org_keys != None)
     query = query.filter(groups.Group.memberships.user_key == self.key)
     results = query.fetch()
-    org_keys = [result.org_key for result in results]
+    org_keys = []
+    for result in results:
+        for org_key in result.org_keys:
+            org_keys.append(org_key)
     from app.orgs import orgs
     org_ents = orgs.Org.search(owner=self) or []
     org_ents += ndb.get_multi(list(set(org_keys)))
+    org_ents = sorted(org_ents, key=lambda org: org.nickname)
     return org_ents
 
   def search_projects(self):
-    team_ents = self.search_teams()
+    group_ents = self.search_teams()
     project_keys = []
-    for team in team_ents:
-      if team.project_key:
-        project_keys.append(team.project_key)
-    team_projects = ndb.get_multi(list(set(project_keys)))
+    for group in group_ents:
+      if group.project_key:
+        for project_key in group.project_keys:
+          project_keys.append(project_key)
+    group_projects = ndb.get_multi(list(set(project_keys)))
     from app.projects import projects
     user_projects = projects.Project.search(owner=self)
     org_ents = self.search_orgs()
     if org_ents:
       user_projects += projects.Project.search(owner=org_ents)
-    results = filter(None, team_projects)
+    results = filter(None, group_projects)
     for project in user_projects:
       if project not in results:
         results.append(project)

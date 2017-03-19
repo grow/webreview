@@ -239,8 +239,8 @@ class Fileset(ndb.Model):
     message.finalized = self.finalized
     message.status = self.status
     message.subdomain = self.subdomain
-    if self.created_by_key:
-      message.created_by = self.created_by.to_message()
+#    if self.created_by_key:
+#      message.created_by = self.created_by.to_message()
     if self.log:
       message.log = self.log.to_message()
     if self.stats:

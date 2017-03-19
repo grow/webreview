@@ -163,13 +163,13 @@ class RequestSigningService(remote.Service, BaseFilesetService):
     allow_fileset_by_commit = bool(request.fileset.commit)
     p = self._get_project(request)
     try:
-      if allow_fileset_by_commit:
-        return filesets.Fileset.get(project=p, commit=request.fileset.commit)
-      elif request.fileset.ident:
+      if request.fileset.ident:
         return filesets.Fileset.get_by_ident(request.fileset.ident)
-      else:
+      elif request.fileset.name:
         p = self._get_project(request)
         return p.get_fileset(request.fileset.name)
+      elif allow_fileset_by_commit:
+        return filesets.Fileset.get(project=p, commit=request.fileset.commit)
     except filesets.FilesetDoesNotExistError:
       return filesets.Fileset.create(
           p, name=request.fileset.name, commit=request.fileset.commit, created_by=me)
