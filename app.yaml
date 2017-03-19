@@ -2,9 +2,11 @@ api_version: 1
 runtime: python27
 threadsafe: true
 
+instance_class: F4_1G
+
 env_variables:
-  JETWAY_CONFIG: config/webreview.yaml
   GAE_USE_SOCKETS_HTTPLIB: 'anyvalue'  # https://github.com/shazow/urllib3/issues/618#issuecomment-101795512
+  JETWAY_CONFIG: config/jetway.googwebreview.yaml
 
 libraries:
 - name: lxml
@@ -52,6 +54,10 @@ skip_files:
 - ^(.*/)?index\.yaml
 - ^(.*/)?index\.yml
 - ^(.*/)?run_tests.py
+- ^.*.example
+- ^.*bower_components.*
+- ^.*node_modules.*
+- ^.*tmp.*
 - bower_components
 - env
 - htmlconv
@@ -59,5 +65,4 @@ skip_files:
 - lib/PIL
 - node_modules
 - testing
-- ^.*.example
 - webreview-fe

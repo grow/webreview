@@ -17,9 +17,9 @@ from protorpc.wsgi import service
 import endpoints
 import webapp2
 
+UNSECURED_SUFFIXES = ('.ttf', '.woff', 'sw.js', 'manifest.json')
 
 frontend_app = webapp2.WSGIApplication([
-#    ('/_jetway/sheets/(.*)', sheets_handlers.SheetsHandler),
     ('/avatars/(u|o|p)/(.*)', frontend_handlers.AvatarHandler),
     ('/me/signout', auth_handlers.SignOutHandler),
     ('.*', frontend_handlers.FrontendHandler),
@@ -78,7 +78,7 @@ def allowed_user_domains_middleware(app):
     # TODO: Remove dirty hack to get around issues with Chrome Beta and
     # Firefox. Note that this exposes all ttf and woff files.
     # http://stackoverflow.com/questions/31140826
-    if environ['PATH_INFO'].endswith(('.ttf', '.woff')):
+    if environ['PATH_INFO'].endswith(UNSECURED_SUFFIXES):
       return app(environ, start_response)
     if utils.is_avatar_request(environ['SERVER_NAME']):
       return app(environ, start_response)

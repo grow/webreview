@@ -6,15 +6,19 @@ cd webreview-fe && ember build && cd ..
 if [ -d env ]; then
   source env/bin/activate
   if [ $2 ]; then
-    gcloud preview app deploy \
+    gcloud app deploy \
+      -q \
+      --no-promote \
       --project=$1 \
       --version=$2 \
-      app.grow-prod.yaml
+      app.yaml
   elif [ $1 ]; then
-    gcloud preview app deploy \
+    gcloud app deploy \
+      -q \
+      --no-promote \
       --project=$1 \
       --version=auto \
-      app.grow-prod.yaml
+      app.yaml
   else
     echo "Usage: ./scripts/deploy <project>"
     exit 1
