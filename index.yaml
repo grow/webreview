@@ -47,22 +47,22 @@ indexes:
 - kind: Group
   properties:
   - name: memberships.user_key
-  - name: org_keys
-
-- kind: Group
-  properties:
-  - name: memberships.user_key
-  - name: project_keys
-
-- kind: Group
-  properties:
-  - name: memberships.user_key
   - name: org_key
 
 - kind: Group
   properties:
   - name: memberships.user_key
+  - name: org_keys
+
+- kind: Group
+  properties:
+  - name: memberships.user_key
   - name: project_key
+
+- kind: Group
+  properties:
+  - name: memberships.user_key
+  - name: project_keys
 
 - kind: Project
   properties:

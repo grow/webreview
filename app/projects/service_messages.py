@@ -136,3 +136,8 @@ class GroupResponse(messages.Message):
 class MembershipRequest(messages.Message):
   project = messages.MessageField(ProjectMessage, 1)
   membership = messages.MessageField(group_messages.MembershipMessage, 2)
+
+
+class GroupRequest(messages.Message):
+  project = messages.MessageField(project_messages.ProjectMessage, 1)
+  group = messages.MessageField(group_messages.GroupMessage, 2)

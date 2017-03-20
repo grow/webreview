@@ -1,6 +1,15 @@
 version ?= auto
 project ?= betawebreview
 
+run-frontend:
+	cd webreview-fe && ember serve
+
+run-backend:
+	virtualenv env
+	. env/bin/activate
+	dev_appserver.py \
+		--port=8088 .
+
 install:
 	virtualenv env
 	. env/bin/activate
@@ -28,6 +37,7 @@ test:
 	  app/
 
 deploy:
+	$(MAKE) test
 	cd webreview-fe && ember build && cd ..
 	gcloud app deploy \
 		-q \

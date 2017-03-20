@@ -36,7 +36,7 @@ handlers:
 - url: /_ah/spi/.*
   script: app.main.endpoints_app
 
-- url: /assets
+- url: /_webreview/assets
   static_dir: dist/assets
 
 - url: /.*

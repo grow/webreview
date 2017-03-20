@@ -1,6 +1,6 @@
-from protorpc import messages
-from protorpc import message_types
 from app.owners import messages as owner_messages
+from protorpc import message_types
+from protorpc import messages
 
 
 class Permission(messages.Enum):

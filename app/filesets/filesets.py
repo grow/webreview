@@ -217,7 +217,7 @@ class Fileset(ndb.Model):
   def finalize(self):
     self.finalized = True
     self.status = messages.FilesetStatus.SUCCESS
-    fileset_utils.send_finalized_email(self)
+#    fileset_utils.send_finalized_email(self)
     self.put()
 
   def update(self, message):

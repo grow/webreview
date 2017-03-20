@@ -105,4 +105,6 @@ class Owner(object):
     message.created = self._entity.created
     message.website_url = self._entity.website_url
     message.avatar_url = self.avatar_url
+    if self.kind == messages.OwnerMessage.Kind.USER:
+        message.email = self._entity.email
     return message

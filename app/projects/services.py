@@ -219,13 +219,17 @@ class ProjectService(api.Service):
     resp.catalog = catalog.to_message()
     return resp
 
-  @remote.method(service_messages.ProjectRequest,
+  @remote.method(service_messages.GroupRequest,
                  service_messages.GroupResponse)
   def get_group(self, request):
-    project = self._get_project(request)
-    self._get_policy(project).authorize_read()
+    if request.group:
+        group = groups.Group.get(request.group.ident)
+    elif request.project:
+        project = self._get_project(request)
+        self._get_policy(project).authorize_read()
+        group = project.group
     resp = service_messages.GroupResponse()
-    resp.group = project.group.to_message()
+    resp.group = group.to_message()
     return resp
 
   @remote.method(service_messages.MembershipRequest,
