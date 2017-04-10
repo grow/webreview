@@ -1,4 +1,4 @@
-# WebReview [![Build Status](https://travis-ci.org/grow/webreview.png?branch=master)](https://travis-ci.org/grow/jetway)
+# WebReview [![Build Status](https://travis-ci.org/grow/webreview.png?branch=master)](https://travis-ci.org/grow/webreview)
 
 The place to go to stage, preview, review, and sign off on static site builds before launch.
 
