@@ -2,13 +2,10 @@
   "name": "jetway",
   "private": true,
   "dependencies": {
-    "angular": "1.2.8",
-    "angular-bootstrap": "*",
-    "angular-ui-router": "*",
-    "angular-xeditable": "*",
+    "angular": "1.4.1",
+    "angular-bootstrap": "0.13.0",
+    "angular-ui-router": "0.2.15",
+    "angular-xeditable": "0.1.9",
     "bootstrap": "3.2.0"
-  },
-  "resolutions": {
-    "angular": ">=1.3.0"
   }
 }

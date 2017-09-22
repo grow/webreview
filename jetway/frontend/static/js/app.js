@@ -7,10 +7,7 @@ var app = angular.module('jetway', [
   'xeditable'
 ])
 
-.config(function($stateProvider, $urlRouterProvider, $locationProvider, $tooltipProvider) {
-  $tooltipProvider.options({
-    animation: false
-  });
+.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $stateProvider
     .state('home', {
