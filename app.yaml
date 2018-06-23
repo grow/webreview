@@ -3,6 +3,8 @@ runtime: python27
 threadsafe: true
 
 libraries:
+- name: lxml
+  version: latest
 - name: endpoints
   version: latest
 - name: ssl 
@@ -28,16 +30,20 @@ handlers:
 - url: /_ah/spi/.*
   script: jetway.main.endpoints_app
 
-- url: /_jetway/[^/]*/static/css
+- url: /_app/[^/]*/config/(.*\.(svg|png|gif|jpg))$
+  static_files: config/\1
+  upload: config/.*\.(svg|png|gif|jpg)$
+
+- url: /_app/[^/]*/static/css
   static_dir: dist/css
 
-- url: /_jetway/[^/]*/static/js
+- url: /_app/[^/]*/static/js
   static_dir: dist/js
 
-- url: /_jetway/[^/]*/static/html
+- url: /_app/[^/]*/static/html
   static_dir: jetway/frontend/static/html
 
-- url: /_jetway/[^/]*/static/images
+- url: /_app/[^/]*/static/images
   static_dir: jetway/frontend/static/images
 
 - url: /.*
@@ -59,6 +65,9 @@ skip_files:
 - env
 - htmlconv
 - lib/Crypto
+- lib/Pillow
+- lib/PIL
 - node_modules
 - testing
 - ^.*.example
+- lib/Pillow
