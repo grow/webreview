@@ -4,7 +4,6 @@ from google.appengine.ext.ndb import msgprop
 from jetway.files import files
 from jetway.files import messages as file_messages
 from jetway.filesets import messages
-from jetway.logs import logs
 from jetway.server import utils
 import appengine_config
 import os
@@ -116,7 +115,6 @@ class Fileset(ndb.Model):
   project_key = ndb.KeyProperty()
   modified = ndb.DateTimeProperty(auto_now=True)
   modified_by_key = ndb.KeyProperty()
-  log = ndb.StructuredProperty(logs.Log)
   stats = ndb.StructuredProperty(FilesetStats)
   resources = ndb.StructuredProperty(Resource, repeated=True)
   finalized = ndb.BooleanProperty()
@@ -221,8 +219,6 @@ class Fileset(ndb.Model):
     self.put()
 
   def update(self, message):
-    if message.log:
-      self.log = logs.Log.from_message(message.log)
     if message.stats:
       self.stats = FilesetStats.from_message(message.stats)
     if message.resources:

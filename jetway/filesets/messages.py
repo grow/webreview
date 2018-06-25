@@ -1,5 +1,4 @@
 from jetway.files import messages as file_messages
-from jetway.logs import messages as log_messages
 from jetway.projects import messages as project_messages
 from jetway.users import messages as user_messages
 from protorpc import message_types
@@ -94,7 +93,6 @@ class FilesetMessage(messages.Message):
   project = messages.MessageField(project_messages.ProjectMessage, 5)
   url = messages.StringField(6)
   modified = message_types.DateTimeField(7)
-  log = messages.MessageField(log_messages.LogMessage, 8)
   message = messages.StringField(9)
   stats = messages.MessageField(StatsMessage, 10)
   resources = messages.MessageField(ResourceMessage, 11, repeated=True)

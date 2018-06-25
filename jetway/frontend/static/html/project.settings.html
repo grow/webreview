@@ -1,5 +1,5 @@
 <div class="card">
-  <h3>Connection</h3>
+  <h3>Settings</h3>
   <form>
     <div class="form-group">
       <label for="nickname">Name</label>
@@ -10,15 +10,10 @@
       <textarea class="form-control" ng-model="project.description"></textarea>
     </div>
     <div class="form-group">
-      <label for="nickname">Repository URL</label>
-      <input type="text" class="form-control" ng-model="project.repo_url">
-    </div>
-    <div class="form-group">
       <button class="btn btn-default">Save</button>
     </div>
   </form>
 </div>
 
 <h3>Delete</h3>
-<div ng-click="deleteProject(project)" class="btn btn-danger btn-sm">Transfer ownership</div>
 <div ng-click="deleteProject(project)" class="btn btn-danger btn-sm">Delete project</div>

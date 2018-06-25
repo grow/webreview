@@ -10,12 +10,6 @@
           <li ng-class="{active: $state.includes('settings.index')}">
             <a ui-sref="settings.index()">Profile</a>
           </li>
-          <li ng-class="{active: $state.includes('settings.memberships')}">
-            <a ui-sref="settings.memberships()">Memberships</a>
-          </li>
-          <li ng-class="{active: $state.includes('settings.notifications')}">
-            <a ui-sref="settings.notifications()">Notifications</a>
-          </li>
           <li ng-repeat="org in orgs" ng-class="{active: $state.includes('settings.org', {'org_nickname': org.nickname})}">
             <a ui-sref="settings.org.index({'org_nickname': org.nickname})">
               <img ng-src="{{org.avatar_url}}" class="avatar avatar-xs">

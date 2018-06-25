@@ -3,7 +3,7 @@
     <td>
       <a ui-sref="owner.projects({'owner': membership.user.nickname})">
         <img ng-src="{{membership.user.avatar_url}}" class="avatar avatar-xs">
-        {{membership.user.nickname}}
+        {{membership.user.email}}
       </a>
     </td>
     <td>
@@ -27,8 +27,7 @@
   </div>
   <div class="form-group">
     <select class="form-control" required>
-      <option>
-      <option value="READ_ONLY">Read only
+      <option value="READ_ONLY" selected>Read only
       <option value="WRITE_FULL">Write
       <option value="ADMIN">Admin
     </select>

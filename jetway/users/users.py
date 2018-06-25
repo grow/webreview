@@ -125,6 +125,7 @@ class User(BaseUser):
     message.description = self.description
     message.location = self.description
     message.website_url = self.website_url
+    message.email = self.email
     return message
 
   def to_me_message(self):
