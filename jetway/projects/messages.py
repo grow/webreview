@@ -16,10 +16,6 @@ class Visibility(messages.Enum):
   COVER = 4
 
 
-class CoverMessage(messages.Message):
-  content = messages.StringField(1)
-
-
 class Order(messages.Enum):
   NAME = 0
 
@@ -32,6 +28,5 @@ class ProjectMessage(messages.Message):
   git_url = messages.StringField(5)
   avatar_url = messages.StringField(6)
   visibility = messages.EnumField(Visibility, 7)
-  cover = messages.MessageField(CoverMessage, 8)
   name = messages.StringField(9)
   built = message_types.DateTimeField(10)

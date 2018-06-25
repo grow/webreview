@@ -45,7 +45,6 @@ class Project(ndb.Model):
   owner_key = ndb.KeyProperty()
   created_by_key = ndb.KeyProperty()
   description = ndb.StringProperty()
-  cover = ndb.StructuredProperty(Cover)
   visibility = msgprop.EnumProperty(messages.Visibility,
                                     default=messages.Visibility.PRIVATE)
   built = ndb.DateTimeProperty()
@@ -183,15 +182,11 @@ class Project(ndb.Model):
     message.git_url = self.git_url
     message.avatar_url = self.avatar_url
     message.visibility = self.visibility
-    if self.cover:
-      message.cover = self.cover.to_message()
     message.built = self.built
     return message
 
   def update(self, message):
     self.description = message.description
-    if message.cover:
-      self.cover = Cover.from_message(message.cover)
     self.visibility = message.visibility
     self.put()
 
