@@ -2,7 +2,12 @@
   <tr ng-repeat="fileset in filesets | orderBy:'modified':true">
     <td>
       <a href="{{fileset.ident_url}}">
-        {{fileset.commit.branch}} {{fileset.commit.sha|limitTo:6}}
+        <span ng-if="fileset.commit">
+          {{fileset.commit.branch}} {{fileset.commit.sha|limitTo:6}}
+        </span>
+        <span ng-if="!fileset.commit">
+          {{fileset.ident}}
+        </span>
       </a>
     </td>
     <td>
@@ -11,7 +16,7 @@
       </span>
     </td>
     <td>
-      {{(fileset.commit.message || fileset.ident)|limitTo:100}}
+      {{(fileset.commit.message || "No commit message.")|limitTo:100}}
     </td>
     <td>
       <span title="by {{fileset.modified_by}}">{{fileset.modified|date:"medium"}}</span>

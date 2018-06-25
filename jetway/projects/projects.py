@@ -240,7 +240,7 @@ class Project(ndb.Model):
     found_teams = query.fetch()
     if self.visibility == messages.Visibility.ORGANIZATION:
       return bool(found_teams)
-    if self.visibility == messages.Visibility.PRIVATE:
+    if self.visibility == messages.Visibility.PRIVATE or not self.visibility:
       # TODO: Remove this once exposing default permissions in UI.
       if (appengine_config.DEFAULT_USER_DOMAINS
           and user.email.split('@')[-1] in appengine_config.DEFAULT_USER_DOMAINS):
