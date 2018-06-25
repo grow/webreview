@@ -56,45 +56,6 @@ var app = angular.module('jetway', [
         .state('settings.org.index', {
           url: '/:org'
         })
-/*
-      .state('settings.referrals', {
-        url: '/referrals',
-        templateUrl: _prefix + '/static/html/settings.referrals.html'
-        controller: ReferralsController
-      })
-*/
-
-    .state('deployments', {
-      abstract: true,
-      url: '/deployments',
-      template: '<ui-view/>'
-    })
-      .state('deployments.new', {
-        url: '/new?owner',
-        controller: DeploymentNewController,
-        templateUrl: _prefix + '/static/html/deployments.new.html'
-      })
-      .state('deployments.deployment', {
-        url: '/:deployment',
-        controller: DeploymentController,
-        templateUrl: _prefix + '/static/html/deployment.html'
-      })
-
-    .state('launches', {
-      url: '/launches',
-      abstract: true,
-      template: '<ui-view/>'
-    })
-      .state('launches.new', {
-        url: '/new?owner&project',
-        controller: LaunchNewController,
-        templateUrl: _prefix + '/static/html/launches.new.html'
-      })
-      .state('launches.launch', {
-        url: '/:launch',
-        controller: LaunchController,
-        templateUrl: _prefix + '/static/html/launch.html'
-      })
 
     .state('owner', {
       abstract: true,
@@ -107,23 +68,6 @@ var app = angular.module('jetway', [
         controller: ProjectsController,
         templateUrl: _prefix + '/static/html/projects.html'
       })
-      .state('owner.launches', {
-        url: '/launches',
-        controller: LaunchesController,
-        templateUrl: _prefix + '/static/html/launches.html'
-      })
-      .state('owner.deployments', {
-        url: '/deployments',
-        controller: DeploymentsController,
-        templateUrl: _prefix + '/static/html/deployments.html'
-      })
-      /*
-      .state('owner.team', {
-        url: '/teams/:team',
-        controller: TeamController,
-        templateUrl: _prefix + '/static/html/team.html'
-      })
-      */
       .state('owner.teams', {
         url: '/teams',
         controller: TeamsController,
@@ -162,17 +106,6 @@ var app = angular.module('jetway', [
         controller: ProjectIndexController,
         templateUrl: _prefix + '/static/html/project.builds.html'
       })
-      .state('project.translations', {
-        abstract: true,
-        url: '/translations',
-        templateUrl: _prefix + '/static/html/project.translations.html'
-      })
-        .state('project.translations.index', {
-          url: ''
-        })
-        .state('project.translations.locale', {
-          url: '/:locale'
-        })
       .state('project.team', {
         url: '/team',
         templateUrl: _prefix + '/static/html/project.team.html'

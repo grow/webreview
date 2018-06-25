@@ -2,10 +2,8 @@ import appengine_config as config
 from google.appengine.api import users
 from .auth import handlers as auth_handlers
 from .avatars import services as avatar_services
-from .comments import services as comment_services
 from .filesets import services as fileset_services
 from .frontend import handlers as frontend_handlers
-from .launches import services as launch_services
 from .orgs import services as org_services
 from .owners import services as owner_services
 from .projects import services as project_services
@@ -47,10 +45,8 @@ oauth2_app = webapp2.WSGIApplication([
 
 api_app = service.service_mappings((
     ('/_api/avatars.*', avatar_services.AvatarService),
-    ('/_api/comments.*', comment_services.CommentService),
     ('/_api/filesets.*', fileset_services.FilesetService),
     ('/_api/me.*', user_services.MeService),
-    ('/_api/launches.*', launch_services.LaunchService),
     ('/_api/owners.*', owner_services.OwnerService),
     ('/_api/orgs.*', org_services.OrgService),
     ('/_api/projects.*', project_services.ProjectService),

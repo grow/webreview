@@ -116,9 +116,7 @@ class Project(ndb.Model):
     return query.fetch()
 
   def delete(self):
-    from jetway.launches import launches
     team_results = teams.Team.search(projects=[self], kind=teams.messages.Kind.DEFAULT)
-    launch_results = launches.Launch.search(project=self)
     fileset_results = filesets.Fileset.search(project=self)
 
     @ndb.transactional(retries=1, xg=True)
@@ -130,8 +128,6 @@ class Project(ndb.Model):
         pass
       for team in team_results:
         team.remove_project(self)
-      for launch in launch_results:
-        launch.delete()
       for fileset in fileset_results:
         fileset.delete()
       self.key.delete()
