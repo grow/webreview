@@ -69,6 +69,11 @@ img.avatar-xs {
 
 .filesets {
   font-size: 13px;
+  table-layout: fixed;
+}
+
+.filesets tr td:last-child {
+  width: 180px;
 }
 
 .filesets b {
