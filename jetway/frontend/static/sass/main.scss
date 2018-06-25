@@ -25,6 +25,10 @@ h4 {
   font-weight: 300;
 }
 
+.table tr:first-child td {
+  border-top: 0;
+}
+
 table.table-margin {
   margin-top: 20px;
 }
@@ -63,12 +67,13 @@ img.avatar-xs {
   font-size: 12px;
 }
 
+.filesets {
+  font-size: 13px;
+}
+
 .filesets b {
   font-size: 16px;
   margin-bottom: 5px;
-}
-
-.filesets {
 }
 
 .project-name {

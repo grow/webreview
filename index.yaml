@@ -13,6 +13,14 @@ indexes:
 - kind: Fileset
   properties:
   - name: commit.sha
+  - name: name
+  - name: project_key
+  - name: modified
+    direction: desc
+
+- kind: Fileset
+  properties:
+  - name: commit.sha
   - name: project_key
   - name: modified
     direction: desc
@@ -20,6 +28,13 @@ indexes:
 - kind: Fileset
   properties:
   - name: name
+  - name: modified
+    direction: desc
+
+- kind: Fileset
+  properties:
+  - name: name
+  - name: project_key
   - name: modified
     direction: desc
 

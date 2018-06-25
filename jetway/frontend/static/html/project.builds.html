@@ -1,18 +1,20 @@
 <table class="table filesets" ng-if="filesets.length">
-  <tr ng-repeat="fileset in filesets">
+  <tr ng-repeat="fileset in filesets | orderBy:'modified':true">
     <td>
-      <small>{{fileset.commit.branch}} {{fileset.commit.sha|limitTo:6}}</small>
+      <a href="{{fileset.ident_url}}">
+        {{fileset.commit.branch}} {{fileset.commit.sha|limitTo:6}}
+      </a>
     </td>
     <td>
-      <a href="{{fileset.url}}" class="commit-message">{{fileset.commit.message || fileset.ident}}</a>
       <span ng-if="fileset.name">
-        – <a href="{{fileset.url}}">{{fileset.name}}</a>
+        <a href="{{fileset.url}}">{{fileset.name}}</a>
       </span>
     </td>
     <td>
-      <small>
-        <span title="by {{fileset.modified_by}}">{{fileset.modified|date:"medium"}}</span>
-      </small>
+      {{(fileset.commit.message || fileset.ident)|limitTo:100}}
+    </td>
+    <td>
+      <span title="by {{fileset.modified_by}}">{{fileset.modified|date:"medium"}}</span>
     </td>
   </tr>
 </table>

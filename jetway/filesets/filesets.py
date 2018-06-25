@@ -230,14 +230,13 @@ class Fileset(ndb.Model):
     message.name = self.name
     message.ident = self.ident
     message.url = self.url
+    message.ident_url = self.ident_url
     message.modified = self.modified
     message.commit = self.commit
     message.finalized = self.finalized
     message.status = self.status
     if self.created_by_key:
       message.created_by = self.created_by.to_message()
-    if self.log:
-      message.log = self.log.to_message()
     if self.stats:
       message.stats = self.stats.to_message()
     if self.resources:
@@ -246,7 +245,14 @@ class Fileset(ndb.Model):
 
   @property
   def url(self):
+    # Hostname is the fileset name (new builds overwrite old ones).
     return utils.make_url(self.name, self.project.nickname,
+                          self.project.owner.nickname, ident=self.ident)
+
+  @property
+  def ident_url(self):
+    # Hostname is the fileset ident (unique per fileset).
+    return utils.make_url(self.ident, self.project.nickname,
                           self.project.owner.nickname, ident=self.ident)
 
   @property
