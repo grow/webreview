@@ -5,8 +5,6 @@ threadsafe: true
 libraries:
 - name: lxml
   version: latest
-- name: endpoints
-  version: latest
 - name: ssl 
   version: latest
 - name: pycrypto
@@ -27,7 +25,7 @@ handlers:
   login: admin
   secure: always
 
-- url: /_ah/spi/.*
+- url: /_ah/api/.*
   script: jetway.main.endpoints_app
 
 - url: /_app/[^/]*/config/(.*\.(svg|png|gif|jpg))$
