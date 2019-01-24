@@ -11,15 +11,10 @@ import os
 import webapp2
 
 
-# Command-line Grow SDK (API project: grow-prod).
-_jetway_client = (
-    '578372381550-jfl3hdlf1q5rgib94pqsctv1kgkflu1a'
-    '.apps.googleusercontent.com')
-
 endpoints_api = endpoints.api(
     name='webreview',
     version='v0',
-    allowed_client_ids=[_jetway_client, endpoints.API_EXPLORER_CLIENT_ID],
+    allowed_client_ids=endpoints.SKIP_CLIENT_ID_CHECK,
     scopes=[
         endpoints.EMAIL_SCOPE,
         'https://www.googleapis.com/auth/plus.me',
@@ -29,7 +24,7 @@ endpoints_api = endpoints.api(
 new_endpoints_api = endpoints.api(
     name='webreview',
     version='v1',
-    allowed_client_ids=[_jetway_client, endpoints.API_EXPLORER_CLIENT_ID],
+    allowed_client_ids=endpoints.SKIP_CLIENT_ID_CHECK,
     scopes=[
         endpoints.EMAIL_SCOPE,
         'https://www.googleapis.com/auth/plus.me',
@@ -39,7 +34,7 @@ new_endpoints_api = endpoints.api(
 legacy_endpoints_api = endpoints.api(
     name='jetway',
     version='v0',
-    allowed_client_ids=[_jetway_client, endpoints.API_EXPLORER_CLIENT_ID],
+    allowed_client_ids=endpoints.SKIP_CLIENT_ID_CHECK,
     scopes=[
         endpoints.EMAIL_SCOPE,
         'https://www.googleapis.com/auth/plus.me',
