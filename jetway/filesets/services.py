@@ -125,25 +125,6 @@ class FilesetService(api.Service, BaseFilesetService):
     resp.fileset = fileset.to_message()
     return resp
 
-#  @remote.method(messages.FinalizeFilesetRequest,
-#                 messages.FinalizeFilesetResponse)
-#  def finalize(self, request):
-#    fileset = self._get_fileset(request)
-#    fileset.update(request.fileset)
-#    resp = messages.FinalizeFilesetResponse()
-#    resp.fileset = fileset.to_message()
-#    return resp
-
-  @remote.method(messages.GetPageSpeedResultRequest,
-                 messages.GetPageSpeedResultResponse)
-  def get_pagespeed_result(self, request):
-    fileset = self._get_fileset(request)
-    runner = fileset.get_pagespeed_runner()
-    pagespeed_result = runner.run(request.file.path)
-    resp = messages.GetPageSpeedResultResponse()
-    resp.pagespeed_result = pagespeed_result
-    return resp
-
 
 @endpoints_api
 class RequestSigningService(remote.Service, BaseFilesetService):

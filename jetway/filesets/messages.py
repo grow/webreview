@@ -163,12 +163,3 @@ class FinalizeRequest(messages.Message):
 
 class FinalizeResponse(messages.Message):
   fileset = messages.MessageField(FilesetMessage, 1)
-
-
-class GetPageSpeedResultRequest(messages.Message):
-  fileset = messages.MessageField(FilesetMessage, 1)
-  file = messages.MessageField(file_messages.FileMessage, 2)
-
-
-class GetPageSpeedResultResponse(messages.Message):
-  pagespeed_result = messages.MessageField(PageSpeedResultMessage, 1)
