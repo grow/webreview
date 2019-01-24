@@ -1,5 +1,6 @@
 project ?= webreview
 version ?= auto
+staging_version ?= staging
 file ?= app.yaml
 
 create-service-account:
@@ -19,4 +20,12 @@ deploy:
 			--promote \
       --project=$(project) \
       --version=$(version) \
+      $(file)
+
+stage:
+	gcloud app deploy \
+			-q \
+			--no-promote \
+      --project=$(project) \
+      --version=$(staging_version) \
       $(file)
