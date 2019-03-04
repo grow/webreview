@@ -1,3 +1,4 @@
+from google.appengine.api import users
 from google.appengine.ext import ndb
 from jetway.auth import handlers as auth_handlers
 from jetway.files import files
@@ -47,7 +48,8 @@ class RequestHandler(auth_handlers.SessionHandler):
         fileset = filesets.Fileset.get_by_name_or_ident(fileset_name)
       if not fileset.project.can(self.me, projects.Permission.READ):
         if self.me:
-          text = '{} does not have access to this page.'.format(self.me)
+          url = users.create_logout_url(self.request.path_qs)
+          text = '<b>{}</b> does not have access to this page.<br><br><a href="{}">Sign out to switch accounts</a>'.format(self.me.email, url)
           self.error(403, 'Forbidden', text)
           return
         else:
