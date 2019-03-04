@@ -48,8 +48,10 @@ class RequestHandler(auth_handlers.SessionHandler):
         fileset = filesets.Fileset.get_by_name_or_ident(fileset_name)
       if not fileset.project.can(self.me, projects.Permission.READ):
         if self.me:
-          url = users.create_logout_url(self.request.path_qs)
-          text = '<b>{}</b> does not have access to this page.<br><br><a href="{}">Sign out to switch accounts</a>'.format(self.me.email, url)
+          # Hack to ensure we display the account chooser.
+          url = users.create_login_url(self.request.path_qs)
+          url = url.replace('/ServiceLogin', '/a/SelectSession', 1)
+          text = '<b>{}</b> does not have access to this page.<br><br><a href="{}">Switch account</a>'.format(self.me.email, url)
           self.error(403, 'Forbidden', text)
           return
         else:

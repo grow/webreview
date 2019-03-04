@@ -78,8 +78,6 @@ def allowed_user_domains_middleware(app):
     if utils.is_preview_server(environ['SERVER_NAME']):
       if user is None:
         url = users.create_login_url(full_path)
-        # Hack to ensure we display the account chooser.
-        url = url.replace('/ServiceLogin', '/a/SelectSession', 1)
         start_response('302', [('Location', url)])
         return []
       return app(environ, start_response)
@@ -90,8 +88,6 @@ def allowed_user_domains_middleware(app):
     # Redirect anonymous users to login.
     if user is None:
       url = users.create_login_url(full_path)
-      # Hack to ensure we display the account chooser.
-      url = url.replace('/ServiceLogin', '/a/SelectSession', 1)
       start_response('302', [('Location', url)])
       return []
     # Ban forbidden users.
