@@ -71,10 +71,15 @@ def allowed_user_domains_middleware(app):
     # Allow project-level permissions to control access to previews.
     # But, require users to be signed in. Use App Engine sign in to avoid
     # building an SSO login system for each preview domain.
+    full_path = environ['PATH_INFO']
+    if environ['QUERY_STRING']:
+        full_path += '?' + environ['QUERY_STRING']
     user = users.get_current_user()
     if utils.is_preview_server(environ['SERVER_NAME']):
       if user is None:
-        url = users.create_login_url(environ['PATH_INFO'])
+        url = users.create_login_url(full_path)
+        # Hack to ensure we display the account chooser.
+        url = url.replace('/ServiceLogin', '/a/SelectSession', 1)
         start_response('302', [('Location', url)])
         return []
       return app(environ, start_response)
@@ -84,13 +89,15 @@ def allowed_user_domains_middleware(app):
       return app(environ, start_response)
     # Redirect anonymous users to login.
     if user is None:
-      url = users.create_login_url(environ['PATH_INFO'])
+      url = users.create_login_url(full_path)
+      # Hack to ensure we display the account chooser.
+      url = url.replace('/ServiceLogin', '/a/SelectSession', 1)
       start_response('302', [('Location', url)])
       return []
     # Ban forbidden users.
     if user.email().split('@')[-1] not in allowed_user_domains:
       start_response('403', [])
-      url = users.create_logout_url(environ['PATH_INFO'])
+      url = users.create_logout_url(full_path)
       return ['Forbidden. <a href="{}">Sign out</a>.'.format(url)]
     return app(environ, start_response)
   return middleware

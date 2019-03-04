@@ -284,17 +284,10 @@ var OrgNewController = function($scope, $state, grow) {
 
 
 var SettingsOrgsController = function($scope, grow) {
-
 };
 
 
 var SettingsController = function($scope, grow) {
-  $scope.regenerateGitPassword = function() {
-    grow.rpc('me.regenerate_git_password').execute(function(resp) {
-      $scope.git_password = resp['git_password'];
-      $scope.$apply();
-    });
-  };
   $scope.updateMe = function(me) {
     grow.rpc('me.update', {'me': me}).execute(function(resp) {
       $scope.me = resp['me'];

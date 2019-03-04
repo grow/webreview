@@ -70,17 +70,6 @@ class MeService(api.Service):
     return resp
 
 
-  @remote.method(messages.RegenerateGitPasswordRequest,
-                 messages.RegenerateGitPasswordResponse)
-  @api.me_required
-  def regenerate_git_password(self, request):
-    git_password = self.me.regenerate_git_password()
-    resp = messages.RegenerateGitPasswordResponse()
-    resp.me = self.me.to_me_message()
-    resp.git_password = git_password
-    return resp
-
-
 class UserService(api.Service):
 
   def _get_project(self, request):

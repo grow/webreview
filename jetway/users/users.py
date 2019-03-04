@@ -12,10 +12,6 @@ class Error(Exception):
   pass
 
 
-class BadGitPasswordError(Error):
-  pass
-
-
 class UserDoesNotExistError(Error):
   pass
 
@@ -208,16 +204,3 @@ class User(BaseUser):
         results.append(project)
     results = sorted(results, key=lambda project: project.nickname)
     return results
-
-  def regenerate_git_password(self):
-    git_password = security.generate_random_string(length=20)
-    hashed_password = security.generate_password_hash(git_password)
-    self.hashed_git_password = hashed_password
-    self.put()
-    return git_password
-
-  def check_hashed_git_password(self, git_password):
-    matched = security.check_password_hash(git_password, self.hashed_git_password)
-    if matched is not True:
-      raise BadGitPasswordError()
-    return True
