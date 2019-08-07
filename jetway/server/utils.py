@@ -5,6 +5,13 @@ import re
 _HOSTNAME_RE = re.compile('^(?:(.*)--)?(.*)--([^\.]*)\.')
 
 
+def is_buildbot():
+  api_key_header = os.environ.get('HTTP_WEBREVIEW_API_KEY')
+  return api_key_header \
+      and appengine_config.BUILDBOT_API_KEY is not None \
+      and api_key_header == appengine_config.BUILDBOT_API_KEY
+
+
 def is_preview_server(hostname, path=None):
   return (hostname.endswith(appengine_config.PREVIEW_HOSTNAME)
           and hostname != appengine_config.PREVIEW_HOSTNAME

@@ -68,6 +68,9 @@ def allowed_user_domains_middleware(app):
   # switch this to use OAuth2 integration with Google Accounts. Implement
   # an SSO service for preview domains.
   def middleware(environ, start_response):
+    # Allow the buildbot to make requests.
+    if utils.is_buildbot():
+        return app(environ, start_response)
     # Allow project-level permissions to control access to previews.
     # But, require users to be signed in. Use App Engine sign in to avoid
     # building an SSO login system for each preview domain.

@@ -46,7 +46,7 @@ class RequestHandler(auth_handlers.SessionHandler):
         if fileset_name is None:
           raise filesets.FilesetDoesNotExistError
         fileset = filesets.Fileset.get_by_name_or_ident(fileset_name)
-      if not fileset.project.can(self.me, projects.Permission.READ):
+      if not utils.is_buildbot() and not fileset.project.can(self.me, projects.Permission.READ):
         if self.me:
           # Hack to ensure we display the account chooser.
           url = users.create_login_url(self.request.path_qs)
