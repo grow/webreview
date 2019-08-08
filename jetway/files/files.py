@@ -71,6 +71,7 @@ class Signer(object):
     return params
 
   def get_headers_for_path(self, path, request_headers=None):
+    is_internal = path.startswith('/.grow/')
     absolute_path = os.path.join(self.root, path.lstrip('/'))
     try:
       stat = cloudstorage.stat(absolute_path)
@@ -92,6 +93,12 @@ class Signer(object):
       headers['X-AppEngine-BlobKey'] = key
       if os.getenv('HTTP_RANGE'):
         headers['X-AppEngine-BlobRange'] = os.getenv('HTTP_RANGE')
+    # Some bot-uploaded files don't have the right Content-Type.
+    if is_internal:
+      if path.endswith('.html'):
+        headers['Content-Type'] = 'text/html'
+      elif path.endswith('.png'):
+        headers['Content-Type'] = 'image/png'
     return headers
 
   def delete(self, path, silent=False):

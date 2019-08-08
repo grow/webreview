@@ -217,6 +217,7 @@ class Fileset(ndb.Model):
     self.status = messages.FilesetStatus.SUCCESS
     fileset_utils.send_finalized_email(self)
     self.put()
+    fileset_utils.invoke_screenshots(self)
 
   def update(self, message):
     if message.stats:
