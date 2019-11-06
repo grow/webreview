@@ -1,3 +1,4 @@
+from cgi import parse_qs
 import appengine_config
 import os
 import re
@@ -7,6 +8,10 @@ _HOSTNAME_RE = re.compile('^(?:(.*)--)?(.*)--([^\.]*)\.')
 
 def is_buildbot():
   api_key_header = os.environ.get('HTTP_WEBREVIEW_API_KEY')
+  if not api_key_header:
+    params = parse_qs(os.environ.get('QUERY_STRING'))
+    api_keys = params.get('webreview-api-key')
+    api_key_header = api_keys and api_keys[0]
   return api_key_header \
       and appengine_config.BUILDBOT_API_KEY is not None \
       and api_key_header == appengine_config.BUILDBOT_API_KEY
